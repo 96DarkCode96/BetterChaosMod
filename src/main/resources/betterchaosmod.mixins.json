@@ -3,8 +3,10 @@
 	"package": "eu.darkcode.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"ExampleMixin"
 	],
+    "client": [
+      "OptionsScreenMixin"
+    ],
 	"injectors": {
 		"defaultRequire": 1
 	},

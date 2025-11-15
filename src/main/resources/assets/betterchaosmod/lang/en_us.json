@@ -1,0 +1,6 @@
+{
+  "betterchaosmod.options.title": "Better Chaos Mod",
+  "betterchaosmod.config.title": "Configuration",
+  "betterchaosmod.option.eventDuration": "Event Duration: %ds",
+  "betterchaosmod.option.timerDuration": "Timer Duration: %ds"
+}
