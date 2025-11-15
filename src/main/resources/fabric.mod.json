@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "betterchaosmod",
+	"version": "${version}",
+	"name": "BetterChaosMod",
+	"description": "BetterChaosMod is an entertainment mode inspired by GTA V Chaos Mode and Entropy mod by juancarloscp52",
+	"authors": [
+		"96DarkCode96"
+	],
+	"contact": {
+        "email": "support@matejtomecek.eu",
+        "homepage": "https://store.matejtomecek.eu/betterchaosmod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/betterchaosmod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"eu.darkcode.BetterChaosMod"
+		],
+		"client": [
+			"eu.darkcode.BetterChaosModClient"
+		]
+	},
+	"mixins": [
+		"betterchaosmod.mixins.json",
+		{
+			"config": "betterchaosmod.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {}
+}
