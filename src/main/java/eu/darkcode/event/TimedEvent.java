@@ -1,10 +1,33 @@
 package eu.darkcode.event;
 
-import eu.darkcode.Settings;
+import eu.darkcode.BetterChaosMod;
+import eu.darkcode.server.EventManager;
+import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class TimedEvent implements Event{
+public abstract class TimedEvent implements Event {
     private int tick = 0;
     private boolean ended = false;
+
+    @Override
+    public void startClient() {
+
+    }
+
+    @Override
+    public void tickClient() {
+
+    }
+
+    @Override
+    public void endPlayer(@NotNull EventManager manager, @NotNull ServerPlayer player) {
+
+    }
+
+    @Override
+    public void endClient() {
+
+    }
 
     @Override
     public int currentTick() {
@@ -18,7 +41,7 @@ public abstract class TimedEvent implements Event{
 
     @Override
     public int duration() {
-        return Settings.eventDuration;
+        return BetterChaosMod.instance().settings().eventDuration;
     }
 
     @Override

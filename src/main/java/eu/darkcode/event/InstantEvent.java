@@ -1,31 +1,17 @@
 package eu.darkcode.event;
 
+import eu.darkcode.server.EventManager;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class InstantEvent implements Event {
-    @Override
-    public void end() {
-
-    }
-
-    @Override
-    public void endPlayer(@NotNull ServerPlayer player) {
-
-    }
-
-    @Override
-    public void endClient() {
-
-    }
-
     @Override
     public void startClient() {
 
     }
 
     @Override
-    public void tick() {
+    public void tick(@NotNull EventManager manager) {
 
     }
 
@@ -35,8 +21,18 @@ public abstract class InstantEvent implements Event {
     }
 
     @Override
-    public int duration() {
-        return 0;
+    public void end(@NotNull EventManager manager) {
+
+    }
+
+    @Override
+    public void endPlayer(@NotNull EventManager manager, @NotNull ServerPlayer player) {
+
+    }
+
+    @Override
+    public void endClient() {
+
     }
 
     @Override
@@ -47,6 +43,11 @@ public abstract class InstantEvent implements Event {
     @Override
     public void currentTick(int tick) {
         // ignored
+    }
+
+    @Override
+    public int duration() {
+        return 0;
     }
 
     @Override
