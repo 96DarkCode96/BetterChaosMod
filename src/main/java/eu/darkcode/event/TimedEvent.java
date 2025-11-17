@@ -15,8 +15,13 @@ public abstract class TimedEvent implements Event {
     }
 
     @Override
-    public void tickClient() {
+    public void tick(@NotNull EventManager manager) {
+        tick++;
+    }
 
+    @Override
+    public void tickClient() {
+        tick++;
     }
 
     @Override
@@ -32,11 +37,6 @@ public abstract class TimedEvent implements Event {
     @Override
     public int currentTick() {
         return tick;
-    }
-
-    @Override
-    public void currentTick(int tick) {
-        this.tick = tick;
     }
 
     @Override

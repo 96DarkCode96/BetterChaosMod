@@ -1,9 +1,16 @@
 package eu.darkcode;
 
 import eu.darkcode.event.EventRegistry;
+import eu.darkcode.networking.ClientboundHandshakeConfirmPayload;
+import eu.darkcode.networking.Payloads;
 import eu.darkcode.server.EventManager;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -39,6 +46,33 @@ public class BetterChaosMod implements ModInitializer {
         LOGGER.info("[Chaos-Server] EventRegistry initialized (events: {})", EventRegistry.EVENTS.size());
         loadSettings();
         LOGGER.info("[Chaos-Server] Settings loaded!");
+
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2S_HANDSHAKE, (payload, context) -> {
+            if (!payload.version().equals(UpdateStatus.getModVersion())) {
+                context.player().connection.disconnect(Component.literal("Mod version mismatch! (Client: " + payload.version() + "; Server: " + UpdateStatus.getModVersion() + ")"));
+                return;
+            }
+
+            if (PlayerLookup.all(context.server()).size() == 1)
+                eventManager = new EventManager(context.server());
+
+            ServerPlayNetworking.send(context.player(), new ClientboundHandshakeConfirmPayload(settings));
+        });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            if (eventManager == null)
+                return;
+            eventManager.endPlayer(handler.player);
+            if (PlayerLookup.all(server).size() <= 1) {
+                eventManager.end();
+                eventManager = null;
+            }
+        });
+
+        ServerTickEvents.START_SERVER_TICK.register(server -> {
+            if (eventManager != null)
+                eventManager.tick();
+        });
     }
 
     public void loadSettings() {

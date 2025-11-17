@@ -28,20 +28,17 @@ public interface Event {
 
     int currentTick();
 
-    void currentTick(int tick);
-
     int duration();
 
     boolean ended();
 
     void ended(boolean ended);
 
-    default EventDefinition definition() {
-        return getClass().getAnnotation(EventDefinition.class);
-    }
+    @NotNull
+    EventRegistry.Entry<? extends Event> entry();
 
     @NotNull
-    default Component displayName() {
-        return Component.translatable("betterchaosmod.event." + definition().key());
+    default Component getName() {
+        return Component.translatable("betterchaosmod.event." + entry().key());
     }
 }

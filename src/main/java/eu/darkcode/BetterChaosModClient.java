@@ -1,26 +1,105 @@
 package eu.darkcode;
 
+import eu.darkcode.client.ClientSettings;
+import eu.darkcode.client.EventManager;
+import eu.darkcode.client.hud.HudManager;
 import eu.darkcode.event.EventRegistry;
+import eu.darkcode.networking.Payloads;
+import eu.darkcode.networking.ServerboundHandshakePayload;
+import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 import static eu.darkcode.utils.Utils.MOD_ID;
 
 public class BetterChaosModClient implements ClientModInitializer {
+    private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/client_config.json";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static BetterChaosModClient instance;
+
     public @NotNull UpdateStatus updateStatus = UpdateStatus.UNKNOWN;
+    private ClientSettings settings = new ClientSettings();
+    private HudManager hudManager;
+    private EventManager eventManager;
 
     public static BetterChaosModClient instance() {
         return instance;
+    }
+
+    public EventManager eventManager() {
+        return eventManager;
+    }
+
+    @NotNull
+    public ClientSettings settings() {
+        return settings;
+    }
+
+    @NotNull
+    public HudManager hudManager() {
+        return hudManager;
     }
 
     @Override
     public void onInitializeClient() {
         instance = this;
         LOGGER.info("[Chaos-Client] EventRegistry initialized (events: {})", EventRegistry.EVENTS.size());
+
+        loadSettings();
+
+        hudManager = new HudManager();
         updateStatus = UpdateStatus.checkVersion();
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
+                ClientPlayNetworking.send(new ServerboundHandshakePayload(UpdateStatus.getModVersion())));
+
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            if (eventManager != null)
+                eventManager.end();
+            eventManager = null;
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_HANDSHAKE_CONFIRM, (payload, context) ->
+                eventManager = new EventManager(payload.settings()));
+
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_TICK, (payload, context) -> {
+            if (eventManager == null)
+                return;
+            context.client().execute(() -> eventManager.tick(payload.timerCount()));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_EVENT_START, (payload, context) -> {
+            if (eventManager == null)
+                return;
+            context.client().execute(() -> eventManager.startEvent(payload.event()));
+        });
+    }
+
+    public void loadSettings() {
+        try {
+            this.settings = Utils.loadObject(CONFIG_FILE, ClientSettings.class);
+            if (this.settings == null) {
+                this.settings = new ClientSettings();
+                LOGGER.info("[Chaos-Client] Creating default settings...");
+                saveSettings();
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load settings!", e);
+        }
+    }
+
+    public void saveSettings() {
+        try {
+            Utils.saveObject(CONFIG_FILE, this.settings);
+            LOGGER.info("[Chaos-Client] Settings saved!");
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to save settings!", e);
+        }
     }
 }

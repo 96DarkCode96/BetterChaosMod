@@ -1,7 +1,7 @@
 package eu.darkcode.event.impl;
 
-import eu.darkcode.event.EventCategory;
-import eu.darkcode.event.EventDefinition;
+import eu.darkcode.event.Event;
+import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.TimedEvent;
 import eu.darkcode.server.EventManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
-@EventDefinition(key = "half_heart", category = EventCategory.ATTRIBUTE)
 public class HalfHeart extends TimedEvent {
+    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("half_heart", HalfHeart::new).build();
     private final @NotNull Map<ServerPlayer, Entry> rollback = new HashMap<>();
 
     private static void resetHealth(@NotNull ServerPlayer player, Entry entry) {
@@ -37,14 +37,14 @@ public class HalfHeart extends TimedEvent {
     }
 
     @Override
-    public void tick(@NotNull EventManager manager) {
-        // ignored
-    }
-
-    @Override
     public void end(@NotNull EventManager manager) {
         rollback.forEach(HalfHeart::resetHealth);
         rollback.clear();
+    }
+
+    @Override
+    public @NotNull EventRegistry.Entry<? extends Event> entry() {
+        return ENTRY;
     }
 
     @Override

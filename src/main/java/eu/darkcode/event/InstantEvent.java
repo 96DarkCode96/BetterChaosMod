@@ -41,11 +41,6 @@ public abstract class InstantEvent implements Event {
     }
 
     @Override
-    public void currentTick(int tick) {
-        // ignored
-    }
-
-    @Override
     public int duration() {
         return 0;
     }

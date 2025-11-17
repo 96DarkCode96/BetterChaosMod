@@ -3,7 +3,6 @@ package eu.darkcode;
 import com.google.gson.JsonObject;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,11 +19,15 @@ public enum UpdateStatus {
     public static final @NotNull URI UPDATE_LINK = URI.create("https://store.matejtomecek.eu/product/5312ceda48/?ref=game&action=update");
 
     @NotNull
+    public static String getModVersion() {
+        return FabricLoader.getInstance().getModContainer(Utils.MOD_ID).orElseThrow().getMetadata().getVersion().getFriendlyString();
+    }
+
+    @NotNull
     public static UpdateStatus checkVersion() {
         try {
 
-            ModContainer modContainer = FabricLoader.getInstance().getModContainer(Utils.MOD_ID).orElseThrow();
-            String versionString = modContainer.getMetadata().getVersion().getFriendlyString();
+            String versionString = getModVersion();
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder(CHECK_URL).GET().timeout(Duration.ofSeconds(5)).setHeader("User-Agent", "BetterChaosMod-" + FabricLoaderImpl.INSTANCE.getEnvironmentType().name()).build();

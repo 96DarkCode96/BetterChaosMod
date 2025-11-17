@@ -4,6 +4,7 @@ import eu.darkcode.BetterChaosMod;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.UpdateStatus;
+import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.widgets.SliderWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -23,18 +24,22 @@ public class ConfigScreen extends Screen {
     private final Screen parent;
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 61, 33);
     private final @NotNull Settings settings;
+    private final @NotNull ClientSettings clientSettings;
 
     public ConfigScreen(OptionsScreen parent) {
         super(Component.translatable("betterchaosmod.config.title"));
         this.parent = parent;
         settings = BetterChaosMod.instance().settings();
+        clientSettings = BetterChaosModClient.instance().settings();
     }
 
     @Override
     public void onClose() {
         // [SAVE SERVER SETTINGS]
         BetterChaosMod.instance().saveSettings();
-        // TODO: Save client settings
+        // [SAVE CLIENT SETTINGS]
+        BetterChaosModClient.instance().saveSettings();
+        // [OPEN PREVIOUS SCREEN]
         assert minecraft != null;
         minecraft.setScreen(parent);
     }
@@ -62,6 +67,10 @@ public class ConfigScreen extends Screen {
 
         GridLayout.RowHelper rowHelper = gridLayout.createRowHelper(2);
         // TODO: add other options
+
+        rowHelper.addChild(new StringWidget(Component.translatable("betterchaosmod.config.client"), this.font), 2);
+
+        rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option.client.timer.height", clientSettings.hud.timerHeight, 5, 40, a -> Component.literal("" + (int) Math.floor(a)), a -> clientSettings.hud.timerHeight = (int) Math.floor(a)));
 
         if (BetterChaosModClient.instance().updateStatus == UpdateStatus.OUTDATED) {
             rowHelper.addChild(Button.builder(Component.translatable("betterchaosmod.option.update.outdated"), button ->

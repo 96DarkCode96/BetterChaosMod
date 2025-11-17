@@ -33,11 +33,6 @@ public abstract class AttributeEvent extends TimedEvent {
     }
 
     @Override
-    public void tick(@NotNull EventManager manager) {
-        // ignored
-    }
-
-    @Override
     public void end(@NotNull EventManager manager) {
         rollbackMap.forEach((serverPlayer, map) -> {
             map.forEach((attr, rollBackValue) -> {

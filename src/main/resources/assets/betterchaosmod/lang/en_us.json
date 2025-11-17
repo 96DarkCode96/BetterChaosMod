@@ -1,9 +1,16 @@
 {
   "betterchaosmod.options.title": "Better Chaos Mod",
   "betterchaosmod.config.title": "Configuration",
-  "betterchaosmod.option.eventDuration": "Event Duration: %ds",
-  "betterchaosmod.option.timerDuration": "Timer Duration: %ds",
+  "betterchaosmod.config.client": "Client",
   "betterchaosmod.event.random_player_height": "Random Player Height",
   "betterchaosmod.event.half_heart": "Half Heart",
+  "betterchaosmod.event.adventure": "Adventure",
+  "betterchaosmod.event.drop_inventory": "Drop Inventory",
+  "betterchaosmod.event.drop_item_in_hand": "Drop Item In Hand",
+  "betterchaosmod.option.client.timer.height": "Height: %dpx",
+  "betterchaosmod.option.client.timer.foreground": "Foreground",
+  "betterchaosmod.option.client.timer.background": "Background",
+  "betterchaosmod.option.eventDuration": "Event Duration: %ds",
+  "betterchaosmod.option.timerDuration": "Timer Duration: %ds",
   "betterchaosmod.option.update.outdated": "Update Mod"
 }
