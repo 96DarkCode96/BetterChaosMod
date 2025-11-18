@@ -3,14 +3,20 @@ package eu.darkcode;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.EventManager;
 import eu.darkcode.client.hud.HudManager;
+import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.Payloads;
 import eu.darkcode.networking.ServerboundHandshakePayload;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +26,9 @@ import static eu.darkcode.utils.Utils.MOD_ID;
 
 public class BetterChaosModClient implements ClientModInitializer {
     private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/client_config.json";
+    private static final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("betterchaosmod", "main"));
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    private static KeyMapping KEYBIND_OPEN_GAME_LOG;
     private static BetterChaosModClient instance;
 
     public @NotNull UpdateStatus updateStatus = UpdateStatus.UNKNOWN;
@@ -55,6 +63,13 @@ public class BetterChaosModClient implements ClientModInitializer {
 
         hudManager = new HudManager();
         updateStatus = UpdateStatus.checkVersion();
+
+        KEYBIND_OPEN_GAME_LOG = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.gamelog.open", GLFW.GLFW_KEY_U, KEYBIND_CATEGORY));
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (KEYBIND_OPEN_GAME_LOG.consumeClick())
+                client.setScreen(new GameLogScreen());
+        });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
                 ClientPlayNetworking.send(new ServerboundHandshakePayload(UpdateStatus.getModVersion())));

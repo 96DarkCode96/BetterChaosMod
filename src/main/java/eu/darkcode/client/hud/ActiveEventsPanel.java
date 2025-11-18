@@ -25,7 +25,7 @@ public class ActiveEventsPanel implements Hud {
             int size = font.width(component);
 
             int width = graphics.guiWidth();
-            graphics.drawString(font, component, width - size - 30, y, 0xFFFFFFFF);
+            graphics.drawString(font, component, width - size - 30, y, 0xFFFFFFFF); // TODO: Add fade-out for first 4 elements if size is > 8
             if (!activeEvent.ended()) {
                 int startX = width - 25;
                 graphics.fill(startX, y + 1, startX + 20, y + 8, 0xFF999999);

@@ -2,6 +2,9 @@ package eu.darkcode.event;
 
 import com.mojang.serialization.Lifecycle;
 import eu.darkcode.event.impl.*;
+import eu.darkcode.event.impl.move.*;
+import eu.darkcode.event.impl.sensitivity.HighSensitivity;
+import eu.darkcode.event.impl.sensitivity.LowSensitivity;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistrationInfo;
@@ -33,6 +36,21 @@ public class EventRegistry {
         register(registry, Adventure.ENTRY);
         register(registry, DropInventory.ENTRY);
         register(registry, DropItemInHand.ENTRY);
+        register(registry, WeakLegs.ENTRY);
+        register(registry, Wither.ENTRY);
+        register(registry, Warden.ENTRY);
+        register(registry, LowSensitivity.ENTRY);
+        register(registry, HighSensitivity.ENTRY);
+        register(registry, Invulnerability.ENTRY);
+        register(registry, FallingLava.ENTRY);
+        register(registry, FallingAnvil.ENTRY);
+
+        register(registry, NoMove.ENTRY);
+        register(registry, NoJump.ENTRY);
+        register(registry, ForceForwards.ENTRY);
+        register(registry, ForceBackwards.ENTRY);
+        register(registry, OnlyBackwards.ENTRY);
+        register(registry, OnlySideways.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
@@ -46,7 +64,8 @@ public class EventRegistry {
     }
 
     public record Entry<T extends Event>(@NotNull String key, @NotNull Supplier<T> constructor,
-                                         @NotNull StreamCodec<RegistryFriendlyByteBuf, Event> codec) {
+                                         @NotNull StreamCodec<RegistryFriendlyByteBuf, Event> codec,
+                                         @Nullable EventCategory category) {
         @Contract(pure = true, value = "-> new")
         public T construct() {
             return constructor.get();
@@ -57,6 +76,7 @@ public class EventRegistry {
         private final @NotNull String key;
         private final @NotNull Supplier<T> constructor;
         private @Nullable StreamCodec<RegistryFriendlyByteBuf, Event> codec;
+        private @Nullable EventCategory category;
 
         private Builder(@NotNull String key, @NotNull Supplier<T> constructor) {
             this.key = key;
@@ -66,6 +86,12 @@ public class EventRegistry {
         @Contract("_ -> this")
         public Builder<T> codec(@Nullable StreamCodec<RegistryFriendlyByteBuf, Event> codec) {
             this.codec = codec;
+            return this;
+        }
+
+        @Contract("_ -> this")
+        public Builder<T> category(@Nullable EventCategory category) {
+            this.category = category;
             return this;
         }
 
@@ -84,7 +110,7 @@ public class EventRegistry {
                     }
                 };
             }
-            return new Entry<>(key, constructor, codec);
+            return new Entry<>(key, constructor, codec, category);
         }
     }
 }

@@ -12,8 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
+import static eu.darkcode.event.EventCategory.ATTRIBUTE;
+
 public class HalfHeart extends TimedEvent {
-    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("half_heart", HalfHeart::new).build();
+    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("half_heart", HalfHeart::new).category(ATTRIBUTE).build();
     private final @NotNull Map<ServerPlayer, Entry> rollback = new HashMap<>();
 
     private static void resetHealth(@NotNull ServerPlayer player, Entry entry) {

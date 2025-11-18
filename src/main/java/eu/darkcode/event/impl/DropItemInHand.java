@@ -4,6 +4,8 @@ import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.InstantEvent;
 import eu.darkcode.server.EventManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class DropItemInHand extends InstantEvent {
@@ -12,11 +14,19 @@ public class DropItemInHand extends InstantEvent {
 
     @Override
     public void start(@NotNull EventManager manager) {
-        manager.activePlayers().forEach(player -> player.drop(true));
+        // ignored
     }
 
     @Override
     public @NotNull EventRegistry.Entry<? extends Event> entry() {
         return ENTRY;
+    }
+
+    @Override
+    public void startClient() {
+        super.startClient();
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null)
+            player.drop(true);
     }
 }

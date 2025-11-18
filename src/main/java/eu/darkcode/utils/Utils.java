@@ -2,8 +2,10 @@ package eu.darkcode.utils;
 
 import com.google.gson.Gson;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -45,5 +47,11 @@ public final class Utils {
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(GSON.toJson(object));
         }
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    public static ResourceLocation resourceLocation(@NotNull String name) {
+        return ResourceLocation.fromNamespaceAndPath("betterchaosmod", name);
     }
 }

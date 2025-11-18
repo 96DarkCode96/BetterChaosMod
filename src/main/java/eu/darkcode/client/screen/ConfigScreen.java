@@ -71,6 +71,7 @@ public class ConfigScreen extends Screen {
         rowHelper.addChild(new StringWidget(Component.translatable("betterchaosmod.config.client"), this.font), 2);
 
         rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option.client.timer.height", clientSettings.hud.timerHeight, 5, 40, a -> Component.literal("" + (int) Math.floor(a)), a -> clientSettings.hud.timerHeight = (int) Math.floor(a)));
+        rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option.client.activeEvents.maxEntries", clientSettings.hud.activeEventsMaxEntries, 4, 12, a -> Component.literal("" + (int) Math.floor(a)), a -> clientSettings.hud.activeEventsMaxEntries = (int) Math.floor(a)));
 
         if (BetterChaosModClient.instance().updateStatus == UpdateStatus.OUTDATED) {
             rowHelper.addChild(Button.builder(Component.translatable("betterchaosmod.option.update.outdated"), button ->

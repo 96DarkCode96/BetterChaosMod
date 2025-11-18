@@ -9,9 +9,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static eu.darkcode.event.EventCategory.ATTRIBUTE;
+
 public class RandomPlayerHeight extends AttributeEvent {
 
-    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("random_player_height", RandomPlayerHeight::new).build();
+    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("random_player_height", RandomPlayerHeight::new).category(ATTRIBUTE).build();
 
     public RandomPlayerHeight() {
         super(Map.of(
