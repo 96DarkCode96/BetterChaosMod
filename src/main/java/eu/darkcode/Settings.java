@@ -2,6 +2,7 @@ package eu.darkcode;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import org.jetbrains.annotations.NotNull;
 
 public final class Settings {
     public static final StreamCodec<RegistryFriendlyByteBuf, Settings> CODEC = new StreamCodec<>() {
@@ -13,7 +14,7 @@ public final class Settings {
         }
 
         @Override
-        public Settings decode(RegistryFriendlyByteBuf buf) {
+        public @NotNull Settings decode(RegistryFriendlyByteBuf buf) {
             Settings settings = new Settings();
             settings.timerDuration = buf.readInt();
             settings.eventDuration = buf.readInt();

@@ -41,6 +41,9 @@ public abstract class TimedEvent implements Event {
 
     @Override
     public int duration() {
+        // TODO: Fix this
+        //if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT)
+        //    return BetterChaosModClient.instance().eventManager().baseEventDuration();
         return BetterChaosMod.instance().settings().eventDuration;
     }
 

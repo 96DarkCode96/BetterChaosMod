@@ -21,7 +21,9 @@
   "betterchaosmod.event.no_move": "No Move",
   "betterchaosmod.event.only_backwards": "Only Backwards Movement",
   "betterchaosmod.event.only_sideways": "Crab Movement",
+  "betterchaosmod.event.inverted_controls": "Inverted Controls",
   "betterchaosmod.option.client.activeEvents.maxEntries": "Max entries: %d",
+  "betterchaosmod.option.client.poll.width": "Poll width: %dpx",
   "betterchaosmod.option.client.timer.height": "Height: %dpx",
   "betterchaosmod.option.client.timer.foreground": "Foreground",
   "betterchaosmod.option.client.timer.background": "Background",
@@ -30,5 +32,7 @@
   "betterchaosmod.option.update.outdated": "Update Mod",
   "betterchaosmod.gamelog.title": "Game Log",
   "key.category.betterchaosmod.main": "Better Chaos Mod",
-  "key.gamelog.open": "Open Game Log"
+  "key.gamelog.open": "Open Game Log",
+  "betterchaosmod.event.random": "Random Event",
+  "betterchaosmod.poll.title": "Total votes: %d"
 }

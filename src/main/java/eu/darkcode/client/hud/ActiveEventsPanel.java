@@ -17,7 +17,7 @@ public class ActiveEventsPanel implements Hud {
     @Override
     public void render(HudSettings settings, @NotNull GuiGraphics graphics, @NotNull DeltaTracker deltaTracker) {
         List<Event> activeEvents = BetterChaosModClient.instance().eventManager().getActiveEvents();
-        int y = settings.timerHeight + TOP_PADDING;
+        int y = settings.timerHeight() + TOP_PADDING;
         for (Event activeEvent : activeEvents) {
             Component component = activeEvent.getName();
 
@@ -32,7 +32,7 @@ public class ActiveEventsPanel implements Hud {
                 graphics.fill(startX, y + 1, startX + (int) (20 * ((double) activeEvent.currentTick() / activeEvent.duration())), y + 8, 0xFFFFFFFF);
             }
 
-            y += settings.activeEventsVerticalSpacing;
+            y += settings.activeEventsVerticalSpacing();
         }
     }
 

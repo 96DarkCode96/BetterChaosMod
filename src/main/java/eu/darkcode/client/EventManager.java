@@ -3,6 +3,7 @@ package eu.darkcode.client;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.screen.GameLogScreen;
+import eu.darkcode.client.voting.VotingSystem;
 import eu.darkcode.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,11 +16,13 @@ public class EventManager {
 
     private final @NotNull List<Event> activeEvents = new ArrayList<>();
     private final @NotNull Settings settings;
+    private final @NotNull VotingSystem votingSystem;
     private int timerCount;
 
     public EventManager(@NotNull Settings settings) {
         this.settings = settings;
         this.timerCount = settings.timerDuration;
+        this.votingSystem = new VotingSystem();
     }
 
     @NotNull
@@ -44,6 +47,14 @@ public class EventManager {
         });
     }
 
+    public @NotNull VotingSystem votingSystem() {
+        return votingSystem;
+    }
+
+    public int baseEventDuration() {
+        return settings.eventDuration;
+    }
+
     public double getTimerFraction() {
         return 1.0 - (double) timerCount / settings.timerDuration;
     }
@@ -56,7 +67,7 @@ public class EventManager {
     }
 
     public void startEvent(Event event) {
-        int maxEntries = BetterChaosModClient.instance().settings().hud.activeEventsMaxEntries;
+        int maxEntries = BetterChaosModClient.instance().settings().hud.activeEventsMaxEntries();
         Event pop;
         while (!this.activeEvents.isEmpty() && this.activeEvents.size() >= maxEntries && (pop = this.activeEvents.getFirst()) != null && pop.ended())
             this.activeEvents.removeFirst();

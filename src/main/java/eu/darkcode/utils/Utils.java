@@ -18,10 +18,15 @@ import java.util.List;
 
 public final class Utils {
 
+    public static final int COUNT_VOTE_OPTIONS = 4;
     public static final @NotNull Gson GSON = new Gson();
     public static final String MOD_ID = "betterchaosmod";
 
     private Utils() {
+    }
+
+    public static int getVoteOptionIndex(int pollId, int optionIndex) {
+        return (pollId % 2 == 0 ? 1 : 5) + optionIndex;
     }
 
     @NotNull

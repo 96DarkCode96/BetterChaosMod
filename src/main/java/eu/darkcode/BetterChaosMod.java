@@ -1,7 +1,8 @@
 package eu.darkcode;
 
 import eu.darkcode.event.EventRegistry;
-import eu.darkcode.networking.ClientboundHandshakeConfirmPayload;
+import eu.darkcode.networking.handshake.ClientboundHandshakeConfirmPayload;
+import eu.darkcode.networking.ClientboundPollStartPayload;
 import eu.darkcode.networking.Payloads;
 import eu.darkcode.server.EventManager;
 import eu.darkcode.utils.Utils;
@@ -53,10 +54,14 @@ public class BetterChaosMod implements ModInitializer {
                 return;
             }
 
-            if (PlayerLookup.all(context.server()).size() == 1)
-                eventManager = new EventManager(context.server());
-
             ServerPlayNetworking.send(context.player(), new ClientboundHandshakeConfirmPayload(settings));
+
+            if (eventManager == null) {
+                eventManager = new EventManager(context.server());
+                return;
+            }
+            // [RESEND STATUSES]
+            ServerPlayNetworking.send(context.player(), new ClientboundPollStartPayload(eventManager.votingSystem().poll()));
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

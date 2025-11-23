@@ -5,6 +5,7 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.UpdateStatus;
 import eu.darkcode.client.ClientSettings;
+import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.widgets.SliderWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -19,6 +20,8 @@ import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.IntConsumer;
 
 public class ConfigScreen extends Screen {
     private final Screen parent;
@@ -70,8 +73,10 @@ public class ConfigScreen extends Screen {
 
         rowHelper.addChild(new StringWidget(Component.translatable("betterchaosmod.config.client"), this.font), 2);
 
-        rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option.client.timer.height", clientSettings.hud.timerHeight, 5, 40, a -> Component.literal("" + (int) Math.floor(a)), a -> clientSettings.hud.timerHeight = (int) Math.floor(a)));
-        rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option.client.activeEvents.maxEntries", clientSettings.hud.activeEventsMaxEntries, 4, 12, a -> Component.literal("" + (int) Math.floor(a)), a -> clientSettings.hud.activeEventsMaxEntries = (int) Math.floor(a)));
+        final HudSettings hud = clientSettings.hud;
+        addIntSlider(rowHelper, "client.timer.height", hud.timerHeight(), 5, 40, hud::timerHeight);
+        addIntSlider(rowHelper, "client.activeEvents.maxEntries", hud.activeEventsMaxEntries(), 4, 12, hud::activeEventsMaxEntries);
+        addIntSlider(rowHelper, "client.poll.width", hud.pollWidth(), 150, 400, hud::pollWidth);
 
         if (BetterChaosModClient.instance().updateStatus == UpdateStatus.OUTDATED) {
             rowHelper.addChild(Button.builder(Component.translatable("betterchaosmod.option.update.outdated"), button ->
@@ -87,5 +92,9 @@ public class ConfigScreen extends Screen {
     @Override
     protected void repositionElements() {
         this.layout.arrangeElements();
+    }
+
+    private void addIntSlider(@NotNull GridLayout.RowHelper rowHelper, @NotNull String tKey, int value, int min, int max, @NotNull IntConsumer set) {
+        rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option." + tKey, value, min, max, a -> Component.literal("" + (int) Math.floor(a)), a -> set.accept((int) Math.floor(a))));
     }
 }

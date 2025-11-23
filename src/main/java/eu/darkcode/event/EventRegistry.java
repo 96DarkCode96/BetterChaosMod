@@ -19,6 +19,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class EventRegistry {
@@ -51,6 +54,7 @@ public class EventRegistry {
         register(registry, ForceBackwards.ENTRY);
         register(registry, OnlyBackwards.ENTRY);
         register(registry, OnlySideways.ENTRY);
+        register(registry, InvertedControls.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
@@ -63,9 +67,21 @@ public class EventRegistry {
         return new Builder<>(key, constructor);
     }
 
+    @Nullable
+    public static Entry<?> pickRandomEvent(@NotNull Predicate<Entry<?>> filter) {
+        List<Entry<?>> candidates = EVENTS.stream().filter(filter).toList();
+
+        // Return null if no candidates
+        if (candidates.isEmpty())
+            return null;
+
+        // Pick a random entry
+        return candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
+    }
+
     public record Entry<T extends Event>(@NotNull String key, @NotNull Supplier<T> constructor,
                                          @NotNull StreamCodec<RegistryFriendlyByteBuf, Event> codec,
-                                         @Nullable EventCategory category) {
+                                         @Nullable EventCategory category, @NotNull EventServerType serverType) {
         @Contract(pure = true, value = "-> new")
         public T construct() {
             return constructor.get();
@@ -77,6 +93,7 @@ public class EventRegistry {
         private final @NotNull Supplier<T> constructor;
         private @Nullable StreamCodec<RegistryFriendlyByteBuf, Event> codec;
         private @Nullable EventCategory category;
+        private @NotNull EventServerType eventServerType = EventServerType.BOTH;
 
         private Builder(@NotNull String key, @NotNull Supplier<T> constructor) {
             this.key = key;
@@ -95,6 +112,12 @@ public class EventRegistry {
             return this;
         }
 
+        @Contract("_ -> this")
+        public Builder<T> eventServerType(@NotNull EventServerType eventServerType) {
+            this.eventServerType = eventServerType;
+            return this;
+        }
+
         @Contract("-> new")
         public Entry<T> build() {
             if (codec == null) {
@@ -110,7 +133,7 @@ public class EventRegistry {
                     }
                 };
             }
-            return new Entry<>(key, constructor, codec, category);
+            return new Entry<>(key, constructor, codec, category, eventServerType);
         }
     }
 }

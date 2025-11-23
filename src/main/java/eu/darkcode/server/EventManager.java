@@ -2,7 +2,6 @@ package eu.darkcode.server;
 
 import eu.darkcode.BetterChaosMod;
 import eu.darkcode.event.Event;
-import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.ClientboundEventStartPayload;
 import eu.darkcode.networking.ClientboundTickPayload;
 import eu.darkcode.utils.Utils;
@@ -11,32 +10,37 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EventManager {
 
     public final @NotNull MinecraftServer server;
     private final @NotNull List<Event> activeEvents = new ArrayList<>();
+    private final @NotNull VotingSystem votingSystem;
     private int timerCount = 0;
 
     public EventManager(@NotNull MinecraftServer server) {
         this.server = server;
+        this.votingSystem = new VotingSystem(this);
         resetTimerCount();
     }
 
     private void resetTimerCount() {
+        this.votingSystem.newPoll();
         this.timerCount = BetterChaosMod.instance().settings().timerDuration;
     }
 
     @NotNull
     public List<ServerPlayer> activePlayers() {
         return Utils.getActivePlayers(server);
+    }
+
+    @NotNull
+    public VotingSystem votingSystem() {
+        return votingSystem;
     }
 
     public void tick() {
@@ -46,16 +50,18 @@ public class EventManager {
             while (!this.activeEvents.isEmpty() && this.activeEvents.size() > selectCooldown && (pop = this.activeEvents.getFirst()) != null && pop.ended())
                 this.activeEvents.removeFirst();
 
-            Event event = chooseEvent();
+            try {
+                VotingSystem.PollResult res = this.votingSystem.endPoll();
 
-            if (event != null) {
-                activeEvents.add(event);
-                event.start(this);
-                ClientboundEventStartPayload packet = new ClientboundEventStartPayload(event);
+                activeEvents.add(res.event());
+                res.event().start(this);
+
+                ClientboundEventStartPayload packet = new ClientboundEventStartPayload(res.event());
                 PlayerLookup.all(server).forEach(player -> ServerPlayNetworking.send(player, packet));
-            }
 
-            // TODO: Pick new events
+            } catch (Throwable e) {
+                BetterChaosMod.LOGGER.error("Error when processing events", e);
+            }
 
             resetTimerCount();
         }
@@ -74,29 +80,6 @@ public class EventManager {
         timerCount--;
     }
 
-    @Nullable
-    private Event chooseEvent() {
-        EventRegistry.Entry<?> entry = pickRandomEvent(List.of());
-        return entry == null ? null : entry.construct();
-    }
-
-    @Nullable
-    private EventRegistry.Entry<?> pickRandomEvent(@NotNull List<EventRegistry.Entry<?>> alreadyPicked) {
-        Set<EventRegistry.Entry<?>> activeSet = activeEvents.stream().map(Event::entry).collect(Collectors.toSet());
-
-        List<EventRegistry.Entry<?>> candidates = EventRegistry.EVENTS.stream()
-                .filter(e -> !activeSet.contains(e))              // remove active
-                .filter(e -> !alreadyPicked.contains(e))          // remove already picked
-                .toList();
-
-        // Return null if no candidates
-        if (candidates.isEmpty())
-            return null;
-
-        // Pick a random entry
-        return candidates.get(ThreadLocalRandom.current().nextInt(candidates.size()));
-    }
-
     public void end() {
         activeEvents.forEach(event -> {
             if (!event.ended()) {
@@ -111,5 +94,10 @@ public class EventManager {
             if (!event.ended())
                 event.endPlayer(this, player);
         });
+    }
+
+    @NotNull
+    public Stream<Event> activeEvents() {
+        return activeEvents.stream();
     }
 }

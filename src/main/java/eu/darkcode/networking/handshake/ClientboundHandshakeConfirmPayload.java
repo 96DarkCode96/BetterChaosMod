@@ -1,6 +1,7 @@
-package eu.darkcode.networking;
+package eu.darkcode.networking.handshake;
 
 import eu.darkcode.Settings;
+import eu.darkcode.networking.Payloads;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

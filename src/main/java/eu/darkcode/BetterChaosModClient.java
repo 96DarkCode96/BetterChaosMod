@@ -2,11 +2,12 @@ package eu.darkcode;
 
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.EventManager;
+import eu.darkcode.client.hud.CurrentPollPanel;
 import eu.darkcode.client.hud.HudManager;
 import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.Payloads;
-import eu.darkcode.networking.ServerboundHandshakePayload;
+import eu.darkcode.networking.handshake.ServerboundHandshakePayload;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -87,6 +88,15 @@ public class BetterChaosModClient implements ClientModInitializer {
             if (eventManager == null)
                 return;
             context.client().execute(() -> eventManager.tick(payload.timerCount()));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_POLL_START, (payload, context) -> {
+            if (eventManager == null)
+                return;
+            context.client().execute(() -> {
+                eventManager.votingSystem().processNewPoll(payload.poll());
+                hudManager.hud(CurrentPollPanel.class).newPoll(payload.poll());
+            });
         });
 
         ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_EVENT_START, (payload, context) -> {

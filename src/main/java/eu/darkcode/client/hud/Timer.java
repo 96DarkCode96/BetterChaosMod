@@ -19,8 +19,8 @@ public class Timer implements Hud {
             fraction += (targetFraction - fraction) * 0.1;
         }
 
-        graphics.fill(0, 0, graphics.guiWidth(), settings.timerHeight, settings.timerBackgroundColor);
-        graphics.fill(0, 0, (int) Math.floor(graphics.guiWidth() * fraction), settings.timerHeight, settings.timerForegroundColor);
+        graphics.fill(0, 0, graphics.guiWidth(), settings.timerHeight(), settings.timerBackgroundColor());
+        graphics.fill(0, 0, (int) Math.floor(graphics.guiWidth() * fraction), settings.timerHeight(), settings.timerForegroundColor());
     }
 
     @Override

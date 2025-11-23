@@ -1,0 +1,43 @@
+package eu.darkcode.event.impl.move;
+
+import eu.darkcode.client.SharedProperties;
+import eu.darkcode.event.Event;
+import eu.darkcode.event.EventRegistry;
+import eu.darkcode.event.TimedEvent;
+import eu.darkcode.server.EventManager;
+import net.minecraft.world.entity.player.Input;
+import org.jetbrains.annotations.NotNull;
+
+import static eu.darkcode.event.EventCategory.MOVEMENT;
+
+public class InvertedControls extends TimedEvent {
+
+    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("inverted_controls", InvertedControls::new).category(MOVEMENT).build();
+
+    @Override
+    public void start(@NotNull EventManager manager) {
+        // ignored
+    }
+
+    @Override
+    public void end(@NotNull EventManager manager) {
+        // ignored
+    }
+
+    @Override
+    public @NotNull EventRegistry.Entry<? extends Event> entry() {
+        return ENTRY;
+    }
+
+    @Override
+    public void startClient() {
+        super.startClient();
+        SharedProperties.moveEditor = input -> new Input(input.backward(), input.forward(), input.right(), input.left(), input.shift(), input.sprint(), input.jump());
+    }
+
+    @Override
+    public void endClient() {
+        super.endClient();
+        SharedProperties.moveEditor = null;
+    }
+}

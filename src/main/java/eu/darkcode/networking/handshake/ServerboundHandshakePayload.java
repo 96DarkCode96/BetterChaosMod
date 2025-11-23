@@ -1,5 +1,6 @@
-package eu.darkcode.networking;
+package eu.darkcode.networking.handshake;
 
+import eu.darkcode.networking.Payloads;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public record ServerboundHandshakePayload(String version) implements CustomPacketPayload {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ServerboundHandshakePayload> CODEC = StreamCodec.composite(
-            ByteBufCodecs.stringUtf8(32767), ServerboundHandshakePayload::version,
+            ByteBufCodecs.STRING_UTF8, ServerboundHandshakePayload::version,
             ServerboundHandshakePayload::new);
 
     @Override
