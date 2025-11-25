@@ -1,7 +1,4 @@
 {
-  "betterchaosmod.options.title": "Better Chaos Mod",
-  "betterchaosmod.config.title": "Configuration",
-  "betterchaosmod.config.client": "Client",
   "betterchaosmod.event.random_player_height": "Random Player Height",
   "betterchaosmod.event.half_heart": "Half Heart",
   "betterchaosmod.event.adventure": "Adventure",
@@ -22,17 +19,29 @@
   "betterchaosmod.event.only_backwards": "Only Backwards Movement",
   "betterchaosmod.event.only_sideways": "Crab Movement",
   "betterchaosmod.event.inverted_controls": "Inverted Controls",
+
+  "betterchaosmod.options.title": "Better Chaos Mod",
+  "betterchaosmod.config.title": "Configuration",
+  "betterchaosmod.option_section.server": "Server",
+  "betterchaosmod.option_section.client": "Client",
+  "betterchaosmod.option_section.client.integration": "Integration",
+
   "betterchaosmod.option.client.activeEvents.maxEntries": "Max entries: %d",
   "betterchaosmod.option.client.poll.width": "Poll width: %dpx",
   "betterchaosmod.option.client.timer.height": "Height: %dpx",
   "betterchaosmod.option.client.timer.foreground": "Foreground",
   "betterchaosmod.option.client.timer.background": "Background",
-  "betterchaosmod.option.eventDuration": "Event Duration: %ds",
-  "betterchaosmod.option.timerDuration": "Timer Duration: %ds",
+  "betterchaosmod.option.server.duration.event": "Event Duration",
+  "betterchaosmod.option.server.duration.event_desc": "Base duration for how long will every event be active",
+  "betterchaosmod.option.server.duration.timer": "Timer Duration",
+  "betterchaosmod.option.server.duration.timer_desc": "Base duration of one timer cycle (=voting time)",
   "betterchaosmod.option.update.outdated": "Update Mod",
+
   "betterchaosmod.gamelog.title": "Game Log",
   "key.category.betterchaosmod.main": "Better Chaos Mod",
   "key.gamelog.open": "Open Game Log",
   "betterchaosmod.event.random": "Random Event",
-  "betterchaosmod.poll.title": "Total votes: %d"
+  "betterchaosmod.poll.title": "Total votes: %d",
+  "betterchaosmod.integration.twitch": "Twitch",
+  "betterchaosmod.changelog.title": "Changelog"
 }

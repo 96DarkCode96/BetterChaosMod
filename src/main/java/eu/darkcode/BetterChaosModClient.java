@@ -5,16 +5,22 @@ import eu.darkcode.client.EventManager;
 import eu.darkcode.client.hud.CurrentPollPanel;
 import eu.darkcode.client.hud.HudManager;
 import eu.darkcode.client.screen.GameLogScreen;
+import eu.darkcode.client.voting.integration.IntegrationSettings;
+import eu.darkcode.client.voting.integration.twitch.IRCClient;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.Payloads;
-import eu.darkcode.networking.handshake.ServerboundHandshakePayload;
+import eu.darkcode.networking.configuration.ServerboundHandshakeAck;
+import eu.darkcode.networking.configuration.ServerboundIntegrationPass;
 import eu.darkcode.utils.Utils;
+import eu.darkcode.voting.IntegrationType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -22,6 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
 
 import static eu.darkcode.utils.Utils.MOD_ID;
 
@@ -62,6 +71,8 @@ public class BetterChaosModClient implements ClientModInitializer {
 
         loadSettings();
 
+        settings.lastShownChangelog = null;
+
         hudManager = new HudManager();
         updateStatus = UpdateStatus.checkVersion();
 
@@ -72,17 +83,46 @@ public class BetterChaosModClient implements ClientModInitializer {
                 client.setScreen(new GameLogScreen());
         });
 
-        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) ->
-                ClientPlayNetworking.send(new ServerboundHandshakePayload(UpdateStatus.getModVersion())));
+        ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_HANDSHAKE, (payload, context) -> {
+            System.out.println("<< " + payload.getClass().getName());
 
+            context.responseSender().sendPacket(new ServerboundHandshakeAck(UpdateStatus.getModVersion()));
+            eventManager = new EventManager(payload.serverSettings());
+        });
+
+        ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_INTEGRATION_CHECK, (payload, context) -> {
+            System.out.println("<< " + payload.getClass().getName());
+
+            final IntegrationSettings integration = settings.integration;
+            final HashSet<IntegrationType> resultSet = new HashSet<>();
+
+            CompletableFuture<Boolean> chain = CompletableFuture.completedFuture(true);
+
+            // [TWITCH]
+            if (integration.twitchEnabled) {
+                resultSet.add(IntegrationType.TWITCH);
+                chain = chain.thenCombine(IRCClient.testConnection(integration.twitchIntegration), (prev, current) -> prev && current);
+            }
+
+            chain.whenComplete((success, err) -> context.client().execute(() -> {
+                System.out.println("Response: " + success + " | Error: " + err);
+                if (err != null || !success) {
+                    context.responseSender().disconnect(Component.literal("Integration check failed!"));
+                    return;
+                }
+                context.responseSender().sendPacket(new ServerboundIntegrationPass(resultSet.isEmpty() ? EnumSet.noneOf(IntegrationType.class) : EnumSet.copyOf(resultSet)));
+            }));
+        });
+
+        registerPlayNetworking();
+    }
+
+    private void registerPlayNetworking() {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             if (eventManager != null)
                 eventManager.end();
             eventManager = null;
         });
-
-        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_HANDSHAKE_CONFIRM, (payload, context) ->
-                eventManager = new EventManager(payload.settings()));
 
         ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_TICK, (payload, context) -> {
             if (eventManager == null)

@@ -23,7 +23,6 @@ import static net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUt
 public class CurrentPollPanel implements Hud {
     private static final int LINE_SPACE = 2;
     private static final int ENTRY_VERTICAL_PADDING = 4;
-    private static final @NotNull ResourceLocation BACKGROUND_SPRITE = ResourceLocation.fromNamespaceAndPath("minecraft", "toast/advancement");
     private static final int MARGIN = 10;
 
     private final @NotNull List<ComputedEntry> entries = new ArrayList<>();

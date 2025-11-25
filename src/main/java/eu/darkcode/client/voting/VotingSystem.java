@@ -1,6 +1,5 @@
 package eu.darkcode.client.voting;
 
-import eu.darkcode.client.voting.integration.DebugIntegration;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.voting.Poll;
 import net.minecraft.util.TriState;
@@ -14,11 +13,14 @@ import static eu.darkcode.utils.Utils.COUNT_VOTE_OPTIONS;
 public class VotingSystem {
 
     private final int[] votes = new int[COUNT_VOTE_OPTIONS];
+    private final @Nullable Integration activeIntegration;
     private int totalVotes = 0;
-
-    private @Nullable Integration activeIntegration = new DebugIntegration();
     private @Nullable Poll currentPoll;
     private @NotNull TriState pollVisibility = TriState.DEFAULT;
+
+    public VotingSystem(@Nullable Integration integration) {
+        this.activeIntegration = integration;
+    }
 
     public void processNewPoll(@NotNull Poll poll) {
 
@@ -42,10 +44,6 @@ public class VotingSystem {
 
     public @Nullable Integration activeIntegration() {
         return activeIntegration;
-    }
-
-    public void activeIntegration(@Nullable Integration activeIntegration) {
-        this.activeIntegration = activeIntegration;
     }
 
     public @Nullable Poll currentPoll() {

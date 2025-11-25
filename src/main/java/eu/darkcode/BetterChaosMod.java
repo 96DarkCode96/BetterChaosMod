@@ -1,16 +1,19 @@
 package eu.darkcode;
 
 import eu.darkcode.event.EventRegistry;
-import eu.darkcode.networking.handshake.ClientboundHandshakeConfirmPayload;
 import eu.darkcode.networking.ClientboundPollStartPayload;
 import eu.darkcode.networking.Payloads;
+import eu.darkcode.networking.configuration.task.HandshakeTask;
+import eu.darkcode.networking.configuration.task.IntegrationCheckTask;
 import eu.darkcode.server.EventManager;
 import eu.darkcode.utils.Utils;
+import eu.darkcode.voting.IntegrationType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerConfigurationNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,20 +51,40 @@ public class BetterChaosMod implements ModInitializer {
         loadSettings();
         LOGGER.info("[Chaos-Server] Settings loaded!");
 
-        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2S_HANDSHAKE, (payload, context) -> {
-            if (!payload.version().equals(UpdateStatus.getModVersion())) {
-                context.player().connection.disconnect(Component.literal("Mod version mismatch! (Client: " + payload.version() + "; Server: " + UpdateStatus.getModVersion() + ")"));
+        ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
+            if (ServerConfigurationNetworking.canSend(handler, Payloads.S2C_HANDSHAKE)) {
+                handler.addTask(new HandshakeTask(settings));
+                handler.addTask(new IntegrationCheckTask());
                 return;
             }
+            handler.disconnect(Component.literal("Please download BetterChaosMod! https://store.matejtomecek.eu/betterchaosmod/"));
+        });
 
-            ServerPlayNetworking.send(context.player(), new ClientboundHandshakeConfirmPayload(settings));
+        ServerConfigurationNetworking.registerGlobalReceiver(Payloads.C2S_HANDSHAKE_ACK, (payload, context) -> {
+            System.out.println(">> " + payload.getClass().getName());
 
-            if (eventManager == null) {
-                eventManager = new EventManager(context.server());
+            if (!payload.clientModVersion().equals(UpdateStatus.getModVersion())) {
+                context.responseSender().disconnect(Component.literal("Mod version mismatch! (Client: " + payload.clientModVersion() + "; Server: " + UpdateStatus.getModVersion() + ")"));
                 return;
             }
+            context.networkHandler().completeTask(HandshakeTask.TYPE);
+        });
+
+        ServerConfigurationNetworking.registerGlobalReceiver(Payloads.C2S_INTEGRATION_PASS, (payload, context) -> {
+            System.out.println(">> " + payload.getClass().getName());
+
+            System.out.println(context.responseSender().getClass().getName());
+            for (IntegrationType integration : payload.integrations()) {
+                System.out.println("Found integration: " + integration);
+            }
+            context.networkHandler().completeTask(IntegrationCheckTask.TYPE);
+        });
+
+        ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            if (eventManager == null)
+                eventManager = new EventManager(server);
             // [RESEND STATUSES]
-            ServerPlayNetworking.send(context.player(), new ClientboundPollStartPayload(eventManager.votingSystem().poll()));
+            sender.sendPacket(new ClientboundPollStartPayload(eventManager.votingSystem().poll()));
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

@@ -4,6 +4,9 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.client.voting.VotingSystem;
+import eu.darkcode.client.voting.integration.Integration;
+import eu.darkcode.client.voting.integration.IntegrationSettings;
+import eu.darkcode.client.voting.integration.twitch.TwitchIntegration;
 import eu.darkcode.event.Event;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +25,14 @@ public class EventManager {
     public EventManager(@NotNull Settings settings) {
         this.settings = settings;
         this.timerCount = settings.timerDuration;
-        this.votingSystem = new VotingSystem();
+
+        Integration integration = null;
+
+        IntegrationSettings integrationSettings = BetterChaosModClient.instance().settings().integration;
+        if (integrationSettings.twitchEnabled)
+            integration = new TwitchIntegration(integrationSettings.twitchIntegration);
+
+        this.votingSystem = new VotingSystem(integration);
     }
 
     @NotNull
