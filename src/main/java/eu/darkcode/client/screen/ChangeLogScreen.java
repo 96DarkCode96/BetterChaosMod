@@ -1,12 +1,8 @@
 package eu.darkcode.client.screen;
 
-import eu.darkcode.client.widgets.OreButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.narration.NarratedElementType;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -58,7 +54,7 @@ public class ChangeLogScreen extends Screen {
         graphics.fill(x + 1, y + h - 2 * PADDING - BUTTON_HEIGHT - 1, x + w - 1, y + h - 1, 0xFF48494A);
 
         super.render(graphics, i, j, f);
-        
+
         profilerFiller.pop();
     }
 
@@ -70,20 +66,7 @@ public class ChangeLogScreen extends Screen {
 
     @Override
     protected void init() {
-        int x = (this.width - w) / 2;
-        int y = (this.height - h) / 2;
-
-        addRenderableWidget(new OreButton(x + PADDING, y + h - PADDING - BUTTON_HEIGHT, w - 2 * PADDING, BUTTON_HEIGHT, Component.translatable("gui.continue")) {
-            @Override
-            protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-                narrationElementOutput.add(NarratedElementType.TITLE, title);
-            }
-
-            @Override
-            public void onPress(InputWithModifiers inputWithModifiers) {
-                onClose();
-            }
-        });
+        
     }
 
     @Override

@@ -6,16 +6,14 @@ import eu.darkcode.Settings;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.widgets.OreSlider;
-import eu.darkcode.client.widgets.Panel;
-import eu.darkcode.client.widgets.SliderWidget;
+import eu.darkcode.client.widgets.ore.OrePanel;
+import eu.darkcode.client.widgets.ore.OreVerticalPanel;
+import eu.darkcode.client.widgets.styles.Constraint;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.IntConsumer;
 
 public class ConfigScreen extends Screen {
     private final Screen parent;
@@ -42,41 +40,58 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        final boolean inGame = Minecraft.getInstance().level != null;
-        final HudSettings hud = clientSettings.hud;
-
-        Panel panel = new Panel();
-        panel.setY(10);
+        OrePanel panel = new OreVerticalPanel();
+        panel.setY(30);
         panel.stretchHorizontal(500, width);
 
-        panel.addChild(new OreSlider(
+        serverConfig(panel);
+        clientConfig(panel);
+
+        panel.arrangeElements();
+        addRenderableWidget(panel);
+    }
+
+    private void serverConfig(OrePanel panel) {
+        boolean enabledOptions = Minecraft.getInstance().level == null;
+        panel.addWidget(new OreSlider(
                 Component.translatable("betterchaosmod.option.server.duration.event"),
                 Component.translatable("betterchaosmod.option.server.duration.event_desc"),
                 settings.eventDuration / 20, 10, 120,
                 a -> Component.literal(a + "s"),
                 a -> settings.eventDuration = a * 20
-        ));
-        panel.addChild(new OreSlider(
+        )).padding(new Constraint(0, 0, 0, 1)).enabled = enabledOptions;
+        panel.addWidget(new OreSlider(
                 Component.translatable("betterchaosmod.option.server.duration.timer"),
                 Component.translatable("betterchaosmod.option.server.duration.timer_desc"),
                 settings.timerDuration / 20, 15, 300,
                 a -> Component.literal(a + "s"),
                 a -> settings.timerDuration = a * 20
+        )).padding(new Constraint(0, 0, 0, 1)).enabled = enabledOptions;
+    }
+
+    private void clientConfig(OrePanel panel) {
+        final HudSettings hud = clientSettings.hud;
+        panel.addWidget(new OreSlider(
+                Component.translatable("betterchaosmod.option.client.timer.height"),
+                null,
+                hud.timerHeight(), 5, 40,
+                a -> Component.literal(a + "px"),
+                hud::timerHeight
+        )).padding(new Constraint(0, 0, 0, 1));
+        panel.addWidget(new OreSlider(
+                Component.translatable("betterchaosmod.option.client.activeEvents.maxEntries"),
+                null,
+                hud.activeEventsMaxEntries(), 4, 12,
+                a -> Component.literal(String.valueOf(a)),
+                hud::activeEventsMaxEntries
+        )).padding(new Constraint(0, 0, 0, 1));
+        panel.addWidget(new OreSlider(
+                Component.translatable("betterchaosmod.option.client.poll.width"),
+                null,
+                hud.pollWidth(), 150, 400,
+                a -> Component.literal(a + "px"),
+                hud::pollWidth
         ));
-
-        //addIntSlider(panel, "client.timer.height", hud.timerHeight(), 5, 40, hud::timerHeight);
-        //addIntSlider(panel, "client.activeEvents.maxEntries", hud.activeEventsMaxEntries(), 4, 12, hud::activeEventsMaxEntries);
-        //addIntSlider(panel, "client.poll.width", hud.pollWidth(), 150, 400, hud::pollWidth);
-
-        //this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, b -> this.onClose()).width(200).build());
-
-        panel.arrangeElements();
-        addRenderableOnly(panel);
-        panel.visitWidgets(this::addRenderableWidget);
     }
 
-    @NotNull
-    private SliderWidget addIntSlider(@NotNull LinearLayout rowHelper, @NotNull String tKey, int value, int min, int max, @NotNull IntConsumer set) {
-        return rowHelper.addChild(new SliderWidget(0, 0, 150, 20, "betterchaosmod.option." + tKey, value, min, max, a -> Component.literal("" + (int) Math.floor(a)), a -> set.accept((int) Math.floor(a))));
-    }
 }
