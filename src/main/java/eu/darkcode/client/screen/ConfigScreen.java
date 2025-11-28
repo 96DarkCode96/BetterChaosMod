@@ -5,15 +5,16 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
-import eu.darkcode.client.widgets.OreSlider;
 import eu.darkcode.client.widgets.ore.OrePanel;
-import eu.darkcode.client.widgets.ore.OreVerticalPanel;
-import eu.darkcode.client.widgets.styles.Constraint;
+import eu.darkcode.client.widgets.ore.layout.LinearLayout;
+import eu.darkcode.client.widgets.ore.option.OreOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+
+import static eu.darkcode.client.widgets.ore.OreSlider.*;
 
 public class ConfigScreen extends Screen {
     private final Screen parent;
@@ -40,56 +41,58 @@ public class ConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        OrePanel panel = new OreVerticalPanel();
+        OrePanel panel = addRenderableWidget(new OrePanel(new LinearLayout(1)));
         panel.setY(30);
-        panel.stretchHorizontal(500, width);
+        panel.setX(0);
+        panel.setWidth(500);
 
         serverConfig(panel);
         clientConfig(panel);
 
         panel.arrangeElements();
-        addRenderableWidget(panel);
     }
 
     private void serverConfig(OrePanel panel) {
         boolean enabledOptions = Minecraft.getInstance().level == null;
-        panel.addWidget(new OreSlider(
-                Component.translatable("betterchaosmod.option.server.duration.event"),
-                Component.translatable("betterchaosmod.option.server.duration.event_desc"),
+        panel.addWidget(OreOption.slider(
+                "server.duration.event",
+                "server.duration.event_desc",
                 settings.eventDuration / 20, 10, 120,
-                a -> Component.literal(a + "s"),
+                FORMATTER_SECONDS,
                 a -> settings.eventDuration = a * 20
-        )).padding(new Constraint(0, 0, 0, 1)).enabled = enabledOptions;
-        panel.addWidget(new OreSlider(
-                Component.translatable("betterchaosmod.option.server.duration.timer"),
-                Component.translatable("betterchaosmod.option.server.duration.timer_desc"),
+        )).setActive(enabledOptions);
+        panel.addWidget(OreOption.slider(
+                "server.duration.timer",
+                "server.duration.timer_desc",
                 settings.timerDuration / 20, 15, 300,
-                a -> Component.literal(a + "s"),
+                FORMATTER_SECONDS,
                 a -> settings.timerDuration = a * 20
-        )).padding(new Constraint(0, 0, 0, 1)).enabled = enabledOptions;
+        )).setActive(enabledOptions);
     }
 
     private void clientConfig(OrePanel panel) {
         final HudSettings hud = clientSettings.hud;
-        panel.addWidget(new OreSlider(
-                Component.translatable("betterchaosmod.option.client.timer.height"),
+        panel.addElement(OreOption.category("client.timer", null));
+        panel.addWidget(OreOption.slider(
+                "client.timer.height",
                 null,
                 hud.timerHeight(), 5, 40,
-                a -> Component.literal(a + "px"),
+                FORMATTER_PIXELS,
                 hud::timerHeight
-        )).padding(new Constraint(0, 0, 0, 1));
-        panel.addWidget(new OreSlider(
-                Component.translatable("betterchaosmod.option.client.activeEvents.maxEntries"),
+        ));
+        panel.addWidget(OreOption.slider(
+                "client.activeEvents.maxEntries",
                 null,
                 hud.activeEventsMaxEntries(), 4, 12,
-                a -> Component.literal(String.valueOf(a)),
+                FORMATTER_PLAIN,
                 hud::activeEventsMaxEntries
-        )).padding(new Constraint(0, 0, 0, 1));
-        panel.addWidget(new OreSlider(
-                Component.translatable("betterchaosmod.option.client.poll.width"),
+        ));
+        panel.addElement(OreOption.category("client.poll", null));
+        panel.addWidget(OreOption.slider(
+                "client.poll.width",
                 null,
                 hud.pollWidth(), 150, 400,
-                a -> Component.literal(a + "px"),
+                FORMATTER_PIXELS,
                 hud::pollWidth
         ));
     }

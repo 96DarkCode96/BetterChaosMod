@@ -1,6 +1,6 @@
 package eu.darkcode.client.widgets.ore;
 
-import eu.darkcode.client.widgets.styles.Constraint;
+import eu.darkcode.client.widgets.styles.EdgeInsets;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class OreWidget implements OreElement, GuiEventListener, NarratableEntry {
 
-    public boolean enabled = true;
+    private boolean active = true;
     private boolean focused;
     private boolean hovered;
 
@@ -22,8 +22,8 @@ public abstract class OreWidget implements OreElement, GuiEventListener, Narrata
     private int width;
     private int height;
 
-    private @NotNull Constraint padding = Constraint.ZERO;
-    private @NotNull Constraint margin = Constraint.ZERO;
+    private @NotNull EdgeInsets padding = EdgeInsets.ZERO;
+    private @NotNull EdgeInsets margin = EdgeInsets.ZERO;
 
     protected OreWidget() {
         this(0, 0, 0, 0);
@@ -77,23 +77,23 @@ public abstract class OreWidget implements OreElement, GuiEventListener, Narrata
     }
 
     @Override
-    public @NotNull Constraint padding() {
+    public @NotNull EdgeInsets padding() {
         return this.padding;
     }
 
     @Override
-    public @NotNull Constraint margin() {
+    public @NotNull EdgeInsets margin() {
         return this.margin;
     }
 
     @Contract("_ -> this")
-    public OreWidget padding(@NotNull Constraint padding) {
+    public OreWidget padding(@NotNull EdgeInsets padding) {
         this.padding = padding;
         return this;
     }
 
     @Contract("_ -> this")
-    public OreWidget margin(@NotNull Constraint margin) {
+    public OreWidget margin(@NotNull EdgeInsets margin) {
         this.margin = margin;
         return this;
     }
@@ -113,6 +113,15 @@ public abstract class OreWidget implements OreElement, GuiEventListener, Narrata
         else if (this.isHovered())
             return NarrationPriority.HOVERED;
         return NarrationPriority.NONE;
+    }
+
+    @Override
+    public boolean isActive() {
+        return this.active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void onClick(@NotNull MouseButtonEvent mouseButtonEvent, boolean bl) {
@@ -152,6 +161,11 @@ public abstract class OreWidget implements OreElement, GuiEventListener, Narrata
         return false;
     }
 
+    @Override
+    public boolean isMouseOver(double d, double e) {
+        return this.isActive() && this.areCoordinatesInRectangle(d, e);
+    }
+
     public void playDownSound(@NotNull SoundManager soundManager) {
         soundManager.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
@@ -160,11 +174,14 @@ public abstract class OreWidget implements OreElement, GuiEventListener, Narrata
         return mouseButtonInfo.button() == 0;
     }
 
+    private boolean areCoordinatesInRectangle(double d, double e) {
+        return d >= this.getX() && e >= this.getY() && d < this.getRight() && e < this.getBottom();
+    }
+
     @Override
     public void setFocused(boolean focused) {
         this.focused = focused;
     }
-
 
     @Override
     public boolean isFocused() {

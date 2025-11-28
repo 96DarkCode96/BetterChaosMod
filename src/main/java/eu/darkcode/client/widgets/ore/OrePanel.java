@@ -1,12 +1,17 @@
 package eu.darkcode.client.widgets.ore;
 
-import eu.darkcode.client.widgets.styles.Constraint;
+import eu.darkcode.client.widgets.ore.layout.Layout;
+import eu.darkcode.client.widgets.styles.EdgeInsets;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class OrePanel extends OreContainer {
+public class OrePanel extends OreContainer {
+
+    public OrePanel(@NotNull Layout layout) {
+        super(layout);
+    }
 
     @Override
     public void render(GuiGraphics g, int i, int j, float f) {
@@ -25,18 +30,8 @@ public abstract class OrePanel extends OreContainer {
         profiler.pop();
     }
 
-    public void stretchHorizontal(int maxX, int screenWidth) {
-        if (maxX > screenWidth)
-            maxX = screenWidth;
-        if (maxX < 0)
-            maxX = 0;
-
-        setWidth(maxX);
-        setX((screenWidth - maxX) / 2);
-    }
-
     @Override
-    public @NotNull Constraint padding() {
-        return Constraint.ONE;
+    public @NotNull EdgeInsets padding() {
+        return EdgeInsets.ONE;
     }
 }

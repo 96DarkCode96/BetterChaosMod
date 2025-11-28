@@ -26,6 +26,9 @@
   "betterchaosmod.option_section.client": "Client",
   "betterchaosmod.option_section.client.integration": "Integration",
 
+  "betterchaosmod.option.category.client.timer": "Timer bar",
+  "betterchaosmod.option.category.client.poll": "Event poll",
+
   "betterchaosmod.option.client.activeEvents.maxEntries": "Max entries",
   "betterchaosmod.option.client.poll.width": "Poll width",
   "betterchaosmod.option.client.timer.height": "Timer height",

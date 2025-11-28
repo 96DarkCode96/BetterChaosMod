@@ -34,14 +34,14 @@ public abstract class OreButton extends OreWidget {
         Minecraft minecraft = Minecraft.getInstance();
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
-                SPRITES.get(enabled, isHovered() || isFocused()),
+                SPRITES.get(isActive(), isHovered() || isFocused()),
                 this.getX(),
                 this.getY(),
                 this.getWidth(),
                 this.getHeight(),
                 ARGB.white(1.0F)
         );
-        int k = ARGB.color(1.0F, this.enabled ? 0xFF333333 : 0xFF000000);
+        int k = ARGB.color(1.0F, this.isActive() ? 0xFF333333 : 0xFF000000);
         guiGraphics.drawCenteredString(minecraft.font, text, getX(), getY(), k);
 
         if (this.isHovered())
