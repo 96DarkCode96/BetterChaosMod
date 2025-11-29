@@ -1,12 +1,14 @@
-package eu.darkcode.client.widgets.ore;
+package eu.darkcode.client.widgets;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import eu.darkcode.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 
-public class OreSlider extends OreWidget {
+public class OreSlider extends AbstractWidget {
 
     private static final @NotNull ResourceLocation SPRITE_BAR = Utils.resourceLocation("widget/slider_bar");
     private static final @NotNull ResourceLocation SPRITE_HANDLE = Utils.resourceLocation("widget/slider_handle");
@@ -33,7 +35,7 @@ public class OreSlider extends OreWidget {
     private boolean dragging;
 
     public OreSlider(int value, int min, int max, @NotNull IntConsumer valueConsumer) {
-        super(0, 0, 100, HANDLE_HEIGHT);
+        super(0, 0, 340, HANDLE_HEIGHT, Component.empty());
 
         this.value = value;
         this.min = min;
@@ -43,7 +45,7 @@ public class OreSlider extends OreWidget {
     }
 
     @Override
-    public void render(GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(GuiGraphics g, int i, int j, float f) {
         double fraction = ((double) value - min) / (max - min);
         int posX = (int) Math.floor(fraction * (getWidth() - HANDLE_WIDTH)) + getX();
 
@@ -77,7 +79,12 @@ public class OreSlider extends OreWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    public void playDownSound(SoundManager soundManager) {
+        // ignored
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
         // ignored ? should add at least something
     }
 
