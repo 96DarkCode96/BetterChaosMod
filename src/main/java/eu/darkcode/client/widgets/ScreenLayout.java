@@ -1,12 +1,15 @@
 package eu.darkcode.client.widgets;
 
+import eu.darkcode.client.screen.BaseScreen;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -15,9 +18,9 @@ import java.util.function.Consumer;
 public class ScreenLayout implements Layout {
     private final @NotNull OreHeader header;
     private final @NotNull FrameLayout contentsFrame = new FrameLayout();
-    private final @NotNull Screen screen;
+    private final @NotNull BaseScreen screen;
 
-    public ScreenLayout(@NotNull Screen screen) {
+    public ScreenLayout(@NotNull BaseScreen screen) {
         this.screen = screen;
         this.header = new OreHeader(screen);
     }
@@ -46,6 +49,21 @@ public class ScreenLayout implements Layout {
 
     public <T extends LayoutElement> T addToHeader(T layoutElement, Consumer<LayoutSettings> consumer) {
         return this.header.addChild(layoutElement, consumer);
+    }
+
+    @NotNull
+    public OreButton addBackButton() {
+        return this.header.addChild(new OreButton(0, 0, 50, 20, Component.literal("BACK")) {
+            @Override
+            protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+                // ignored
+            }
+
+            @Override
+            public void onPress(InputWithModifiers inputWithModifiers) {
+                screen.onBack();
+            }
+        }, LayoutSettings::alignHorizontallyLeft);
     }
 
     public <T extends LayoutElement> T addToContents(T layoutElement) {

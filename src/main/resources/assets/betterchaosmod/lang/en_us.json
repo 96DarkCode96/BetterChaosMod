@@ -28,6 +28,10 @@
 
   "betterchaosmod.option.category.client.timer": "Timer bar",
   "betterchaosmod.option.category.client.poll": "Event poll",
+  "betterchaosmod.option.category.integration": "Integration",
+
+  "betterchaosmod.option.client.integration.twitch.channel": "Twitch Channel",
+  "betterchaosmod.option.client.integration.twitch.token": "Twitch Token",
 
   "betterchaosmod.option.client.activeEvents.maxEntries": "Max entries",
   "betterchaosmod.option.client.poll.width": "Poll width",
@@ -46,5 +50,6 @@
   "betterchaosmod.event.random": "Random Event",
   "betterchaosmod.poll.title": "Total votes: %d",
   "betterchaosmod.integration.twitch": "Twitch",
-  "betterchaosmod.changelog.title": "Changelog"
+  "betterchaosmod.changelog.title": "Changelog",
+  "betterchaosmod.integration_check.title": "Integration Check"
 }

@@ -5,14 +5,10 @@ import eu.darkcode.client.EventManager;
 import eu.darkcode.client.hud.CurrentPollPanel;
 import eu.darkcode.client.hud.HudManager;
 import eu.darkcode.client.screen.GameLogScreen;
-import eu.darkcode.client.voting.integration.IntegrationSettings;
-import eu.darkcode.client.voting.integration.twitch.IRCClient;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.Payloads;
 import eu.darkcode.networking.configuration.ServerboundHandshakeAck;
-import eu.darkcode.networking.configuration.ServerboundIntegrationPass;
 import eu.darkcode.utils.Utils;
-import eu.darkcode.voting.IntegrationType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -28,9 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.concurrent.CompletableFuture;
 
 import static eu.darkcode.utils.Utils.MOD_ID;
 
@@ -93,25 +86,12 @@ public class BetterChaosModClient implements ClientModInitializer {
         ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_INTEGRATION_CHECK, (payload, context) -> {
             System.out.println("<< " + payload.getClass().getName());
 
-            final IntegrationSettings integration = settings.integration;
-            final HashSet<IntegrationType> resultSet = new HashSet<>();
-
-            CompletableFuture<Boolean> chain = CompletableFuture.completedFuture(true);
-
-            // [TWITCH]
-            if (integration.twitchEnabled) {
-                resultSet.add(IntegrationType.TWITCH);
-                chain = chain.thenCombine(IRCClient.testConnection(integration.twitchIntegration), (prev, current) -> prev && current);
+            if (eventManager == null) {
+                context.responseSender().disconnect(Component.literal("Event manager is not initialized!"));
+                return;
             }
 
-            chain.whenComplete((success, err) -> context.client().execute(() -> {
-                System.out.println("Response: " + success + " | Error: " + err);
-                if (err != null || !success) {
-                    context.responseSender().disconnect(Component.literal("Integration check failed!"));
-                    return;
-                }
-                context.responseSender().sendPacket(new ServerboundIntegrationPass(resultSet.isEmpty() ? EnumSet.noneOf(IntegrationType.class) : EnumSet.copyOf(resultSet)));
-            }));
+            eventManager.setupIntegration(context);
         });
 
         registerPlayNetworking();

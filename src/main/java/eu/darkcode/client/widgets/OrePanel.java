@@ -19,7 +19,7 @@ public class OrePanel extends LinearLayout implements Renderable {
 
     public OrePanel() {
         super(0, 0, Orientation.VERTICAL);
-        defaultCellSetting().alignHorizontallyCenter().paddingHorizontal(1).paddingBottom(1);
+        defaultCellSetting().alignHorizontallyLeft().paddingHorizontal(1).paddingBottom(1);
     }
 
     @Override
@@ -32,7 +32,10 @@ public class OrePanel extends LinearLayout implements Renderable {
 
     @NotNull
     public OreCategory addCategory(@NotNull String name, @Nullable String description) {
-        return addChild(Ore.category(name, description), a -> a.paddingBottom(0));
+        return addChild(new OreCategory(this,
+                        Component.translatable("betterchaosmod.option.category." + name),
+                        description != null ? Component.translatable("betterchaosmod.option.category." + description) : null),
+                a -> a.paddingBottom(0));
     }
 
     @NotNull
@@ -40,12 +43,22 @@ public class OrePanel extends LinearLayout implements Renderable {
         return addChild(Ore.sliderOption(name, description, value, min, max, formatter, valueConsumer, enabled));
     }
 
+    @NotNull
+    public OreInputOption addTextInput(@NotNull String name, @Nullable String description, @NotNull String text, @NotNull Consumer<String> valueConsumer, boolean enabled) {
+        return addChild(new OreInputOption(
+                Component.translatable("betterchaosmod.option." + name),
+                description != null ? Component.translatable("betterchaosmod.option." + description) : null,
+                text, valueConsumer, enabled
+        ));
+    }
+
     @Override
     public <T extends LayoutElement> T addChild(T layoutElement, LayoutSettings layoutSettings) {
         if (!first)
             return super.addChild(layoutElement, layoutSettings);
         first = false;
-        return super.addChild(layoutElement, layoutSettings.paddingTop(1));
+        layoutSettings.getExposed().paddingTop++;
+        return super.addChild(layoutElement, layoutSettings);
     }
 
     @Override
@@ -55,7 +68,7 @@ public class OrePanel extends LinearLayout implements Renderable {
         first = false;
         return super.addChild(layoutElement, a -> {
             consumer.accept(a);
-            a.paddingTop(1);
+            a.getExposed().paddingTop++;
         });
     }
 }

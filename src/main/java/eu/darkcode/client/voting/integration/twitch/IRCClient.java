@@ -28,12 +28,15 @@ public class IRCClient {
     public static CompletableFuture<Boolean> testConnection(@NotNull TwitchIntegrationSettings settings) {
         return CompletableFuture.supplyAsync(() -> {
             try {
+                System.out.println("Testing Twitch IRC connection...");
                 SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 try (SSLSocket socket = (SSLSocket) factory.createSocket("irc.chat.twitch.tv", 6697)) {
                     socket.startHandshake();
 
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
                     BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+
+                    System.out.println("Connected to Twitch IRC for testing. Authenticating...");
 
                     writer.write("PASS oauth:" + settings.token + "\r\n");
                     writer.write("NICK " + settings.channel.toLowerCase() + "\r\n");
@@ -47,8 +50,11 @@ public class IRCClient {
                             return true;
                 }
 
+                System.out.println("Connection test failed: Did not receive welcome message.");
+
                 return false;
             } catch (Throwable e) {
+                System.out.println("Connection test failed: " + e.getMessage());
                 return false;
             }
         });
@@ -97,13 +103,14 @@ public class IRCClient {
         writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 
+        connected.set(true);
+
+        System.out.println("Connected!");
+
         sendRaw("PASS oauth:" + this.settings.token);
         sendRaw("NICK " + this.settings.channel.toLowerCase());
         sendRaw("JOIN #" + this.settings.channel);
         sendRaw("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership");
-
-        connected.set(true);
-        System.out.println("Connected!");
 
         lastPing = System.currentTimeMillis();
     }
@@ -119,8 +126,6 @@ public class IRCClient {
                 sendRaw("PONG :" + line.substring(6));
                 continue;
             }
-
-
         }
 
         throw new IOException("Stream disconnected");

@@ -3,11 +3,11 @@ package eu.darkcode.client;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.screen.GameLogScreen;
+import eu.darkcode.client.screen.IntegrationCheckScreen;
 import eu.darkcode.client.voting.VotingSystem;
-import eu.darkcode.client.voting.integration.Integration;
-import eu.darkcode.client.voting.integration.IntegrationSettings;
-import eu.darkcode.client.voting.integration.twitch.TwitchIntegration;
 import eu.darkcode.event.Event;
+import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -25,14 +25,7 @@ public class EventManager {
     public EventManager(@NotNull Settings settings) {
         this.settings = settings;
         this.timerCount = settings.timerDuration;
-
-        Integration integration = null;
-
-        IntegrationSettings integrationSettings = BetterChaosModClient.instance().settings().integration;
-        if (integrationSettings.twitchEnabled)
-            integration = new TwitchIntegration(integrationSettings.twitchIntegration);
-
-        this.votingSystem = new VotingSystem(integration);
+        this.votingSystem = new VotingSystem();
     }
 
     @NotNull
@@ -84,5 +77,11 @@ public class EventManager {
         this.gameLogEntries.add(event);
         this.activeEvents.add(event);
         event.startClient();
+    }
+
+    public void setupIntegration(@NotNull ClientConfigurationNetworking.Context context) {
+        final Minecraft minecraft = context.client();
+        // [OPEN INTEGRATION CHECK SCREEN]
+        minecraft.setScreen(new IntegrationCheckScreen(minecraft.screen, context.responseSender()));
     }
 }

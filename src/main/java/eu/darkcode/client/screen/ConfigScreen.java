@@ -5,29 +5,23 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
+import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
+import eu.darkcode.client.widgets.OreInputOption;
 import eu.darkcode.client.widgets.OrePanel;
-import eu.darkcode.client.widgets.ScreenLayout;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.layouts.Layout;
-import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import static eu.darkcode.client.widgets.Ore.PASSWORD_FORMATTER;
 import static eu.darkcode.client.widgets.OreSlider.*;
 
-public class ConfigScreen extends Screen {
-    private final Screen parent;
+public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
     private final @NotNull ClientSettings clientSettings;
-    private final ScreenLayout layout = new ScreenLayout(this);
 
     public ConfigScreen(OptionsScreen parent) {
-        super(Component.translatable("betterchaosmod.config.title"));
-        this.parent = parent;
+        super(parent, Component.translatable("betterchaosmod.config.title"));
         settings = BetterChaosMod.instance().settings();
         clientSettings = BetterChaosModClient.instance().settings();
     }
@@ -38,9 +32,7 @@ public class ConfigScreen extends Screen {
         BetterChaosMod.instance().saveSettings();
         // [SAVE CLIENT SETTINGS]
         BetterChaosModClient.instance().saveSettings();
-        // [OPEN PREVIOUS SCREEN]
-        assert minecraft != null;
-        minecraft.setScreen(parent);
+        super.onClose();
     }
 
     @Override
@@ -50,24 +42,9 @@ public class ConfigScreen extends Screen {
         serverConfig(panel);
         clientConfig(panel);
 
+        this.layout.addBackButton();
         this.layout.addToContents(panel);
-        this.layout.visitChildren(this::addChildren);
-
-        repositionElements();
-    }
-
-    @Override
-    protected void repositionElements() {
-        this.layout.arrangeElements();
-    }
-
-    private void addChildren(LayoutElement element) {
-        if (element instanceof AbstractWidget aw)
-            this.addRenderableWidget(aw);
-        else if (element instanceof Renderable r)
-            this.addRenderableOnly(r);
-        if (element instanceof Layout l)
-            l.visitChildren(this::addChildren);
+        super.init();
     }
 
     private void serverConfig(OrePanel panel) {
@@ -118,6 +95,14 @@ public class ConfigScreen extends Screen {
                 hud::pollWidth,
                 true
         );
+        boolean enabledOptions = Minecraft.getInstance().level == null;
+        panel.addCategory("integration", null);
+
+        TwitchIntegrationSettings twitchIntegration = clientSettings.integration.twitchIntegration;
+
+        OreInputOption channelName = panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
+        OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
+        channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
     }
 
 }

@@ -4,11 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.layouts.FrameLayout;
-import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 public class OreHeader extends FrameLayout implements Renderable {
@@ -19,17 +15,6 @@ public class OreHeader extends FrameLayout implements Renderable {
         super(0, 0, screen.width, screen.height);
         this.screen = screen;
         defaultChildLayoutSetting().paddingTop(5).paddingBottom(8).paddingHorizontal(10);
-        addChild(new OreButton(0, 0, 50, 20, Component.literal("BACK")) {
-            @Override
-            protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-                // ignored
-            }
-
-            @Override
-            public void onPress(InputWithModifiers inputWithModifiers) {
-                screen.onClose();
-            }
-        }, LayoutSettings::alignHorizontallyLeft);
         addChild(new OreLabel(screen.getTitle(), Minecraft.getInstance().font).setColor(0xFF000000));
     }
 

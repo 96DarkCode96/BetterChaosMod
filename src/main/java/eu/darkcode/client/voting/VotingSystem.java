@@ -13,14 +13,11 @@ import static eu.darkcode.utils.Utils.COUNT_VOTE_OPTIONS;
 public class VotingSystem {
 
     private final int[] votes = new int[COUNT_VOTE_OPTIONS];
-    private final @Nullable Integration activeIntegration;
+
+    private @Nullable Integration activeIntegration = null;
     private int totalVotes = 0;
     private @Nullable Poll currentPoll;
     private @NotNull TriState pollVisibility = TriState.DEFAULT;
-
-    public VotingSystem(@Nullable Integration integration) {
-        this.activeIntegration = integration;
-    }
 
     public void processNewPoll(@NotNull Poll poll) {
 
@@ -30,6 +27,10 @@ public class VotingSystem {
         if (this.activeIntegration != null)
             this.activeIntegration.sendPoll(poll);
         this.currentPoll = poll;
+    }
+
+    public void setActiveIntegration(@Nullable Integration activeIntegration) {
+        this.activeIntegration = activeIntegration;
     }
 
     public double percentage(int optionIndex) {

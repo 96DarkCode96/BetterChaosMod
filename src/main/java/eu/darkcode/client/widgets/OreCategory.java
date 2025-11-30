@@ -1,48 +1,38 @@
 package eu.darkcode.client.widgets;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OreCategory extends AbstractWidget {
+public class OreCategory extends LinearLayout implements Renderable {
 
-    private final @NotNull Component name;
-    private final @Nullable Component description;
+    private final @NotNull LayoutElement parent;
 
-    public OreCategory(@NotNull Component name, @Nullable Component description) {
-        super(0, 0, 376, 0, Component.empty());
-        this.name = name;
-        this.description = description;
-        if (description == null)
-            setHeight(24 + Minecraft.getInstance().font.lineHeight);
-        else
-            setHeight(24 + Minecraft.getInstance().font.lineHeight * 2 + 4);
+    public OreCategory(@NotNull LayoutElement parent, @NotNull Component name, @Nullable Component description) {
+        super(0, 0, Orientation.VERTICAL);
+        this.parent = parent;
+        spacing(4).defaultCellSetting().alignHorizontallyLeft().paddingHorizontal(18);
+
+        if (description == null) {
+            addChild(new OreLabel(name, Minecraft.getInstance().font), a -> a.paddingVertical(12)).setColor(0xFFFFFFFF);
+        } else {
+            addChild(new OreLabel(name, Minecraft.getInstance().font), a -> a.paddingTop(12)).setColor(0xFFFFFFFF);
+            addChild(new OreLabel(description, Minecraft.getInstance().font), a -> a.paddingBottom(12)).setColor(0xFFC5C6C8);
+        }
     }
 
     @Override
-    protected void renderWidget(GuiGraphics g, int i, int j, float f) {
-        final Font font = Minecraft.getInstance().font;
-
-        g.fill(getX(), getY(), getRight(), getBottom(), 0xFF48494B);
-
-        g.drawString(font, name, getX() + 18, getY() + 12, 0xFFFFFFFF, false);
-        if (description != null)
-            g.drawString(font, description, getX() + 18, getY() + 12 + font.lineHeight + 4, 0xFFC5C6C8, false);
+    public int getWidth() {
+        return parent.getWidth() - 2;
     }
 
     @Override
-    public void playDownSound(SoundManager soundManager) {
-        // ignored
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
+    public void render(GuiGraphics g, int i, int j, float f) {
+        g.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF48494B);
     }
 }
