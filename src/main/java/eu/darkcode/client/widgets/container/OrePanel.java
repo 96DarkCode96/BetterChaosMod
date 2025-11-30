@@ -1,5 +1,9 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.container;
 
+import eu.darkcode.client.widgets.Ore;
+import eu.darkcode.client.widgets.OreCategory;
+import eu.darkcode.client.widgets.OreInputOption;
+import eu.darkcode.client.widgets.OreSliderOption;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.layouts.LayoutElement;

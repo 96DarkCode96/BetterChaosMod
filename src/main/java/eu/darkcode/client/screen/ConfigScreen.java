@@ -7,7 +7,7 @@ import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import eu.darkcode.client.widgets.OreInputOption;
-import eu.darkcode.client.widgets.OrePanel;
+import eu.darkcode.client.widgets.container.OrePanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;

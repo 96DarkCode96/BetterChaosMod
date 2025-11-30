@@ -1,6 +1,6 @@
 package eu.darkcode.client.screen;
 
-import eu.darkcode.client.widgets.ScreenLayout;
+import eu.darkcode.client.widgets.container.ScreenLayout;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.layouts.Layout;

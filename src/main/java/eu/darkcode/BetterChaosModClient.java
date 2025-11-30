@@ -91,7 +91,7 @@ public class BetterChaosModClient implements ClientModInitializer {
                 return;
             }
 
-            eventManager.setupIntegration(context);
+            context.client().execute(() -> eventManager.setupIntegration(context));
         });
 
         registerPlayNetworking();

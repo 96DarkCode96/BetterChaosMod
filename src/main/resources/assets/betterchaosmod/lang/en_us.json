@@ -21,7 +21,7 @@
   "betterchaosmod.event.inverted_controls": "Inverted Controls",
 
   "betterchaosmod.options.title": "Better Chaos Mod",
-  "betterchaosmod.config.title": "Configuration",
+  "betterchaosmod.config.title": "CONFIGURATION",
   "betterchaosmod.option_section.server": "Server",
   "betterchaosmod.option_section.client": "Client",
   "betterchaosmod.option_section.client.integration": "Integration",
@@ -51,5 +51,5 @@
   "betterchaosmod.poll.title": "Total votes: %d",
   "betterchaosmod.integration.twitch": "Twitch",
   "betterchaosmod.changelog.title": "Changelog",
-  "betterchaosmod.integration_check.title": "Integration Check"
+  "betterchaosmod.integration_check.title": "INTEGRATION CHECK"
 }

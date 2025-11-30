@@ -2,7 +2,7 @@ package eu.darkcode.client.screen;
 
 import eu.darkcode.client.widgets.OreButton;
 import eu.darkcode.client.widgets.OreLabel;
-import eu.darkcode.client.widgets.OrePanel;
+import eu.darkcode.client.widgets.container.OrePanel;
 import eu.darkcode.networking.configuration.ServerboundIntegrationPass;
 import eu.darkcode.voting.IntegrationType;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;

@@ -1,10 +1,13 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.container;
 
+import eu.darkcode.client.widgets.OreLabel;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 public class OreHeader extends FrameLayout implements Renderable {
@@ -15,6 +18,9 @@ public class OreHeader extends FrameLayout implements Renderable {
         super(0, 0, screen.width, screen.height);
         this.screen = screen;
         defaultChildLayoutSetting().paddingTop(5).paddingBottom(8).paddingHorizontal(10);
+        if (screen.getTitle() instanceof MutableComponent mc)
+            mc.withStyle(ChatFormatting.BOLD);
+
         addChild(new OreLabel(screen.getTitle(), Minecraft.getInstance().font).setColor(0xFF000000));
     }
 

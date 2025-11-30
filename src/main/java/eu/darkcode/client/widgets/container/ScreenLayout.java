@@ -1,9 +1,9 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.container;
 
 import eu.darkcode.client.screen.BaseScreen;
+import eu.darkcode.client.widgets.OreButton;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.layouts.FrameLayout;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LayoutSettings;
@@ -17,17 +17,18 @@ import java.util.function.Consumer;
 @Environment(EnvType.CLIENT)
 public class ScreenLayout implements Layout {
     private final @NotNull OreHeader header;
-    private final @NotNull FrameLayout contentsFrame = new FrameLayout();
+    private final @NotNull OreContent contents;
     private final @NotNull BaseScreen screen;
 
     public ScreenLayout(@NotNull BaseScreen screen) {
         this.screen = screen;
         this.header = new OreHeader(screen);
+        this.contents = new OreContent(screen);
     }
 
     @Override
-    public void visitChildren(Consumer<LayoutElement> consumer) {
-        this.contentsFrame.visitChildren(consumer);
+    public void visitChildren(@NotNull Consumer<LayoutElement> consumer) {
+        this.contents.visitChildren(consumer);
         consumer.accept(header);
     }
 
@@ -36,11 +37,9 @@ public class ScreenLayout implements Layout {
         this.header.setPosition(0, 0);
         this.header.setMinWidth(this.screen.width);
         this.header.arrangeElements();
-        this.contentsFrame.setMinWidth(this.screen.width);
-        this.contentsFrame.arrangeElements();
-        int k = header.getHeight() + 20;
-        int l = this.screen.height - this.contentsFrame.getHeight();
-        this.contentsFrame.setPosition(0, Math.min(k, l));
+
+        this.contents.setHeaderHeight(this.header.getHeight());
+        this.contents.arrangeElements();
     }
 
     public <T extends LayoutElement> T addToHeader(T layoutElement) {
@@ -67,22 +66,22 @@ public class ScreenLayout implements Layout {
     }
 
     public <T extends LayoutElement> T addToContents(T layoutElement) {
-        return this.contentsFrame.addChild(layoutElement);
+        return this.contents.addChild(layoutElement);
     }
 
     public <T extends LayoutElement> T addToContents(T layoutElement, Consumer<LayoutSettings> consumer) {
-        return this.contentsFrame.addChild(layoutElement, consumer);
+        return this.contents.addChild(layoutElement, consumer);
     }
 
     @Override
     public void setX(int i) {
+        // ignored
     }
-
 
     @Override
     public void setY(int i) {
+        // ignored
     }
-
 
     @Override
     public int getX() {
