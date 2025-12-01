@@ -64,8 +64,7 @@ public class OreSlider extends AbstractWidget {
         else
             g.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, posX, getY(), HANDLE_WIDTH, HANDLE_HEIGHT, 0xFFFFFFFF);
 
-        if (isHovered() && isActive())
-            g.requestCursor(this.dragging ? CursorTypes.RESIZE_EW : CursorTypes.POINTING_HAND);
+        renderCursor(g);
     }
 
     @Override
@@ -117,6 +116,20 @@ public class OreSlider extends AbstractWidget {
         } else {
             narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.hovered"));
         }
+    }
+
+    private void renderCursor(@NotNull GuiGraphics g) {
+        if (!isHovered())
+            return;
+        if (!isActive()) {
+            g.requestCursor(CursorTypes.NOT_ALLOWED);
+            return;
+        }
+        if (this.dragging) {
+            g.requestCursor(CursorTypes.RESIZE_EW);
+            return;
+        }
+        g.requestCursor(CursorTypes.POINTING_HAND);
     }
 
     @Override

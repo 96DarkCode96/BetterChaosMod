@@ -7,11 +7,14 @@ import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import eu.darkcode.client.widgets.OreInputOption;
+import eu.darkcode.client.widgets.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
+import eu.darkcode.client.widgets.container.OreSidePanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static eu.darkcode.client.widgets.Ore.PASSWORD_FORMATTER;
 import static eu.darkcode.client.widgets.OreSlider.*;
@@ -19,6 +22,8 @@ import static eu.darkcode.client.widgets.OreSlider.*;
 public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
     private final @NotNull ClientSettings clientSettings;
+    private @NotNull Category category = Category.SERVER;
+    private OrePanel panel;
 
     public ConfigScreen(OptionsScreen parent) {
         super(parent, Component.translatable("betterchaosmod.config.title"));
@@ -37,17 +42,33 @@ public class ConfigScreen extends BaseScreen {
 
     @Override
     protected void init() {
-        OrePanel panel = new OrePanel();
+        OreSidePanel sidebar = new OreSidePanel();
+        for (Category value : Category.values()) {
+            OreSidebarOption option = sidebar.addSidebarOption(value.key(), value.sprite(), category == value, () -> {
+                category = value;
+                this.clearWidgets();
+                this.clearFocus();
+                this.init();
+            });
+            if (category == value)
+                setInitialFocus(option);
+        }
 
-        serverConfig(panel);
-        clientConfig(panel);
+        panel = new OrePanel();
+
+        switch (category) {
+            case Category.SERVER -> serverConfig();
+            case Category.CLIENT -> clientConfig();
+            default -> integrationConfig();
+        }
 
         this.layout.addBackButton();
+        this.layout.addToContents(sidebar);
         this.layout.addToContents(panel);
         super.init();
     }
 
-    private void serverConfig(OrePanel panel) {
+    private void serverConfig() {
         boolean enabledOptions = Minecraft.getInstance().level == null;
         panel.addSlider(
                 "server.duration.event",
@@ -67,7 +88,7 @@ public class ConfigScreen extends BaseScreen {
         );
     }
 
-    private void clientConfig(OrePanel panel) {
+    private void clientConfig() {
         final HudSettings hud = clientSettings.hud;
         panel.addCategory("client.timer", null);
         panel.addSlider(
@@ -95,14 +116,38 @@ public class ConfigScreen extends BaseScreen {
                 hud::pollWidth,
                 true
         );
-        boolean enabledOptions = Minecraft.getInstance().level == null;
-        panel.addCategory("integration", null);
+    }
 
+    private void integrationConfig() {
+        panel.addCategory("integration.twitch", null);
+
+        boolean enabledOptions = Minecraft.getInstance().level == null;
         TwitchIntegrationSettings twitchIntegration = clientSettings.integration.twitchIntegration;
 
         OreInputOption channelName = panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
         OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+    }
+
+    private enum Category {
+        SERVER("server", "server"),
+        CLIENT("client", "client"),
+        INTEGRATION("client.integration", "integration");
+        private final @NotNull String key;
+        private final @Nullable String sprite;
+
+        Category(@NotNull String key, @Nullable String sprite) {
+            this.key = key;
+            this.sprite = sprite;
+        }
+
+        public @NotNull String key() {
+            return key;
+        }
+
+        public @Nullable String sprite() {
+            return sprite;
+        }
     }
 
 }

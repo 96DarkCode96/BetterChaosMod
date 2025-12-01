@@ -18,6 +18,7 @@ public class OreContent extends AbstractLayout {
     private final List<ChildContainer> children = new ArrayList<>();
     private final LayoutSettings defaultChildLayoutSettings = LayoutSettings.defaults().align(0.5F, 0.5F);
     private int headerHeight = 20;
+    private int spacing = 10;
 
     public OreContent(@NotNull final BaseScreen screen) {
         super(0, 0, screen.width, screen.height);
@@ -39,7 +40,7 @@ public class OreContent extends AbstractLayout {
 
     @NotNull
     public <T extends LayoutElement> T addChild(@NotNull T layoutElement, @NotNull LayoutSettings layoutSettings) {
-        this.children.add(new ChildContainer(layoutElement, layoutSettings));
+        this.children.add(new ChildContainer(layoutElement, layoutSettings.getExposed()));
         return layoutElement;
     }
 
@@ -55,21 +56,52 @@ public class OreContent extends AbstractLayout {
 
     @Override
     public void arrangeElements() {
+        if (this.children.isEmpty())
+            return;
+
         super.arrangeElements();
+        int totalWidth = 0;
+        for (ChildContainer child : this.children)
+            totalWidth += child.getWidth();
+        totalWidth += (this.children.size() - 1) * spacing;
+
+        int xPointer = (screen.width - totalWidth) / 2;
         for (ChildContainer childContainer : this.children) {
-            childContainer.setX(0, screen.width);
-            childContainer.setY(headerHeight + 10, screen.height - headerHeight - 10);
+            childContainer.setX(xPointer);
+            childContainer.setY(headerHeight + 10);
+            xPointer += childContainer.getWidth() + spacing;
         }
+    }
+
+    public void setSpacing(int spacing) {
+        this.spacing = spacing;
     }
 
     public void setHeaderHeight(int height) {
         this.headerHeight = height;
     }
 
+    public void clearWidgets() {
+        this.children.clear();
+    }
+
     @Environment(EnvType.CLIENT)
-    static class ChildContainer extends AbstractLayout.AbstractChildWrapper {
-        protected ChildContainer(LayoutElement layoutElement, LayoutSettings layoutSettings) {
-            super(layoutElement, layoutSettings);
+    record ChildContainer(LayoutElement child, LayoutSettings.LayoutSettingsImpl layoutSettings) {
+
+        public int getHeight() {
+            return this.child.getHeight();
+        }
+
+        public int getWidth() {
+            return this.child.getWidth();
+        }
+
+        public void setX(int x) {
+            this.child.setX(x);
+        }
+
+        public void setY(int y) {
+            this.child.setY(y);
         }
     }
 }

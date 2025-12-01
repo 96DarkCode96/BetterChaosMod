@@ -28,6 +28,12 @@ public abstract class BaseScreen extends Screen {
     }
 
     @Override
+    protected void clearWidgets() {
+        super.clearWidgets();
+        this.layout.clearWidgets();
+    }
+
+    @Override
     protected void init() {
         this.layout.visitChildren(this::addChildren);
 

@@ -21,7 +21,7 @@ public class OreLabel extends AbstractStringWidget {
     private StringWidget.TextOverflow textOverflow = StringWidget.TextOverflow.CLAMPED;
 
     public OreLabel(@NotNull Component label, @NotNull Font font) {
-        this(0, 0, font.width(label.getVisualOrderText()), 9, label, font);
+        this(0, 0, font.width(label.getVisualOrderText()), 8, label, font);
     }
 
     public OreLabel(int k, int l, @NotNull Component label, @NotNull Font font) {

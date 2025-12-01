@@ -1,15 +1,12 @@
 package eu.darkcode.client.widgets.container;
 
 import eu.darkcode.client.screen.BaseScreen;
-import eu.darkcode.client.widgets.OreButton;
+import eu.darkcode.client.widgets.OreBackButton;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -24,6 +21,7 @@ public class ScreenLayout implements Layout {
         this.screen = screen;
         this.header = new OreHeader(screen);
         this.contents = new OreContent(screen);
+        this.header.addTitle();
     }
 
     @Override
@@ -34,8 +32,6 @@ public class ScreenLayout implements Layout {
 
     @Override
     public void arrangeElements() {
-        this.header.setPosition(0, 0);
-        this.header.setMinWidth(this.screen.width);
         this.header.arrangeElements();
 
         this.contents.setHeaderHeight(this.header.getHeight());
@@ -51,18 +47,8 @@ public class ScreenLayout implements Layout {
     }
 
     @NotNull
-    public OreButton addBackButton() {
-        return this.header.addChild(new OreButton(0, 0, 50, 20, Component.literal("BACK")) {
-            @Override
-            protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-                // ignored
-            }
-
-            @Override
-            public void onPress(InputWithModifiers inputWithModifiers) {
-                screen.onBack();
-            }
-        }, LayoutSettings::alignHorizontallyLeft);
+    public OreBackButton addBackButton() {
+        return this.header.addChild(new OreBackButton(screen), LayoutSettings::alignHorizontallyLeft);
     }
 
     public <T extends LayoutElement> T addToContents(T layoutElement) {
@@ -71,6 +57,12 @@ public class ScreenLayout implements Layout {
 
     public <T extends LayoutElement> T addToContents(T layoutElement, Consumer<LayoutSettings> consumer) {
         return this.contents.addChild(layoutElement, consumer);
+    }
+
+    public void clearWidgets() {
+        this.header.clearWidgets();
+        this.contents.clearWidgets();
+        this.header.addTitle();
     }
 
     @Override
@@ -102,5 +94,6 @@ public class ScreenLayout implements Layout {
     public int getHeight() {
         return this.screen.height;
     }
+
 
 }

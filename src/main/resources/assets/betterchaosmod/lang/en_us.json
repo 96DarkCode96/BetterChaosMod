@@ -28,7 +28,7 @@
 
   "betterchaosmod.option.category.client.timer": "Timer bar",
   "betterchaosmod.option.category.client.poll": "Event poll",
-  "betterchaosmod.option.category.integration": "Integration",
+  "betterchaosmod.option.category.integration.twitch": "Twitch",
 
   "betterchaosmod.option.client.integration.twitch.channel": "Twitch Channel",
   "betterchaosmod.option.client.integration.twitch.token": "Twitch Token",
