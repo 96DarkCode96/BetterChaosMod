@@ -44,7 +44,7 @@ public class OreInputOption extends OreOption {
     @Override
     public void arrangeElements() {
         super.arrangeElements();
-        setWidth(oreTextInput.getWidth() + 36);
+        width = oreTextInput.getWidth() + 36;
         int height = 12;
 
         nameLabel.setX(getX() + 18);

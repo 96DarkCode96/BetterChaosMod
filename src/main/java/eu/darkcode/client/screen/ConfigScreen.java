@@ -15,8 +15,8 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static eu.darkcode.client.widgets.utils.Ore.PASSWORD_FORMATTER;
 import static eu.darkcode.client.widgets.impl.OreSlider.*;
+import static eu.darkcode.client.widgets.utils.Ore.PASSWORD_FORMATTER;
 
 public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
@@ -41,7 +41,7 @@ public class ConfigScreen extends BaseScreen {
 
     @Override
     protected void init() {
-        OrePanel sidebar = new OrePanel();
+        OrePanel sidebar = new OrePanel(1, 7, 1, 7, 0);
         for (Category value : Category.values()) {
             OreSidebarOption option = sidebar.addSidebarOption(value.key(), value.sprite(), category == value, () -> {
                 category = value;
@@ -98,14 +98,8 @@ public class ConfigScreen extends BaseScreen {
                 hud::timerHeight,
                 true
         );
-        panel.addSlider(
-                "client.activeEvents.maxEntries",
-                null,
-                hud.activeEventsMaxEntries(), 4, 12,
-                FORMATTER_PLAIN,
-                hud::activeEventsMaxEntries,
-                true
-        );
+        panel.addColorOption("client.timer.foreground", null, hud.timerForegroundColor(), hud::timerForegroundColor, true);
+        panel.addColorOption("client.timer.background", null, hud.timerBackgroundColor(), hud::timerBackgroundColor, true);
         panel.addCategory("client.poll", null);
         panel.addSlider(
                 "client.poll.width",
@@ -113,6 +107,14 @@ public class ConfigScreen extends BaseScreen {
                 hud.pollWidth(), 150, 400,
                 FORMATTER_PIXELS,
                 hud::pollWidth,
+                true
+        );
+        panel.addSlider(
+                "client.activeEvents.maxEntries",
+                null,
+                hud.activeEventsMaxEntries(), 4, 12,
+                FORMATTER_PLAIN,
+                hud::activeEventsMaxEntries,
                 true
         );
     }

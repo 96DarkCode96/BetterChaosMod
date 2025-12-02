@@ -22,4 +22,10 @@ public abstract class OreOption extends AbstractLayout<OreElement> implements Re
         g.fill(getX(), getY(), getRight(), getY() + 1, 0xFF5A5B5D);
         g.fill(getX(), getY() + 1, getRight(), getBottom(), 0xFF48494B);
     }
+
+    @Override
+    public void setWidth(int i) {
+        width = i;
+        arrangeElements();
+    }
 }

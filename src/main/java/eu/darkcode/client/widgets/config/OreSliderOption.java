@@ -41,7 +41,7 @@ public class OreSliderOption extends OreOption {
     public void arrangeElements() {
         super.arrangeElements();
 
-        setWidth(slider.getWidth() + 36);
+        width = slider.getWidth() + 36;
         int height = 12;
 
         valueLabel.setX(getRight() - valueLabel.getWidth() - 18);

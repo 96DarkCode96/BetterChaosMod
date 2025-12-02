@@ -39,10 +39,7 @@ public abstract class AbstractLayout<T> implements OreLayout {
 
     @Override
     public void setX(int i) {
-        this.visitChildren(layoutElement -> {
-            int j = layoutElement.getX() + (i - this.getX());
-            layoutElement.setX(j);
-        });
+        this.visitChildren(el -> el.setX(el.getX() + (i - this.getX())));
         this.x = i;
     }
 
@@ -53,10 +50,7 @@ public abstract class AbstractLayout<T> implements OreLayout {
 
     @Override
     public void setY(int i) {
-        this.visitChildren(layoutElement -> {
-            int j = layoutElement.getY() + (i - this.getY());
-            layoutElement.setY(j);
-        });
+        this.visitChildren(el -> el.setY(el.getY() + (i - this.getY())));
         this.y = i;
     }
 
@@ -66,8 +60,12 @@ public abstract class AbstractLayout<T> implements OreLayout {
     }
 
     @Override
-    public void setWidth(int width) {
-        this.width = width;
+    public void setWidth(int i) {
+        final int diff = i - this.width;
+        if (diff == 0)
+            return;
+        this.visitChildren(el -> el.setWidth(el.getWidth() + diff));
+        this.width = i;
     }
 
     @Override

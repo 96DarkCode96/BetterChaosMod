@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public abstract class BaseScreen extends Screen {
 
     protected final @NotNull ScreenLayout layout = new ScreenLayout(this);
-    private final @Nullable Screen parent;
+    protected final @Nullable Screen parent;
 
     protected BaseScreen(@Nullable Screen parent, @NotNull Component title) {
         super(title);
