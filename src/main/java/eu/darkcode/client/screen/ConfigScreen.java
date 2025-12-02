@@ -6,18 +6,17 @@ import eu.darkcode.Settings;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
-import eu.darkcode.client.widgets.OreInputOption;
-import eu.darkcode.client.widgets.OreSidebarOption;
+import eu.darkcode.client.widgets.config.OreInputOption;
+import eu.darkcode.client.widgets.config.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
-import eu.darkcode.client.widgets.container.OreSidePanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static eu.darkcode.client.widgets.Ore.PASSWORD_FORMATTER;
-import static eu.darkcode.client.widgets.OreSlider.*;
+import static eu.darkcode.client.widgets.utils.Ore.PASSWORD_FORMATTER;
+import static eu.darkcode.client.widgets.impl.OreSlider.*;
 
 public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
@@ -42,7 +41,7 @@ public class ConfigScreen extends BaseScreen {
 
     @Override
     protected void init() {
-        OreSidePanel sidebar = new OreSidePanel();
+        OrePanel sidebar = new OrePanel();
         for (Category value : Category.values()) {
             OreSidebarOption option = sidebar.addSidebarOption(value.key(), value.sprite(), category == value, () -> {
                 category = value;
@@ -119,7 +118,7 @@ public class ConfigScreen extends BaseScreen {
     }
 
     private void integrationConfig() {
-        panel.addCategory("integration.twitch", null);
+        panel.addCategory("integration.twitch", "integration.twitch.description");
 
         boolean enabledOptions = Minecraft.getInstance().level == null;
         TwitchIntegrationSettings twitchIntegration = clientSettings.integration.twitchIntegration;

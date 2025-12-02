@@ -1,12 +1,11 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.config;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import eu.darkcode.client.widgets.OreWidget;
 import eu.darkcode.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -15,21 +14,23 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class OreSidebarOption extends AbstractWidget {
+public class OreSidebarOption extends OreWidget {
     private static final int ICON_SIZE = 24;
     private final boolean selected;
     private final @NotNull Runnable onClick;
     private final @Nullable ResourceLocation sprite;
+    private final @NotNull Component text;
 
     public OreSidebarOption(@NotNull Component component, @Nullable String spriteLocation, boolean selected, @NotNull Runnable onClick) {
-        super(0, 0, 130, 14 + ICON_SIZE, component);
+        super(0, 0, 130, 14 + ICON_SIZE);
+        text = component;
         this.selected = selected;
         this.onClick = onClick;
         this.sprite = spriteLocation == null ? null : Utils.resourceLocation("icons/" + spriteLocation);
     }
 
     @Override
-    protected void renderWidget(GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
         int right = getX() + getWidth();
         int bottom = getY() + getHeight();
         if (selected) {
@@ -37,7 +38,7 @@ public class OreSidebarOption extends AbstractWidget {
             g.fill(getX(), getY() + 1, right, bottom - 1, 0xFF48494B);
             g.fill(getX(), bottom - 1, right, bottom, 0xFF5A5B5D);
         }
-        if (isHoveredOrFocused())
+        if (isHovered() || isFocused())
             g.fill(getX(), getY(), right, bottom, 0x10FFFFFF);
 
         int xIcon = getX() + 10;
@@ -47,8 +48,8 @@ public class OreSidebarOption extends AbstractWidget {
             g.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, xIcon, getY() + 7, ICON_SIZE, ICON_SIZE, 0xFFFFFFFF);
 
         final Font font = Minecraft.getInstance().font;
-        g.drawString(font, getMessage(), xIcon + ICON_SIZE + 8, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF, false);
-        if (isHovered)
+        g.drawString(font, text, xIcon + ICON_SIZE + 8, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF, false);
+        if (isHovered())
             g.requestCursor(CursorTypes.POINTING_HAND);
     }
 
@@ -57,11 +58,6 @@ public class OreSidebarOption extends AbstractWidget {
         if (selected)
             return;
         this.onClick.run();
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-
     }
 
     @Override

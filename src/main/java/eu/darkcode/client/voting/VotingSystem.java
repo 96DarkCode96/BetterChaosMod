@@ -54,4 +54,9 @@ public class VotingSystem {
     public boolean canViewPoll() {
         return currentPoll != null && pollVisibility.toBoolean(activeIntegration != null);
     }
+
+    public void end() {
+        if(activeIntegration != null)
+            activeIntegration.shutdown();
+    }
 }

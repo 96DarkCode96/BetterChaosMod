@@ -1,4 +1,4 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.utils;
 
 import eu.darkcode.utils.Utils;
 import net.minecraft.resources.ResourceLocation;

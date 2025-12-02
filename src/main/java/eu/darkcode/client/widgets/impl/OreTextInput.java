@@ -1,6 +1,7 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.impl;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import eu.darkcode.client.widgets.OreWidget;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -8,7 +9,6 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
@@ -32,7 +32,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class OreTextInput extends AbstractWidget {
+public class OreTextInput extends OreWidget {
     private static final ResourceLocation SPRITE = Utils.resourceLocation("widget/text_field");
     private final @NotNull Font font;
     private final List<TextFormatter> formatters = new ArrayList<>();
@@ -53,7 +53,7 @@ public class OreTextInput extends AbstractWidget {
     private int textY;
 
     public OreTextInput(@NotNull String text, @NotNull Consumer<String> valueConsumer) {
-        super(0, 0, 340, 20, Component.empty());
+        super(0, 0, 340, 20);
         this.font = Minecraft.getInstance().font;
 
         setValue(text);
@@ -70,15 +70,12 @@ public class OreTextInput extends AbstractWidget {
         this.formatters.add(textFormatter);
     }
 
-    @Override
     protected @NotNull MutableComponent createNarrationMessage() {
         return Component.translatable("gui.narrate.editBox", Component.empty(), this.value);
     }
 
     @Override
-    public void renderWidget(GuiGraphics g, int i, int j, float f) {
-        if (!this.visible)
-            return;
+    public void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
         // [FOCUSED BORDER]
         if (isFocused()) {
             g.fill(getX() - 2, getY() - 2, getRight() + 2, getY() - 1, 0xFFFFFFFF);
@@ -106,7 +103,7 @@ public class OreTextInput extends AbstractWidget {
         boolean bl3 = this.cursorPos < this.value.length() || this.value.length() >= this.getMaxLength();
         int o = m;
         if (!bl) {
-            o = l > 0 ? this.textX + this.width : this.textX;
+            o = l > 0 ? this.textX + this.getWidth() : this.textX;
         } else if (bl3) {
             o = m - 1;
             m--;
@@ -118,7 +115,7 @@ public class OreTextInput extends AbstractWidget {
 
         if (n != l) {
             int p = this.textX + this.font.width(string.substring(0, n));
-            g.textHighlight(Math.min(o, this.getX() + this.width), this.textY - 1, Math.min(p - 1, this.getX() + this.width), this.textY + 1 + 9);
+            g.textHighlight(Math.min(o, getRight()), this.textY - 1, Math.min(p - 1, getRight()), this.textY + 1 + 9);
         }
 
         if (bl2) {
@@ -131,6 +128,11 @@ public class OreTextInput extends AbstractWidget {
 
         if (this.isHovered())
             g.requestCursor(isActive() ? CursorTypes.IBEAM : CursorTypes.NOT_ALLOWED);
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+        narrationElementOutput.add(NarratedElementType.TITLE, this.createNarrationMessage());
     }
 
     @Override
@@ -148,7 +150,7 @@ public class OreTextInput extends AbstractWidget {
     }
 
     @Override
-    public void playDownSound(SoundManager soundManager) {
+    public void playDownSound(@NotNull SoundManager soundManager) {
         // ignored
     }
 
@@ -159,11 +161,6 @@ public class OreTextInput extends AbstractWidget {
         super.setFocused(bl);
         if (bl)
             this.focusedTime = Util.getMillis();
-    }
-
-    @Override
-    public void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.TITLE, this.createNarrationMessage());
     }
 
     @Override
@@ -425,7 +422,7 @@ public class OreTextInput extends AbstractWidget {
     private void updateTextPosition() {
         String string = this.font.plainSubstrByWidth(this.value.substring(this.displayPos), this.getInnerWidth());
         this.textX = this.getX() + (this.isCentered() ? (this.getWidth() - this.font.width(string)) / 2 : 4);
-        this.textY = this.getY() + (this.height - 8) / 2;
+        this.textY = this.getY() + (this.getHeight() - 8) / 2;
     }
 
     private int getMaxLength() {
@@ -467,7 +464,7 @@ public class OreTextInput extends AbstractWidget {
     }
 
     public int getInnerWidth() {
-        return this.width - 8;
+        return this.getWidth() - 8;
     }
 
     public void setHighlightPos(int i) {

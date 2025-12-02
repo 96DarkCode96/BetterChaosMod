@@ -67,6 +67,7 @@ public class EventManager {
             if (!event.ended())
                 event.endClient();
         });
+        votingSystem.end();
     }
 
     public void startEvent(Event event) {

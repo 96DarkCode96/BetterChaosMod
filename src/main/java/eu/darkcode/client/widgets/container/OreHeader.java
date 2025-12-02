@@ -1,6 +1,7 @@
 package eu.darkcode.client.widgets.container;
 
-import eu.darkcode.client.widgets.OreLabel;
+import eu.darkcode.client.widgets.OreElement;
+import eu.darkcode.client.widgets.impl.OreLabel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
@@ -8,20 +9,16 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.layouts.AbstractLayout;
-import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.layouts.LayoutSettings;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
-public class OreHeader extends AbstractLayout implements Renderable {
+public class OreHeader extends AbstractLayout<OreHeader.ChildContainer> implements Renderable {
 
-    private final List<ChildContainer> children = new ArrayList<>();
     private final LayoutSettings defaultChildLayoutSettings = LayoutSettings.defaults().align(0.5F, 0.5F);
     private final @NotNull Screen screen;
 
@@ -45,21 +42,24 @@ public class OreHeader extends AbstractLayout implements Renderable {
         return this.defaultChildLayoutSettings;
     }
 
-    public <T extends LayoutElement> T addChild(T layoutElement) {
+    @NotNull
+    public <T extends OreElement> T addChild(@NotNull T layoutElement) {
         return this.addChild(layoutElement, this.newChildLayoutSettings());
     }
 
-    public <T extends LayoutElement> T addChild(T layoutElement, LayoutSettings layoutSettings) {
-        this.children.add(new ChildContainer(layoutElement, layoutSettings));
+    @NotNull
+    public <T extends OreElement> T addChild(@NotNull T layoutElement, LayoutSettings layoutSettings) {
+        this.addChild(new ChildContainer(layoutElement, layoutSettings.getExposed()));
         return layoutElement;
     }
 
-    public <T extends LayoutElement> T addChild(T layoutElement, Consumer<LayoutSettings> consumer) {
+    @NotNull
+    public <T extends OreElement> T addChild(@NotNull T layoutElement, Consumer<LayoutSettings> consumer) {
         return this.addChild(layoutElement, Util.make(this.newChildLayoutSettings(), consumer));
     }
 
     @Override
-    public void visitChildren(Consumer<LayoutElement> consumer) {
+    public void visitChildren(@NotNull Consumer<OreElement> consumer) {
         this.children.forEach(childContainer -> consumer.accept(childContainer.child));
     }
 
@@ -97,9 +97,28 @@ public class OreHeader extends AbstractLayout implements Renderable {
     }
 
     @Environment(EnvType.CLIENT)
-    static class ChildContainer extends AbstractLayout.AbstractChildWrapper {
-        protected ChildContainer(LayoutElement layoutElement, LayoutSettings layoutSettings) {
-            super(layoutElement, layoutSettings);
+    record ChildContainer(OreElement child, LayoutSettings.LayoutSettingsImpl layoutSettings) {
+
+        public int getHeight() {
+            return this.child.getHeight() + this.layoutSettings.paddingTop + this.layoutSettings.paddingBottom;
+        }
+
+        public int getWidth() {
+            return this.child.getWidth() + this.layoutSettings.paddingLeft + this.layoutSettings.paddingRight;
+        }
+
+        public void setX(int i, int j) {
+            float f = this.layoutSettings.paddingLeft;
+            float g = j - this.child.getWidth() - this.layoutSettings.paddingRight;
+            int k = (int) Mth.lerp(this.layoutSettings.xAlignment, f, g);
+            this.child.setX(k + i);
+        }
+
+        public void setY(int i, int j) {
+            float f = this.layoutSettings.paddingTop;
+            float g = j - this.child.getHeight() - this.layoutSettings.paddingBottom;
+            int k = Math.round(Mth.lerp(this.layoutSettings.yAlignment, f, g));
+            this.child.setY(k + i);
         }
     }
 }

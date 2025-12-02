@@ -26,4 +26,9 @@ public class TwitchIntegration implements Integration {
         } catch (IOException e) {
         }
     }
+
+    @Override
+    public void shutdown() {
+        client.close();
+    }
 }

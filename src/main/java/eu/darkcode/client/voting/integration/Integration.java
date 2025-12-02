@@ -5,4 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Integration {
     void sendPoll(@NotNull Poll poll);
+
+    void shutdown();
 }

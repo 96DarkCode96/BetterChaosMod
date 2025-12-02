@@ -8,28 +8,28 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
-public abstract class OreButton extends AbstractWidget {
+public abstract class OreButton extends OreWidget {
     private static final WidgetSprites SPRITES = new WidgetSprites(
             Utils.resourceLocation("widget/button"),
             Utils.resourceLocation("widget/button_disabled"),
             Utils.resourceLocation("widget/button_highlighted")
     );
+    private final @NotNull Component label;
 
     protected OreButton(int i, int j, int k, int l, @NotNull Component label) {
-        super(i, j, k, l, label);
+        super(i, j, k, l);
+        this.label = label;
     }
 
     protected static void renderScrollingString(GuiGraphics guiGraphics, Font font, Component component, int i, int j, int k, int l, int m, int n) {
@@ -59,18 +59,16 @@ public abstract class OreButton extends AbstractWidget {
         Minecraft minecraft = Minecraft.getInstance();
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
-                SPRITES.get(this.active, this.isHoveredOrFocused()),
+                SPRITES.get(this.isActive(), isHovered() || isFocused()),
                 this.getX(),
                 this.getY(),
                 this.getWidth(),
                 this.getHeight(),
-                ARGB.white(this.alpha)
+                0xFFFFFFFF
         );
-        int k = ARGB.color(this.alpha, this.active ? 0xFF000000 : 0xffA0A0A0);
-        this.renderString(guiGraphics, minecraft.font, k);
-        if (this.isHovered()) {
+        this.renderString(guiGraphics, minecraft.font, isActive() ? 0xFF000000 : 0xffA0A0A0);
+        if (this.isHovered())
             guiGraphics.requestCursor(this.isActive() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);
-        }
     }
 
     @Override
@@ -80,8 +78,8 @@ public abstract class OreButton extends AbstractWidget {
 
     public void renderString(GuiGraphics guiGraphics, Font font, int j) {
         int k = this.getX() + 2;
-        int l = this.getX() + this.getWidth() - 2;
-        OreButton.renderScrollingString(guiGraphics, font, this.getMessage(), (k + l) / 2, k, this.getY(), l, this.getY() + this.getHeight(), j);
+        int l = getRight() - 2;
+        OreButton.renderScrollingString(guiGraphics, font, label, (k + l) / 2, k, this.getY(), l, getBottom(), j);
     }
 
     @Override

@@ -26,9 +26,10 @@
   "betterchaosmod.option_section.client": "Client",
   "betterchaosmod.option_section.client.integration": "Integration",
 
-  "betterchaosmod.option.category.client.timer": "Timer bar",
-  "betterchaosmod.option.category.client.poll": "Event poll",
-  "betterchaosmod.option.category.integration.twitch": "Twitch",
+  "betterchaosmod.option.category.client.timer": "TIMER BAR",
+  "betterchaosmod.option.category.client.poll": "EVENT POLL",
+  "betterchaosmod.option.category.integration.twitch": "TWITCH",
+  "betterchaosmod.option.category.integration.twitch.description": "Integrate Better Chaos Mod with your Twitch channel to let your viewers vote for events directly from chat!",
 
   "betterchaosmod.option.client.integration.twitch.channel": "Twitch Channel",
   "betterchaosmod.option.client.integration.twitch.token": "Twitch Token",
@@ -51,5 +52,6 @@
   "betterchaosmod.poll.title": "Total votes: %d",
   "betterchaosmod.integration.twitch": "Twitch",
   "betterchaosmod.changelog.title": "Changelog",
-  "betterchaosmod.integration_check.title": "INTEGRATION CHECK"
+  "betterchaosmod.integration_check.title": "INTEGRATION CHECK",
+  "betterchaosmod.connect.title": "CONNECTING"
 }

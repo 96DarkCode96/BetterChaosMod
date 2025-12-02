@@ -1,10 +1,10 @@
 package eu.darkcode.client.screen;
 
+import eu.darkcode.client.widgets.OreElement;
+import eu.darkcode.client.widgets.OreLayout;
+import eu.darkcode.client.widgets.OreWidget;
 import eu.darkcode.client.widgets.container.ScreenLayout;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.layouts.Layout;
-import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -45,12 +45,12 @@ public abstract class BaseScreen extends Screen {
         this.layout.arrangeElements();
     }
 
-    private void addChildren(LayoutElement element) {
-        if (element instanceof AbstractWidget aw)
+    private void addChildren(@NotNull OreElement element) {
+        if (element instanceof OreWidget aw)
             this.addRenderableWidget(aw);
         else if (element instanceof Renderable r)
             this.addRenderableOnly(r);
-        if (element instanceof Layout l)
+        if (element instanceof OreLayout l)
             l.visitChildren(this::addChildren);
     }
 

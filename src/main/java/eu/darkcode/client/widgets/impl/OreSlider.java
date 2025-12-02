@@ -1,11 +1,12 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.impl;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import eu.darkcode.client.widgets.OreWidget;
+import eu.darkcode.client.widgets.utils.SpriteAtlas;
 import eu.darkcode.utils.Utils;
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 
-public class OreSlider extends AbstractWidget {
+public class OreSlider extends OreWidget {
 
     private static final @NotNull ResourceLocation SPRITE_BAR = Utils.resourceLocation("widget/slider_bar");
 
@@ -40,7 +41,7 @@ public class OreSlider extends AbstractWidget {
     private boolean canChangeValue;
 
     public OreSlider(int value, int min, int max, @NotNull IntConsumer valueConsumer) {
-        super(0, 0, 340, HANDLE_HEIGHT, Component.empty());
+        super(0, 0, 340, HANDLE_HEIGHT);
 
         this.value = value;
         this.min = min;
@@ -50,7 +51,7 @@ public class OreSlider extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
         double fraction = ((double) value - min) / (max - min);
         int posX = (int) Math.floor(fraction * (getWidth() - HANDLE_WIDTH)) + getX();
 
@@ -65,6 +66,22 @@ public class OreSlider extends AbstractWidget {
             g.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, posX, getY(), HANDLE_WIDTH, HANDLE_HEIGHT, 0xFFFFFFFF);
 
         renderCursor(g);
+    }
+
+    @Override
+    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+        narrationElementOutput.add(NarratedElementType.TITLE, Component.translatable("gui.narrate.slider", Component.literal("Option")));
+        if (!this.isActive())
+            return;
+        if (this.isFocused()) {
+            if (this.canChangeValue) {
+                narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.focused"));
+            } else {
+                narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.focused.keyboard_cannot_change_value"));
+            }
+        } else {
+            narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.hovered"));
+        }
     }
 
     @Override
@@ -86,7 +103,7 @@ public class OreSlider extends AbstractWidget {
     }
 
     @Override
-    public void playDownSound(SoundManager soundManager) {
+    public void playDownSound(@NotNull SoundManager soundManager) {
         // ignored
     }
 
@@ -100,22 +117,6 @@ public class OreSlider extends AbstractWidget {
         InputType inputType = Minecraft.getInstance().getLastInputType();
         if (inputType == InputType.MOUSE || inputType == InputType.KEYBOARD_TAB)
             this.canChangeValue = true;
-    }
-
-    @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
-        narrationElementOutput.add(NarratedElementType.TITLE, Component.translatable("gui.narrate.slider", Component.literal("Option")));
-        if (!this.active)
-            return;
-        if (this.isFocused()) {
-            if (this.canChangeValue) {
-                narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.focused"));
-            } else {
-                narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.focused.keyboard_cannot_change_value"));
-            }
-        } else {
-            narrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.slider.usage.hovered"));
-        }
     }
 
     private void renderCursor(@NotNull GuiGraphics g) {

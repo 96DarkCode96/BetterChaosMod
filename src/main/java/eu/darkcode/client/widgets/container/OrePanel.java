@@ -1,14 +1,13 @@
 package eu.darkcode.client.widgets.container;
 
-import eu.darkcode.client.widgets.Ore;
-import eu.darkcode.client.widgets.OreCategory;
-import eu.darkcode.client.widgets.OreInputOption;
-import eu.darkcode.client.widgets.OreSliderOption;
+import eu.darkcode.client.widgets.OreElement;
+import eu.darkcode.client.widgets.config.OreCategory;
+import eu.darkcode.client.widgets.config.OreInputOption;
+import eu.darkcode.client.widgets.config.OreSidebarOption;
+import eu.darkcode.client.widgets.config.OreSliderOption;
+import eu.darkcode.client.widgets.utils.Ore;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.layouts.LayoutElement;
-import net.minecraft.client.gui.layouts.LayoutSettings;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,13 +16,25 @@ import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 
-public class OrePanel extends LinearLayout implements Renderable {
+public class OrePanel extends AbstractLayout<OreElement> implements Renderable {
 
-    private boolean first = true;
+    private int paddingLeft;
+    private int paddingTop;
+    private int paddingBottom;
+    private int paddingRight;
+    private int spacing;
 
     public OrePanel() {
-        super(0, 0, Orientation.VERTICAL);
-        defaultCellSetting().alignHorizontallyLeft().paddingHorizontal(1).paddingBottom(1);
+        this(1, 1, 1, 1, 1);
+    }
+
+    public OrePanel(int paddingLeft, int paddingTop, int paddingBottom, int paddingRight, int spacing) {
+        super(0, 0, 0, 0);
+        this.paddingLeft = paddingLeft;
+        this.paddingTop = paddingTop;
+        this.paddingBottom = paddingBottom;
+        this.paddingRight = paddingRight;
+        this.spacing = spacing;
     }
 
     @Override
@@ -36,10 +47,8 @@ public class OrePanel extends LinearLayout implements Renderable {
 
     @NotNull
     public OreCategory addCategory(@NotNull String name, @Nullable String description) {
-        return addChild(new OreCategory(this,
-                        Component.translatable("betterchaosmod.option.category." + name),
-                        description != null ? Component.translatable("betterchaosmod.option.category." + description) : null),
-                a -> a.paddingBottom(0));
+        return addChild(new OreCategory(Component.translatable("betterchaosmod.option.category." + name),
+                description != null ? Component.translatable("betterchaosmod.option.category." + description) : null));
     }
 
     @NotNull
@@ -56,23 +65,36 @@ public class OrePanel extends LinearLayout implements Renderable {
         ));
     }
 
-    @Override
-    public <T extends LayoutElement> T addChild(T layoutElement, LayoutSettings layoutSettings) {
-        if (!first)
-            return super.addChild(layoutElement, layoutSettings);
-        first = false;
-        layoutSettings.getExposed().paddingTop++;
-        return super.addChild(layoutElement, layoutSettings);
+    @NotNull
+    public OreSidebarOption addSidebarOption(@NotNull String name, @Nullable String sprite, boolean selected, @NotNull Runnable onClick) {
+        OreSidebarOption e = new OreSidebarOption(Component.translatable("betterchaosmod.option_section." + name), sprite, selected, onClick);
+        children.add(e);
+        return e;
     }
 
     @Override
-    public <T extends LayoutElement> T addChild(T layoutElement, Consumer<LayoutSettings> consumer) {
-        if (!first)
-            return super.addChild(layoutElement, consumer);
-        first = false;
-        return super.addChild(layoutElement, a -> {
-            consumer.accept(a);
-            a.getExposed().paddingTop++;
-        });
+    public void visitChildren(@NotNull Consumer<OreElement> consumer) {
+        children.forEach(consumer);
     }
+
+    @Override
+    public void arrangeElements() {
+        super.arrangeElements();
+
+        width = 0;
+        for (OreElement child : children)
+            width = Math.max(width, child.getWidth());
+
+        int posY = paddingTop;
+        for (OreElement child : children) {
+            child.setWidth(width);
+            child.setPosition(x + paddingLeft, y + posY);
+            posY += child.getHeight() + spacing;
+        }
+        if (!children.isEmpty())
+            posY -= spacing;
+        width += paddingLeft + paddingRight;
+        height = posY + paddingBottom;
+    }
+
 }

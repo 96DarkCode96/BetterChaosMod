@@ -1,5 +1,7 @@
-package eu.darkcode.client.widgets;
+package eu.darkcode.client.widgets.utils;
 
+import eu.darkcode.client.widgets.config.OreSliderOption;
+import eu.darkcode.client.widgets.impl.OreTextInput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
