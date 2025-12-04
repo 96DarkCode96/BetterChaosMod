@@ -4,6 +4,8 @@ import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.EventManager;
 import eu.darkcode.client.hud.CurrentPollPanel;
 import eu.darkcode.client.hud.HudManager;
+import eu.darkcode.client.overlay.OverlaySettings;
+import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.Payloads;
@@ -95,6 +97,15 @@ public class BetterChaosModClient implements ClientModInitializer {
         });
 
         registerPlayNetworking();
+
+        OverlaySettings overlay = settings.overlay;
+        try {
+            if (overlay.enabled)
+                OverlayWebServer.startServer(overlay.webServerPort);
+        } catch (Exception e) {
+            overlay.enabled = false;
+            OverlayWebServer.startFailed(e);
+        }
     }
 
     private void registerPlayNetworking() {

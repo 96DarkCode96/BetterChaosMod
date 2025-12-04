@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Better Chaos Mod - Overlay</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #log { border: 1px solid #ccc; padding: 10px; height: 300px; overflow: auto; background: #f9f9f9; }
+        #log div { padding: 4px 0; border-bottom: 1px dashed #eee; }
+    </style>
+</head>
+<body>
+<div id="log"></div>
+<script defer>
+    (() => {
+        const log = document.getElementById('log');
+
+        function addLine(text) {
+            const p = document.createElement('div');
+            p.textContent = text;
+            log.prepend(p);
+        }
+
+        let ws;
+
+        function connect() {
+            ws = new WebSocket('ws://localhost:6180');
+            ws.onopen = () => addLine('WS connected');
+            ws.onmessage = (ev) => addLine('MSG: ' + ev.data);
+            ws.onclose = () => {
+                addLine('WS closed, retry in 2s');
+                setTimeout(connect, 2000);
+            };
+            ws.onerror = (e) => console.error(e);
+        }
+
+        connect();
+    })();
+</script>
+</body>
+</html>

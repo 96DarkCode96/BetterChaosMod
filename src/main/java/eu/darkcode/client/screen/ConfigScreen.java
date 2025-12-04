@@ -128,6 +128,28 @@ public class ConfigScreen extends BaseScreen {
         OreInputOption channelName = panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
         OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+
+        panel.addCategory("integration.overlay", "integration.overlay.description");
+        //panel.addCheckbox("client.overlay.enabled", null, clientSettings.overlay.enabled, a -> clientSettings.overlay.enabled = a, true);
+        OreInputOption webPort = panel.addTextInput("client.overlay.webPort", null, String.valueOf(clientSettings.overlay.webServerPort), a -> {
+            try {
+                int port = Integer.parseInt(a);
+                if (port >= 1024 && port <= 65535)
+                    clientSettings.overlay.webServerPort = port;
+            } catch (NumberFormatException ignored) {
+            }
+        }, true);
+        webPort.textInput().setFilter(s -> {
+            if (s.isEmpty())
+                return true;
+            if (s.startsWith("0"))
+                return false;
+            try {
+                return Integer.parseInt(s) > 0;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        });
     }
 
     private enum Category {
