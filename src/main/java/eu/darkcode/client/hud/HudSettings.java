@@ -1,7 +1,11 @@
 package eu.darkcode.client.hud;
 
 import eu.darkcode.BetterChaosModClient;
+import eu.darkcode.client.overlay.OverlayWebServer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
+@Environment(EnvType.CLIENT)
 public class HudSettings {
     private int timerBackgroundColor = 0xFF000000;
     private int timerForegroundColor = 0xFF28A745;
@@ -41,6 +45,7 @@ public class HudSettings {
 
     public void timerHeight(int timerHeight) {
         this.timerHeight = timerHeight;
+        OverlayWebServer.sendStyleUpdate();
     }
 
     public int timerForegroundColor() {

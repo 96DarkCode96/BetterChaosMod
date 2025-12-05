@@ -10,7 +10,8 @@
       "KeyboardInputMixin",
       "BossHealthOverlayMixin",
       "MinecraftMixin",
-      "TitleScreenMixin"
+      "TitleScreenMixin",
+      "WindowMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1

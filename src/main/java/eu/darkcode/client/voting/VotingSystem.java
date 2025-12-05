@@ -1,5 +1,6 @@
 package eu.darkcode.client.voting;
 
+import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.voting.Poll;
 import net.minecraft.util.TriState;
@@ -26,6 +27,7 @@ public class VotingSystem {
 
         if (this.activeIntegration != null)
             this.activeIntegration.sendPoll(poll);
+        OverlayWebServer.sendPollUpdate(poll);
         this.currentPoll = poll;
     }
 
@@ -56,7 +58,8 @@ public class VotingSystem {
     }
 
     public void end() {
-        if(activeIntegration != null)
+        if (activeIntegration != null)
             activeIntegration.shutdown();
+        OverlayWebServer.sendPollUpdate(null);
     }
 }

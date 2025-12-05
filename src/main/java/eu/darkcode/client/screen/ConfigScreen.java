@@ -5,6 +5,7 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
+import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
@@ -23,6 +24,7 @@ public class ConfigScreen extends BaseScreen {
     private final @NotNull ClientSettings clientSettings;
     private @NotNull Category category = Category.SERVER;
     private OrePanel panel;
+    private OreInputOption overlayWebPort;
 
     public ConfigScreen(OptionsScreen parent) {
         super(parent, Component.translatable("betterchaosmod.config.title"));
@@ -130,17 +132,30 @@ public class ConfigScreen extends BaseScreen {
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
         panel.addSwitch("client.integration.twitch.announceNewPolls", "client.integration.twitch.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
 
+        overlayConfig();
+    }
+
+    private void overlayConfig() {
         panel.addCategory("integration.overlay", "integration.overlay.description");
-        panel.addSwitch("client.overlay.enabled", null, clientSettings.overlay.enabled, a -> clientSettings.overlay.enabled = a, true);
-        OreInputOption webPort = panel.addTextInput("client.overlay.webPort", null, String.valueOf(clientSettings.overlay.webServerPort), a -> {
+        panel.addSwitch("client.overlay.enabled", null, clientSettings.overlay.enabled, a -> {
+            clientSettings.overlay.enabled = a;
+            overlayWebPort.textInput().setActive(!a);
+            if (clientSettings.overlay.enabled)
+                OverlayWebServer.startServer(clientSettings.overlay.webServerPort);
+            else
+                OverlayWebServer.stopServer();
+        }, true);
+        overlayWebPort = panel.addTextInput("client.overlay.webPort", null, String.valueOf(clientSettings.overlay.webServerPort), a -> {
             try {
                 int port = Integer.parseInt(a);
                 if (port >= 1024 && port <= 65535)
                     clientSettings.overlay.webServerPort = port;
+                else
+                    overlayWebPort.textInput().setValue("" + clientSettings.overlay.webServerPort);
             } catch (NumberFormatException ignored) {
             }
-        }, true);
-        webPort.textInput().setFilter(s -> {
+        }, !clientSettings.overlay.enabled);
+        overlayWebPort.textInput().setFilter(s -> {
             if (s.isEmpty())
                 return true;
             if (s.startsWith("0"))

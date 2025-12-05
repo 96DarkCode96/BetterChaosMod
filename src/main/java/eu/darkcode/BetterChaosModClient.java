@@ -99,13 +99,8 @@ public class BetterChaosModClient implements ClientModInitializer {
         registerPlayNetworking();
 
         OverlaySettings overlay = settings.overlay;
-        try {
-            if (overlay.enabled)
-                OverlayWebServer.startServer(overlay.webServerPort);
-        } catch (Exception e) {
-            overlay.enabled = false;
-            OverlayWebServer.startFailed(e);
-        }
+        if (overlay.enabled)
+            OverlayWebServer.startServer(overlay.webServerPort);
     }
 
     private void registerPlayNetworking() {
