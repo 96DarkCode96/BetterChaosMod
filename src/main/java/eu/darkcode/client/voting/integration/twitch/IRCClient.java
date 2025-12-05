@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IRCClient {
 
-    private final @NotNull TwitchIntegrationSettings settings;
+    public final @NotNull TwitchIntegrationSettings settings;
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean running = new AtomicBoolean(true);
     private SSLSocket socket;

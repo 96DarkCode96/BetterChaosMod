@@ -128,9 +128,10 @@ public class ConfigScreen extends BaseScreen {
         OreInputOption channelName = panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
         OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+        panel.addSwitch("client.integration.twitch.announceNewPolls", "client.integration.twitch.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
 
         panel.addCategory("integration.overlay", "integration.overlay.description");
-        //panel.addCheckbox("client.overlay.enabled", null, clientSettings.overlay.enabled, a -> clientSettings.overlay.enabled = a, true);
+        panel.addSwitch("client.overlay.enabled", null, clientSettings.overlay.enabled, a -> clientSettings.overlay.enabled = a, true);
         OreInputOption webPort = panel.addTextInput("client.overlay.webPort", null, String.valueOf(clientSettings.overlay.webServerPort), a -> {
             try {
                 int port = Integer.parseInt(a);

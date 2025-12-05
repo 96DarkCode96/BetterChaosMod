@@ -54,6 +54,15 @@ public class OrePanel extends AbstractLayout<OrePanel.ChildWrapper> implements R
     }
 
     @NotNull
+    public OreSwitchOption addSwitch(@NotNull String name, @Nullable String description, boolean value, @NotNull Consumer<Boolean> valueConsumer, boolean enabled) {
+        return addChild(new OreSwitchOption(
+                Component.translatable("betterchaosmod.option." + name),
+                description != null ? Component.translatable("betterchaosmod.option." + description) : null,
+                value, valueConsumer, enabled
+        ));
+    }
+
+    @NotNull
     public OreCategory addCategory(@NotNull String name, @Nullable String description) {
         return addChild(new OreCategory(Component.translatable("betterchaosmod.option.category." + name),
                         description != null ? Component.translatable("betterchaosmod.option.category." + description) : null),

@@ -55,7 +55,7 @@ public abstract class OreButton extends OreWidget {
     public abstract void onPress(InputWithModifiers inputWithModifiers);
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
         Minecraft minecraft = Minecraft.getInstance();
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,

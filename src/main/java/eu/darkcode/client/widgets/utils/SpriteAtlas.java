@@ -7,6 +7,16 @@ import org.jetbrains.annotations.Nullable;
 
 public record SpriteAtlas(@NotNull ResourceLocation normal, @Nullable ResourceLocation hovered,
                           @Nullable ResourceLocation disabled, @Nullable ResourceLocation focused) {
+
+    public SpriteAtlas(@NotNull String basePath, @Nullable String hoveredPath, @Nullable String disabledPath, @Nullable String focusedPath) {
+        this(
+                Utils.resourceLocation(basePath),
+                hoveredPath != null ? Utils.resourceLocation(hoveredPath) : null,
+                disabledPath != null ? Utils.resourceLocation(disabledPath) : null,
+                focusedPath != null ? Utils.resourceLocation(focusedPath) : null
+        );
+    }
+
     public SpriteAtlas(@NotNull String basePath) {
         this(
                 Utils.resourceLocation(basePath),

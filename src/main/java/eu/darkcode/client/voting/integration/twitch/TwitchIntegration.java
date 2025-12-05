@@ -21,6 +21,8 @@ public class TwitchIntegration implements Integration {
 
     @Override
     public void sendPoll(@NotNull Poll poll) {
+        if (!client.settings.announceNewPolls)
+            return;
         try {
             client.sendMessage(poll.pollId() + " ");
         } catch (IOException e) {
