@@ -7,7 +7,9 @@ import net.minecraft.util.TriState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static eu.darkcode.utils.Utils.COUNT_VOTE_OPTIONS;
 
@@ -15,7 +17,7 @@ public class VotingSystem {
 
     private final int[] votes = new int[COUNT_VOTE_OPTIONS];
 
-    private @Nullable Integration activeIntegration = null;
+    private @NotNull List<Integration> activeIntegrations = new ArrayList<>();
     private int totalVotes = 0;
     private @Nullable Poll currentPoll;
     private @NotNull TriState pollVisibility = TriState.DEFAULT;
@@ -25,14 +27,11 @@ public class VotingSystem {
         this.totalVotes = 0;
         Arrays.fill(this.votes, 0);
 
-        if (this.activeIntegration != null)
-            this.activeIntegration.sendPoll(poll);
+        for (Integration activeIntegration : this.activeIntegrations)
+            activeIntegration.sendPoll(poll);
+
         OverlayWebServer.sendPollUpdate(poll);
         this.currentPoll = poll;
-    }
-
-    public void setActiveIntegration(@Nullable Integration activeIntegration) {
-        this.activeIntegration = activeIntegration;
     }
 
     public double percentage(int optionIndex) {
@@ -45,8 +44,15 @@ public class VotingSystem {
         return this.totalVotes;
     }
 
-    public @Nullable Integration activeIntegration() {
-        return activeIntegration;
+    @NotNull
+    public List<Integration> getActiveIntegrations() {
+        return activeIntegrations;
+    }
+
+    public void setActiveIntegrations(@NotNull List<Integration> activeIntegrations) {
+        this.activeIntegrations = activeIntegrations;
+        if (currentPoll != null)
+            this.activeIntegrations.forEach(i -> i.sendPoll(this.currentPoll));
     }
 
     public @Nullable Poll currentPoll() {
@@ -54,11 +60,11 @@ public class VotingSystem {
     }
 
     public boolean canViewPoll() {
-        return currentPoll != null && pollVisibility.toBoolean(activeIntegration != null);
+        return currentPoll != null && pollVisibility.toBoolean(!activeIntegrations.isEmpty());
     }
 
     public void end() {
-        if (activeIntegration != null)
+        for (Integration activeIntegration : this.activeIntegrations)
             activeIntegration.shutdown();
         OverlayWebServer.sendPollUpdate(null);
     }

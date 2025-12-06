@@ -25,7 +25,7 @@ public abstract class OreButton extends OreWidget {
             Utils.resourceLocation("widget/button_disabled"),
             Utils.resourceLocation("widget/button_highlighted")
     );
-    private final @NotNull Component label;
+    private @NotNull Component label;
 
     protected OreButton(int i, int j, int k, int l, @NotNull Component label) {
         super(i, j, k, l);
@@ -50,6 +50,10 @@ public abstract class OreButton extends OreWidget {
             FormattedCharSequence formattedCharSequence = component.getVisualOrderText();
             guiGraphics.drawString(font, formattedCharSequence, r - font.width(formattedCharSequence) / 2, p, n, false);
         }
+    }
+
+    public void setLabel(@NotNull Component label) {
+        this.label = label;
     }
 
     public abstract void onPress(InputWithModifiers inputWithModifiers);

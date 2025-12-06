@@ -7,11 +7,14 @@ import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
+import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
+import eu.darkcode.client.widgets.OreButton;
 import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
+import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,9 +50,7 @@ public class ConfigScreen extends BaseScreen {
         for (Category value : Category.values()) {
             OreSidebarOption option = sidebar.addSidebarOption(value.key(), value.sprite(), category == value, () -> {
                 category = value;
-                this.clearWidgets();
-                this.clearFocus();
-                this.init();
+                reinit();
             });
             if (category == value)
                 setInitialFocus(option);
@@ -67,6 +68,12 @@ public class ConfigScreen extends BaseScreen {
         this.layout.addToContents(sidebar);
         this.layout.addToContents(panel);
         super.init();
+    }
+
+    public void reinit() {
+        this.clearWidgets();
+        this.clearFocus();
+        this.init();
     }
 
     private void serverConfig() {
@@ -130,6 +137,14 @@ public class ConfigScreen extends BaseScreen {
         OreInputOption channelName = panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
         OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+
+        panel.addChild(new OreButton(0, 0, 150, 20, Component.translatable("betterchaosmod.option.client.integration.twitch.getToken")) {
+            @Override
+            public void onPress(InputWithModifiers inputWithModifiers) {
+                TwitchTokenServer.openUrl();
+            }
+        });
+
         panel.addSwitch("client.integration.twitch.announceNewPolls", "client.integration.twitch.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
 
         overlayConfig();

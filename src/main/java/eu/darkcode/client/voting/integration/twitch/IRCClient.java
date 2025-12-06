@@ -1,69 +1,47 @@
 package eu.darkcode.client.voting.integration.twitch;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
-import java.util.concurrent.CompletableFuture;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Environment(EnvType.CLIENT)
 public class IRCClient {
 
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger("IRCClient");
+
     public final @NotNull TwitchIntegrationSettings settings;
-    private final AtomicBoolean connected = new AtomicBoolean(false);
-    private final AtomicBoolean running = new AtomicBoolean(true);
+    private final @NotNull AtomicBoolean running = new AtomicBoolean(true);
+    private final @NotNull AtomicBoolean connected = new AtomicBoolean(false);
+    private final @NotNull AtomicBoolean successful = new AtomicBoolean(false);
+    private final @NotNull List<String> messageQueue = new ArrayList<>();
+    private final @NotNull IRCEvent eventHandler;
     private SSLSocket socket;
     private BufferedWriter writer;
     private BufferedReader reader;
     private long lastPing = System.currentTimeMillis();
 
-    public IRCClient(@NotNull TwitchIntegrationSettings settings) {
+    public IRCClient(@NotNull TwitchIntegrationSettings settings, @NotNull IRCEvent eventHandler) {
         this.settings = settings;
+        this.eventHandler = eventHandler;
         if (settings.channel == null || settings.channel.isBlank() || settings.token == null || settings.token.isBlank())
             throw new NullPointerException("channel or token is null or blank");
-    }
-
-    @NotNull
-    public static CompletableFuture<Boolean> testConnection(@NotNull TwitchIntegrationSettings settings) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                System.out.println("Testing Twitch IRC connection...");
-                SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-                try (SSLSocket socket = (SSLSocket) factory.createSocket("irc.chat.twitch.tv", 6697)) {
-                    socket.startHandshake();
-
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-
-                    System.out.println("Connected to Twitch IRC for testing. Authenticating...");
-
-                    writer.write("PASS oauth:" + settings.token + "\r\n");
-                    writer.write("NICK " + settings.channel.toLowerCase() + "\r\n");
-                    writer.write("JOIN #" + settings.channel + "\r\n");
-                    writer.write("CAP REQ :twitch.tv/tags twitch.tv/commands twitch.tv/membership\r\n");
-                    writer.flush();
-
-                    String line;
-                    while (socket.isConnected() && (line = reader.readLine()) != null)
-                        if (line.contains("Welcome, GLHF!"))
-                            return true;
-                }
-
-                System.out.println("Connection test failed: Did not receive welcome message.");
-
-                return false;
-            } catch (Throwable e) {
-                System.out.println("Connection test failed: " + e.getMessage());
-                return false;
-            }
-        });
     }
 
     private static void sleep(long ms) {
         try {
             Thread.sleep(ms);
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException e) {
+            LOGGER.warn("Sleep interrupted", e);
         }
     }
 
@@ -81,31 +59,32 @@ public class IRCClient {
                 retry = 0; // reset retry count on successful connect
                 readLoop();
             } catch (Exception e) {
-                System.out.println("Connection lost: " + e.getMessage());
+                LOGGER.warn("Connection lost", e);
+                successful.set(false);
                 connected.set(false);
             }
 
             // reconnect with backoff
             retry++;
             int delay = Math.min(30, retry * 2); // max 30 seconds
-            System.out.println("Reconnecting in " + delay + "s...");
-            sleep(delay * 1000);
+            LOGGER.info("Reconnecting in {} seconds...", delay);
+            sleep(delay * 1000L);
         }
     }
 
     private void connectOnce() throws Exception {
-        System.out.println("Connecting to Twitch IRC (SSL)...");
+        LOGGER.info("Attempting to connect to IRC");
 
         SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
         socket = (SSLSocket) factory.createSocket("irc.chat.twitch.tv", 6697);
         socket.startHandshake();
 
-        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-        reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+        writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8));
+        reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
         connected.set(true);
 
-        System.out.println("Connected!");
+        LOGGER.info("Successfully connected to IRC");
 
         sendRaw("PASS oauth:" + this.settings.token);
         sendRaw("NICK " + this.settings.channel.toLowerCase());
@@ -117,49 +96,89 @@ public class IRCClient {
 
     private void readLoop() throws Exception {
         String line;
-
         while ((line = reader.readLine()) != null) {
-            System.out.println("<< " + line);
+            lastPing = System.currentTimeMillis();
+            LOGGER.info("<< {}", line);
 
-            if (line.startsWith("PING")) {
-                lastPing = System.currentTimeMillis();
+            if (line.startsWith("@")) {
+                handleTwitchMessage(line);
+            } else if (line.startsWith("PING")) {
                 sendRaw("PONG :" + line.substring(6));
-                continue;
+            } else if (line.contains(" :Welcome, GLHF!") && !successful.get()) {
+                successful.set(true);
+                sendQueue();
             }
         }
-
         throw new IOException("Stream disconnected");
+    }
+
+    private void handleTwitchMessage(@NotNull String line) {
+        try {
+            // Pattern: @<tags> :<source> <command> <params> :<message>
+            String[] parts = line.split(" ", 5);
+            if (parts.length < 5)
+                return;
+            String tagsPart = parts[0];
+            String sourcePart = parts[1];
+            String commandPart = parts[2];
+            String paramsPart = parts[3];
+            String messagePart = parts[4].startsWith(":") ? parts[4].substring(1) : parts[4];
+
+            if (commandPart.equals("PRIVMSG")) {
+                String channel = paramsPart.substring(paramsPart.indexOf('#') + 1);
+
+                // Process the message as needed
+                LOGGER.info("Message in #{}: {}", channel, messagePart);
+                eventHandler.onMessage(channel, messagePart);
+            }
+        } catch (Throwable e) {
+            LOGGER.error("Failed to handle Twitch message: {}", line, e);
+        }
     }
 
     private void watchdogLoop() {
         while (running.get()) {
             sleep(5000);
 
-            // If no ping in 2 minutes -> assume dead
-            if (connected.get() && (System.currentTimeMillis() - lastPing) > 120_000) {
-                System.out.println("Ping timeout — forcing reconnect...");
+            if (connected.get() && (System.currentTimeMillis() - lastPing) > 315_000) {
+                LOGGER.warn("Watchdog loop has been interrupted");
                 close();
             }
         }
     }
 
-    public synchronized void sendRaw(String message) throws IOException {
-        if (!connected.get()) return;
+    public synchronized void sendRaw(@NotNull String message) throws IOException {
+        if (!connected.get())
+            return;
         writer.write(message + "\r\n");
         writer.flush();
-        System.out.println(">> " + message);
+        LOGGER.info(">> {}", message);
     }
 
-    public void sendMessage(String message) throws IOException {
-        sendRaw("PRIVMSG " + this.settings.channel + " :" + message);
+    public void sendMessage(@NotNull String message) throws IOException {
+        final String msg = "PRIVMSG #" + this.settings.channel + " :/me " + message;
+        if (!successful.get() || !connected.get()) {
+            messageQueue.add(msg);
+            return;
+        }
+        sendQueue();
+        sendRaw(msg);
+    }
+
+    private void sendQueue() throws IOException {
+        for (String s : messageQueue)
+            sendRaw(s);
+        messageQueue.clear();
     }
 
     public void close() {
+        running.set(false);
         try {
-            running.set(false);
             socket.close();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            LOGGER.warn("Failed to close IRC connection", e);
         }
         connected.set(false);
+        successful.set(false);
     }
 }

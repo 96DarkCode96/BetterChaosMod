@@ -54,5 +54,6 @@
   "betterchaosmod.integration.twitch": "Twitch",
   "betterchaosmod.changelog.title": "Changelog",
   "betterchaosmod.integration_check.title": "INTEGRATION CHECK",
-  "betterchaosmod.connect.title": "CONNECTING"
+  "betterchaosmod.connect.title": "CONNECTING",
+  "betterchaosmod.option.client.integration.twitch.getToken": "Obtain token"
 }

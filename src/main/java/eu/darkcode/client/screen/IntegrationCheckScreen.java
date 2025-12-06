@@ -1,32 +1,37 @@
 package eu.darkcode.client.screen;
 
 import eu.darkcode.BetterChaosModClient;
+import eu.darkcode.client.EventManager;
+import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.client.voting.integration.IntegrationSettings;
-import eu.darkcode.client.voting.integration.twitch.IRCClient;
+import eu.darkcode.client.voting.integration.twitch.IRCTest;
+import eu.darkcode.client.voting.integration.twitch.TwitchIntegration;
+import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
 import eu.darkcode.client.widgets.OreButton;
+import eu.darkcode.client.widgets.config.OreSwitchOption;
 import eu.darkcode.client.widgets.container.OrePanel;
-import eu.darkcode.client.widgets.impl.OreLabel;
 import eu.darkcode.networking.configuration.ServerboundIntegrationPass;
 import eu.darkcode.voting.IntegrationType;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+@Environment(EnvType.CLIENT)
 public class IntegrationCheckScreen extends BaseScreen {
 
     private final @NotNull PacketSender packetSender;
     private final @NotNull HashSet<IntegrationType> enabled = new HashSet<>();
     private final @NotNull IntegrationSettings settings;
+    private @Nullable CompletableFuture<Map<IntegrationType, Integration>> submitFuture = null;
+    private OreButton connectButton;
 
     public IntegrationCheckScreen(@Nullable Screen parent, @NotNull PacketSender packetSender) {
         super(parent, Component.translatable("betterchaosmod.integration_check.title"));
@@ -41,17 +46,20 @@ public class IntegrationCheckScreen extends BaseScreen {
 
     @Override
     protected void init() {
-        final Font font = Minecraft.getInstance().font;
-
         final OrePanel panel = new OrePanel(18, 12, 18, 12, 4);
 
-        panel.addChild(new OreLabel(Component.literal("Checking..."), font));
-        panel.addChild(new OreButton(0, 0, 150, 20, Component.literal("Connect")) {
+        panel.addChild(new OreSwitchOption(Component.literal("Twitch"), null,
+                enabled.contains(IntegrationType.TWITCH), value -> toggle(value, IntegrationType.TWITCH), true));
+        connectButton = panel.addChild(new OreButton(0, 0, 150, 20, Component.literal("Connect")) {
             @Override
             public void onPress(InputWithModifiers inputWithModifiers) {
                 submit(enabled);
             }
         });
+        if (submitFuture != null && !submitFuture.isDone()) {
+            connectButton.setActive(false);
+            connectButton.setLabel(Component.literal("Connecting..."));
+        }
 
         this.layout.addBackButton();
         this.layout.addToContents(panel);
@@ -63,19 +71,58 @@ public class IntegrationCheckScreen extends BaseScreen {
         packetSender.disconnect(Component.literal("Integration check cancelled by user."));
     }
 
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return false;
+    }
+
+    private void toggle(boolean on, @NotNull IntegrationType type) {
+        if (on)
+            enabled.add(type);
+        else
+            enabled.remove(type);
+    }
+
     public void submit(@NotNull Set<IntegrationType> enabled) {
-        CompletableFuture<Boolean> chain = CompletableFuture.completedFuture(true);
+        if (submitFuture != null && !submitFuture.isDone())
+            return;
+
+        connectButton.setActive(false);
+        connectButton.setLabel(Component.literal("Connecting..."));
+
+        CompletableFuture<Map<IntegrationType, Integration>> chain = CompletableFuture.completedFuture(new EnumMap<>(IntegrationType.class));
 
         // [TWITCH]
         if (enabled.contains(IntegrationType.TWITCH))
-            chain = chain.thenCombine(IRCClient.testConnection(settings.twitchIntegration), (prev, current) -> prev && current);
+            chain = chain.thenCombine(CompletableFuture.supplyAsync(() -> {
+                IRCTest.TestResult result = IRCTest.testConnection(settings.twitchIntegration).join();
 
-        chain.whenComplete((success, err) -> minecraft.execute(() -> {
-            System.out.println("Response: " + success + " | Error: " + err);
-            if (err != null || !success) {
+                if (result == IRCTest.TestResult.AUTHENTICATION_FAILED && TwitchTokenServer.refreshToken().join())
+                    result = IRCTest.testConnection(settings.twitchIntegration).join();
+
+                if (result == IRCTest.TestResult.SUCCESS)
+                    return new TwitchIntegration(settings.twitchIntegration);
+
+                return null;
+            }), (prev, current) -> {
+                if (current != null)
+                    prev.put(IntegrationType.TWITCH, current);
+                return prev;
+            });
+
+        submitFuture = chain;
+        submitFuture.whenComplete((success, err) -> minecraft.execute(() -> {
+            EventManager eventManager = BetterChaosModClient.instance().eventManager();
+            if (eventManager == null || err != null || success == null || success.size() != enabled.size()) {
+                BetterChaosModClient.LOGGER.error("Integration check failed!", err);
                 packetSender.disconnect(Component.literal("Integration check failed!"));
+
+                if (success != null)
+                    success.forEach((type, integration) -> integration.shutdown());
+
                 return;
             }
+            eventManager.votingSystem().setActiveIntegrations(success.values().stream().toList());
             packetSender.sendPacket(new ServerboundIntegrationPass(enabled.isEmpty() ? EnumSet.noneOf(IntegrationType.class) : EnumSet.copyOf(enabled)));
             onClose();
         }));
