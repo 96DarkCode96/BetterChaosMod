@@ -5,8 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.EventManager;
-import eu.darkcode.client.voting.VotingSystem;
-import eu.darkcode.voting.Poll;
+import eu.darkcode.client.voting.Poll;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -165,8 +164,8 @@ public class SimpleWebSocketServer {
 
         updateStyles();
         EventManager eventManager = BetterChaosModClient.instance().eventManager();
-        if(eventManager != null)
-            broadcastNewPoll(eventManager.votingSystem().currentPoll());
+        if (eventManager != null)
+            broadcastNewPoll(eventManager.votingSystem().poll());
 
         return true;
     }
@@ -261,9 +260,9 @@ public class SimpleWebSocketServer {
 
         obj.addProperty("message", "new_poll");
         JsonObject pollObject = new JsonObject();
-        pollObject.addProperty("pollId", poll.pollId());
+        pollObject.addProperty("pollId", poll.id());
         JsonArray entriesArray = new JsonArray();
-        for (Component entry : poll.entries())
+        for (Component entry : poll.definition().entries())
             entriesArray.add(entry.getString());
         pollObject.add("entries", entriesArray);
         obj.add("poll", pollObject);

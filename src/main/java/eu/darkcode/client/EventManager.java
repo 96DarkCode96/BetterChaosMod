@@ -4,6 +4,7 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
 import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.client.screen.IntegrationCheckScreen;
+import eu.darkcode.client.voting.Poll;
 import eu.darkcode.client.voting.VotingSystem;
 import eu.darkcode.event.Event;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
@@ -48,6 +49,12 @@ public class EventManager {
                     event.endClient();
             }
         });
+
+        if (timerCount % 20 == 15) {
+            Poll poll = votingSystem.poll();
+            if (poll != null)
+                poll.sendVotes();
+        }
     }
 
     public @NotNull VotingSystem votingSystem() {

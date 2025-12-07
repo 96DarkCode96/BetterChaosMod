@@ -2,70 +2,77 @@ package eu.darkcode.client.voting;
 
 import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.voting.integration.Integration;
-import eu.darkcode.voting.Poll;
-import net.minecraft.util.TriState;
+import eu.darkcode.voting.PollDefinition;
+import eu.darkcode.voting.VoteEntry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static eu.darkcode.utils.Utils.COUNT_VOTE_OPTIONS;
-
+@Environment(EnvType.CLIENT)
 public class VotingSystem {
 
-    private final int[] votes = new int[COUNT_VOTE_OPTIONS];
+    private final @NotNull List<Integration> activeIntegrations = new ArrayList<>();
+    private @Nullable Poll poll;
 
-    private @NotNull List<Integration> activeIntegrations = new ArrayList<>();
-    private int totalVotes = 0;
-    private @Nullable Poll currentPoll;
-    private @NotNull TriState pollVisibility = TriState.DEFAULT;
-
-    public void processNewPoll(@NotNull Poll poll) {
-
-        this.totalVotes = 0;
-        Arrays.fill(this.votes, 0);
-
+    public void processNewPoll(@NotNull PollDefinition definition) {
+        this.poll = new Poll(definition);
         for (Integration activeIntegration : this.activeIntegrations)
-            activeIntegration.sendPoll(poll);
-
-        OverlayWebServer.sendPollUpdate(poll);
-        this.currentPoll = poll;
+            activeIntegration.sendPoll(definition);
+        OverlayWebServer.sendPollUpdate(this.poll);
     }
 
     public double percentage(int optionIndex) {
-        if (this.totalVotes == 0)
-            return 0;
-        return (double) this.votes[optionIndex] / this.totalVotes;
+        return poll == null ? 0.0 : poll.percentage(optionIndex);
     }
 
     public int totalVotes() {
-        return this.totalVotes;
+        return poll == null ? 0 : poll.totalVotes();
     }
 
     @NotNull
-    public List<Integration> getActiveIntegrations() {
+    public List<Integration> activeIntegrations() {
         return activeIntegrations;
     }
 
     public void setActiveIntegrations(@NotNull List<Integration> activeIntegrations) {
-        this.activeIntegrations = activeIntegrations;
-        if (currentPoll != null)
-            this.activeIntegrations.forEach(i -> i.sendPoll(this.currentPoll));
+        for (Integration activeIntegration : this.activeIntegrations)
+            if (!activeIntegrations.contains(activeIntegration))
+                activeIntegration.shutdown();
+        this.activeIntegrations.clear();
+
+        this.activeIntegrations.addAll(activeIntegrations);
+        if (poll != null)
+            this.activeIntegrations.forEach(i -> i.sendPoll(this.poll.definition()));
     }
 
-    public @Nullable Poll currentPoll() {
-        return currentPoll;
+    @Nullable
+    public Poll poll() {
+        return poll;
     }
 
     public boolean canViewPoll() {
-        return currentPoll != null && pollVisibility.toBoolean(!activeIntegrations.isEmpty());
+        return poll != null && poll.definition().visibility().orElse(!activeIntegrations.isEmpty());
+    }
+
+    public void receiveUpdate(int pollId, int totalVotes, int @NotNull [] votes) {
+        if (poll == null || poll.id() != pollId)
+            return;
+        poll.receiveUpdate(totalVotes, votes);
     }
 
     public void end() {
         for (Integration activeIntegration : this.activeIntegrations)
             activeIntegration.shutdown();
         OverlayWebServer.sendPollUpdate(null);
+    }
+
+    public void handleVote(int pollId, @NotNull VoteEntry voteEntry) {
+        if (poll == null || poll.id() != pollId)
+            return;
+        poll.recordVote(voteEntry);
     }
 }

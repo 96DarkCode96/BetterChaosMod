@@ -1,5 +1,6 @@
-package eu.darkcode.client.voting.integration.twitch;
+package eu.darkcode.client.voting.integration.twitch.irc;
 
+import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
@@ -11,8 +12,11 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
 public class IRCClient {
@@ -43,6 +47,30 @@ public class IRCClient {
         } catch (InterruptedException e) {
             LOGGER.warn("Sleep interrupted", e);
         }
+    }
+
+    @NotNull
+    private static Map<String, String> parseTags(@NotNull String tagsPart) {
+        if (tagsPart.startsWith("@"))
+            tagsPart = tagsPart.substring(1);
+
+        String[] tagPairs = tagsPart.split(";");
+        return Arrays.stream(tagPairs)
+                .map(tag -> tag.split("=", 2))
+                .collect(Collectors.toMap(
+                        pair -> pair[0],
+                        pair -> pair.length > 1 ? pair[1] : ""
+                ));
+    }
+
+    @NotNull
+    private static IRCUser makeUser(@NotNull String sourcePart, @NotNull Map<String, String> tags) {
+        return new IRCUser(Long.parseLong(tags.get("user-id")), tags.get("display-name"),
+                sourcePart.substring(1, sourcePart.indexOf('!')),
+                Integer.parseInt(tags.getOrDefault("color", "#FFFFFF").substring(1), 16),
+                tags.containsKey("vip"),
+                tags.getOrDefault("mod", "0").equals("1"),
+                tags.getOrDefault("subscriber", "0").equals("1"));
     }
 
     public void start() {
@@ -98,7 +126,6 @@ public class IRCClient {
         String line;
         while ((line = reader.readLine()) != null) {
             lastPing = System.currentTimeMillis();
-            LOGGER.info("<< {}", line);
 
             if (line.startsWith("@")) {
                 handleTwitchMessage(line);
@@ -118,19 +145,14 @@ public class IRCClient {
             String[] parts = line.split(" ", 5);
             if (parts.length < 5)
                 return;
-            String tagsPart = parts[0];
-            String sourcePart = parts[1];
-            String commandPart = parts[2];
-            String paramsPart = parts[3];
-            String messagePart = parts[4].startsWith(":") ? parts[4].substring(1) : parts[4];
 
-            if (commandPart.equals("PRIVMSG")) {
-                String channel = paramsPart.substring(paramsPart.indexOf('#') + 1);
-
-                // Process the message as needed
-                LOGGER.info("Message in #{}: {}", channel, messagePart);
-                eventHandler.onMessage(channel, messagePart);
+            if (parts[2].equals("PRIVMSG")) {
+                Map<String, String> tags = parseTags(parts[0]);
+                if (settings.ignoreSharedChat && tags.containsKey("room-id") && tags.containsKey("source-room-id") && !tags.get("room-id").equals(tags.get("source-room-id")))
+                    return; // shared chat message, ignore
+                eventHandler.onMessage(makeUser(parts[1], tags), parts[3].substring(1), parts[4].substring(1));
             }
+
         } catch (Throwable e) {
             LOGGER.error("Failed to handle Twitch message: {}", line, e);
         }
@@ -152,7 +174,6 @@ public class IRCClient {
             return;
         writer.write(message + "\r\n");
         writer.flush();
-        LOGGER.info(">> {}", message);
     }
 
     public void sendMessage(@NotNull String message) throws IOException {

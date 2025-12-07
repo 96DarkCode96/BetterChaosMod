@@ -1,9 +1,16 @@
 package eu.darkcode.client.voting.integration.twitch;
 
 import eu.darkcode.BetterChaosModClient;
+import eu.darkcode.client.EventManager;
+import eu.darkcode.client.voting.VotingSystem;
 import eu.darkcode.client.voting.integration.Integration;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCClient;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCEvent;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCUser;
 import eu.darkcode.utils.Utils;
-import eu.darkcode.voting.Poll;
+import eu.darkcode.client.voting.Poll;
+import eu.darkcode.voting.PollDefinition;
+import eu.darkcode.voting.VoteEntry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +29,28 @@ public class TwitchIntegration implements Integration, IRCEvent {
         }
     }
 
+    private static void handleVote(@NotNull IRCUser user, @NotNull String message) {
+        int val = message.charAt(0) - '1';
+        if (val < 0 || val > 7)
+            return;
+
+        EventManager eventManager = BetterChaosModClient.instance().eventManager();
+        if (eventManager == null)
+            return;
+
+        VotingSystem votingSystem = eventManager.votingSystem();
+        Poll poll = votingSystem.poll();
+        if (poll == null)
+            return;
+
+        Utils.toOptionIndex(poll.id(), val).ifPresent(voteOption -> {
+            VoteEntry entry = new VoteEntry(user.userId(), user.effectiveName(), voteOption, 1);
+            eventManager.votingSystem().handleVote(poll.id(), entry);
+        });
+    }
+
     @Override
-    public void sendPoll(@NotNull Poll poll) {
+    public void sendPoll(@NotNull PollDefinition poll) {
         if (!client.settings.announceNewPolls)
             return;
         try {
@@ -46,13 +73,11 @@ public class TwitchIntegration implements Integration, IRCEvent {
     }
 
     @Override
-    public void onMessage(@NotNull String channel, @NotNull String message) {
+    public void onMessage(@NotNull IRCUser user, @NotNull String channel, @NotNull String message) {
         message = message.trim();
         if (message.length() == 1) {
-            int val = message.charAt(0) - '1';
-            if (val >= 0 && val <= 7) {
-                BetterChaosModClient.LOGGER.info("Received vote for option {}", val + 1);
-            }
+            handleVote(user, message);
+            return;
         }
     }
 }

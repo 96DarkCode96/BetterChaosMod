@@ -23,8 +23,6 @@ public abstract class MinecraftMixin {
         try {
             return UpdateStatus.getModVersion();
         } catch (Exception e) {
-            System.out.println("Failed to get mod version for title!");
-            e.printStackTrace();
             return operation.call(worldVersion);
         }
     }

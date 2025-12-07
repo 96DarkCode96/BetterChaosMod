@@ -79,15 +79,11 @@ public class BetterChaosModClient implements ClientModInitializer {
         });
 
         ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_HANDSHAKE, (payload, context) -> {
-            System.out.println("<< " + payload.getClass().getName());
-
             context.responseSender().sendPacket(new ServerboundHandshakeAck(UpdateStatus.getModVersion()));
             eventManager = new EventManager(payload.serverSettings());
         });
 
         ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_INTEGRATION_CHECK, (payload, context) -> {
-            System.out.println("<< " + payload.getClass().getName());
-
             if (eventManager == null) {
                 context.responseSender().disconnect(Component.literal("Event manager is not initialized!"));
                 return;
@@ -122,6 +118,15 @@ public class BetterChaosModClient implements ClientModInitializer {
             context.client().execute(() -> {
                 eventManager.votingSystem().processNewPoll(payload.poll());
                 hudManager.hud(CurrentPollPanel.class).newPoll(payload.poll());
+            });
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_POLL_UPDATE, (payload, context) -> {
+            if (eventManager == null)
+                return;
+            context.client().execute(() -> {
+                eventManager.votingSystem().receiveUpdate(payload.pollId(), payload.totalVotes(), payload.votes());
+                hudManager.hud(CurrentPollPanel.class).recalculateEntries();
             });
         });
 

@@ -2,7 +2,7 @@ package eu.darkcode.client.hud;
 
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.voting.VotingSystem;
-import eu.darkcode.voting.Poll;
+import eu.darkcode.voting.PollDefinition;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -25,12 +25,12 @@ public class CurrentPollPanel implements Hud {
     private static final int MARGIN = 10;
 
     private final @NotNull List<ComputedEntry> entries = new ArrayList<>();
-    private @Nullable Poll poll;
+    private @Nullable PollDefinition poll;
     private int panelWidth = 100;
     private int panelHeight = 100;
     private int totalVotes = 0;
 
-    public void newPoll(@NotNull Poll poll) {
+    public void newPoll(@NotNull PollDefinition poll) {
         this.poll = poll;
         recalculateEntries();
     }

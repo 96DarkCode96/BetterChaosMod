@@ -10,4 +10,5 @@ public class TwitchIntegrationSettings {
     public boolean announceNewPolls = true;
     public String refreshToken;
     public long tokenExpiry = -1L;
+    public boolean ignoreSharedChat = true;
 }

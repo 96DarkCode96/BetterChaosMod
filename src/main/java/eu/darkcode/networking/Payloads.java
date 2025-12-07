@@ -24,7 +24,9 @@ public final class Payloads {
 
     public static final CustomPacketPayload.Type<ClientboundEventStartPayload> S2C_EVENT_START = regPlayS2C("event_start", ClientboundEventStartPayload.CODEC);
     public static final CustomPacketPayload.Type<ClientboundPollStartPayload> S2C_POLL_START = regPlayS2C("poll_start", ClientboundPollStartPayload.CODEC);
-    public static final CustomPacketPayload.Type<ClientboundPollUpdateVotesPayload> S2C_POLL_UPDATE = regPlayS2C("poll_update", ClientboundPollUpdateVotesPayload.CODEC);
+    public static final CustomPacketPayload.Type<ClientboundPollUpdateVotesPayload> S2C_POLL_UPDATE = regPlayS2C("poll_update", ClientboundPollUpdateVotesPayload.STREAM_CODEC);
+
+    public static final CustomPacketPayload.Type<ServerboundSendVotesPayload> C2S_SEND_VOTES = regPlayC2S("send_votes", ServerboundSendVotesPayload.CODEC);
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> regConfigS2C(@NotNull String packetId, @NotNull StreamCodec<FriendlyByteBuf, T> codec) {
         CustomPacketPayload.Type<T> reg = reg(packetId);

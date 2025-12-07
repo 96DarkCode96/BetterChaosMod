@@ -4,7 +4,7 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.EventManager;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.client.voting.integration.IntegrationSettings;
-import eu.darkcode.client.voting.integration.twitch.IRCTest;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCTest;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegration;
 import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
 import eu.darkcode.client.widgets.OreButton;

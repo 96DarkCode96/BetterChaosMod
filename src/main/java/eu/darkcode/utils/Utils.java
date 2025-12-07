@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public final class Utils {
 
@@ -27,6 +28,13 @@ public final class Utils {
 
     public static int getVoteOptionIndex(int pollId, int optionIndex) {
         return (pollId % 2 == 0 ? 1 : 5) + optionIndex;
+    }
+
+    @NotNull
+    public static Optional<Integer> toOptionIndex(int pollId, int option) {
+        if (pollId % 2 == 0)
+            return (option >= 1 && option <= 4) ? Optional.of(option - 1) : Optional.empty();
+        return (option >= 5 && option <= 8) ? Optional.of(option - 5) : Optional.empty();
     }
 
     @NotNull
@@ -57,6 +65,6 @@ public final class Utils {
     @NotNull
     @Contract("_ -> new")
     public static ResourceLocation resourceLocation(@NotNull String name) {
-        return ResourceLocation.fromNamespaceAndPath("betterchaosmod", name);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 }

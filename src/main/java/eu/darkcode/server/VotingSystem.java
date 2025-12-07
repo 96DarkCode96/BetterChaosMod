@@ -4,15 +4,21 @@ import eu.darkcode.event.Event;
 import eu.darkcode.event.EventCategory;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.ClientboundPollStartPayload;
+import eu.darkcode.networking.ClientboundPollUpdateVotesPayload;
 import eu.darkcode.utils.Utils;
-import eu.darkcode.voting.Poll;
+import eu.darkcode.voting.PollDefinition;
+import eu.darkcode.voting.VoteEntry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -23,9 +29,7 @@ public class VotingSystem {
     private final @NotNull EventManager eventManager;
     private final @NotNull List<Event> events = new ArrayList<>();
 
-    private final int[] votes = new int[Utils.COUNT_VOTE_OPTIONS];
     private @Nullable Poll poll;
-    private int totalVotes = 0;
 
     public VotingSystem(@NotNull EventManager eventManager) {
         this.eventManager = eventManager;
@@ -44,12 +48,9 @@ public class VotingSystem {
         this.events.forEach(e -> eventNames.add(e.getName()));
         eventNames.add(Component.translatable("betterchaosmod.event.random"));
 
-        this.poll = new Poll(POLL_ID.incrementAndGet(), eventNames);
+        this.poll = new Poll(new PollDefinition(POLL_ID.incrementAndGet(), eventNames, TriState.DEFAULT));
 
-        this.totalVotes = 0;
-        Arrays.fill(this.votes, 0);
-
-        ClientboundPollStartPayload packet = new ClientboundPollStartPayload(poll);
+        ClientboundPollStartPayload packet = new ClientboundPollStartPayload(poll.definition());
         PlayerLookup.all(eventManager.server).forEach(player -> ServerPlayNetworking.send(player, packet));
     }
 
@@ -58,21 +59,20 @@ public class VotingSystem {
         return Objects.requireNonNull(poll, "Poll was accessed before VotingSystem initialization!");
     }
 
+    public void receiveVotes(int pollId, @NotNull List<VoteEntry> votes) {
+        if (poll != null && poll.id() == pollId) {
+            poll.receiveVotes(votes);
+            ClientboundPollUpdateVotesPayload update = new ClientboundPollUpdateVotesPayload(poll.id(), poll.totalVotes(), poll.votes());
+            PlayerLookup.all(eventManager.server).forEach(sender -> ServerPlayNetworking.send(sender, update));
+        }
+    }
+
     @NotNull
     public PollResult endPoll() {
         if (poll == null)
             throw new IllegalStateException("Poll was accessed before VotingSystem initialization!");
 
-        int max = 0;
-        int selected = -1;
-        if (totalVotes > 0) {
-            for (int i = 0; i < this.votes.length; i++) {
-                if (this.votes[i] <= max)
-                    continue;
-                max = this.votes[i];
-                selected = i;
-            }
-        }
+        int selected = poll.pollResult();
 
         Event result;
         if (selected >= 0 && selected < events.size()) {
@@ -83,7 +83,7 @@ public class VotingSystem {
                 throw new IllegalStateException("There was nothing left that could be selected as random event!");
             result = entry.construct();
         }
-        return new PollResult(poll.pollId(), this.totalVotes, this.votes, selected, result);
+        return new PollResult(poll.id(), poll.totalVotes(), poll.votes(), selected, result);
     }
 
     @Nullable

@@ -1,10 +1,10 @@
 package eu.darkcode.client.voting.integration;
 
-import eu.darkcode.voting.Poll;
+import eu.darkcode.voting.PollDefinition;
 import org.jetbrains.annotations.NotNull;
 
 public interface Integration {
-    void sendPoll(@NotNull Poll poll);
+    void sendPoll(@NotNull PollDefinition poll);
 
     void shutdown();
 }

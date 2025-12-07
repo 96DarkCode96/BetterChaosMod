@@ -34,6 +34,8 @@
   "betterchaosmod.option.client.integration.twitch.token": "Twitch Token",
   "betterchaosmod.option.client.integration.twitch.announceNewPolls": "Announce New Polls",
   "betterchaosmod.option.client.integration.twitch.announceNewPolls.description": "Send a message to chat whenever a new event poll starts.",
+  "betterchaosmod.option.client.integration.twitch.ignoreSharedChat": "Ignore Shared Chat",
+  "betterchaosmod.option.client.integration.twitch.ignoreSharedChat.description": "De-duplicate votes coming from shared chat.",
   "betterchaosmod.option.client.overlay.enabled": "Enable Overlay",
   "betterchaosmod.option.client.activeEvents.maxEntries": "Max entries",
   "betterchaosmod.option.client.poll.width": "Poll width",

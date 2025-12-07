@@ -1,6 +1,7 @@
-package eu.darkcode.client.voting.integration.twitch;
+package eu.darkcode.client.voting.integration.twitch.irc;
 
 import eu.darkcode.BetterChaosModClient;
+import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;

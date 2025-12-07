@@ -29,24 +29,24 @@ public enum UpdateStatus {
 
             String versionString = getModVersion();
 
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder(CHECK_URL).GET().timeout(Duration.ofSeconds(5)).setHeader("User-Agent", "BetterChaosMod-" + FabricLoaderImpl.INSTANCE.getEnvironmentType().name()).build();
+            try (HttpClient client = HttpClient.newHttpClient()) {
+                HttpRequest request = HttpRequest.newBuilder(CHECK_URL).GET().timeout(Duration.ofSeconds(5)).setHeader("User-Agent", "BetterChaosMod-" + FabricLoaderImpl.INSTANCE.getEnvironmentType().name()).build();
 
-            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (send.statusCode() != 200)
-                return UNKNOWN;
+                HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+                if (send.statusCode() != 200)
+                    return UNKNOWN;
 
-            JsonObject object = Utils.GSON.fromJson(send.body(), JsonObject.class);
-            if (object.get("status").getAsString().equals("ok")) {
-                JsonObject latest = object.getAsJsonObject("latest");
-                String mod_version = latest.get("mod_version").getAsString();
-                String minecraft_version = latest.get("minecraft_version").getAsString();
-                System.out.println("Mod version: " + mod_version + "-" + minecraft_version);
-                System.out.println("Current version: " + versionString);
-                if (!versionString.equals(mod_version + "-" + minecraft_version))
-                    return OUTDATED;
+                JsonObject object = Utils.GSON.fromJson(send.body(), JsonObject.class);
+                if (object.get("status").getAsString().equals("ok")) {
+                    JsonObject latest = object.getAsJsonObject("latest");
+                    String modVersion = latest.get("mod_version").getAsString();
+                    String minecraftVersion = latest.get("minecraft_version").getAsString();
+                    System.out.println("Mod version: " + modVersion + "-" + minecraftVersion);
+                    System.out.println("Current version: " + versionString);
+                    if (!versionString.equals(modVersion + "-" + minecraftVersion))
+                        return OUTDATED;
+                }
             }
-
             return OK;
         } catch (Throwable e) {
             return UNKNOWN;

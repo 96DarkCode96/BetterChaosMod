@@ -138,14 +138,18 @@ public class ConfigScreen extends BaseScreen {
         OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
 
+        panel.addSwitch("client.integration.twitch.announceNewPolls", "client.integration.twitch.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
+        panel.addSwitch("client.integration.twitch.ignoreSharedChat", "client.integration.twitch.ignoreSharedChat.description", twitchIntegration.ignoreSharedChat, a -> twitchIntegration.ignoreSharedChat = a, enabledOptions);
+
         panel.addChild(new OreButton(0, 0, 150, 20, Component.translatable("betterchaosmod.option.client.integration.twitch.getToken")) {
             @Override
             public void onPress(InputWithModifiers inputWithModifiers) {
                 TwitchTokenServer.openUrl();
             }
-        });
-
-        panel.addSwitch("client.integration.twitch.announceNewPolls", "client.integration.twitch.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
+        }, widget -> {
+            widget.marginLeft(20);
+            widget.marginRight(20);
+        }).setActive(enabledOptions);
 
         overlayConfig();
     }
