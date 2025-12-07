@@ -118,6 +118,8 @@ public class ConfigScreen extends BaseScreen {
                 hud::pollWidth,
                 true
         );
+        panel.addColorOption("client.poll.bar.foreground", null, hud.pollBarForegroundColor(), hud::pollBarForegroundColor, true);
+        panel.addColorOption("client.poll.bar.background", null, hud.pollBarBackgroundColor(), hud::pollBarBackgroundColor, true);
         panel.addSlider(
                 "client.activeEvents.maxEntries",
                 null,

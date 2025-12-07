@@ -47,14 +47,18 @@ public class Poll {
     }
 
     public void recordVote(@NotNull VoteEntry voteEntry) {
-        this.receivedVotes.add(voteEntry);
+        synchronized (receivedVotes) {
+            this.receivedVotes.add(voteEntry);
+        }
     }
 
-    public void sendVotes() {
-        if (this.receivedVotes.isEmpty())
-            return;
-        ClientPlayNetworking.send(new ServerboundSendVotesPayload(pollDefinition.pollId(), this.receivedVotes.stream().toList()));
-        this.receivedVotes.clear();
+    public synchronized void sendVotes() {
+        synchronized (receivedVotes) {
+            if (this.receivedVotes.isEmpty())
+                return;
+            ClientPlayNetworking.send(new ServerboundSendVotesPayload(pollDefinition.pollId(), this.receivedVotes.stream().toList()));
+            this.receivedVotes.clear();
+        }
     }
 
 }

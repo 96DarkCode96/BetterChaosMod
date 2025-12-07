@@ -2,13 +2,13 @@ package eu.darkcode.client.voting.integration.twitch;
 
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.EventManager;
+import eu.darkcode.client.voting.Poll;
 import eu.darkcode.client.voting.VotingSystem;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.client.voting.integration.twitch.irc.IRCClient;
 import eu.darkcode.client.voting.integration.twitch.irc.IRCEvent;
 import eu.darkcode.client.voting.integration.twitch.irc.IRCUser;
 import eu.darkcode.utils.Utils;
-import eu.darkcode.client.voting.Poll;
 import eu.darkcode.voting.PollDefinition;
 import eu.darkcode.voting.VoteEntry;
 import net.fabricmc.api.EnvType;
@@ -30,8 +30,8 @@ public class TwitchIntegration implements Integration, IRCEvent {
     }
 
     private static void handleVote(@NotNull IRCUser user, @NotNull String message) {
-        int val = message.charAt(0) - '1';
-        if (val < 0 || val > 7)
+        int val = message.charAt(0) - '0';
+        if (val < 1 || val > 8)
             return;
 
         EventManager eventManager = BetterChaosModClient.instance().eventManager();

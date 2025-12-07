@@ -13,6 +13,8 @@ public class HudSettings {
     private int activeEventsVerticalSpacing = 11;
     private int activeEventsMaxEntries = 8;
     private int pollWidth = 200;
+    private int pollBarBackgroundColor = 0xFF009999;
+    private int pollBarForegroundColor = 0xFFFFFFFF;
 
     public int pollWidth() {
         return pollWidth;
@@ -62,5 +64,21 @@ public class HudSettings {
 
     public void timerBackgroundColor(int timerBackgroundColor) {
         this.timerBackgroundColor = timerBackgroundColor;
+    }
+
+    public int pollBarForegroundColor() {
+        return pollBarForegroundColor;
+    }
+
+    public void pollBarForegroundColor(int pollBarForegroundColor) {
+        this.pollBarForegroundColor = pollBarForegroundColor;
+    }
+
+    public int pollBarBackgroundColor() {
+        return pollBarBackgroundColor;
+    }
+
+    public void pollBarBackgroundColor(int pollBarBackgroundColor) {
+        this.pollBarBackgroundColor = pollBarBackgroundColor;
     }
 }

@@ -42,7 +42,7 @@ public class CurrentPollPanel implements Hud {
         if (this.poll == null)
             return;
 
-        double[] previousPercentage = this.entries.stream().mapToDouble(computedEntry -> computedEntry.percentage).toArray();
+        double[] previousPercentage = this.entries.stream().mapToDouble(e -> e.percentage).toArray();
         if (previousPercentage.length != poll.entries().size())
             previousPercentage = new double[poll.entries().size()];
 
@@ -106,23 +106,27 @@ public class CurrentPollPanel implements Hud {
     private void renderEntry(@NotNull GuiGraphics graphics, @NotNull DeltaTracker delta, int y, @NotNull CurrentPollPanel.ComputedEntry entry) {
         final Font font = Minecraft.getInstance().font;
 
-        if (entry.time < 1)
+        double percDelta;
+        if (entry.time < 1) {
             entry.time += .05;
-
-        double percDelta = entry.previousPercentage + entry.time * (entry.percentage - entry.previousPercentage);
-
-        graphics.fill(MARGIN, y, MARGIN + (int) (panelWidth * percDelta), y + panelHeight, 0xFF009999);
-
-        y += ENTRY_VERTICAL_PADDING;
-        graphics.drawString(font, entry.optionNumber + ".", MARGIN + 4, y, 0xFFFFFFFF);
-        {
-            String percentage = String.format("%.0f%%", entry.percentage * 100);
-            int w = font.width(percentage);
-            graphics.drawString(font, percentage, MARGIN - 4 + panelWidth - w, y, 0xFFFFFFFF);
+            percDelta = entry.previousPercentage + entry.time * (entry.percentage - entry.previousPercentage);
+        } else {
+            percDelta = entry.percentage;
         }
 
+        graphics.fill(MARGIN + 2, y + 2, MARGIN + 2 + (int) ((panelWidth - 4) * percDelta), y + entry.height - 4, BetterChaosModClient.instance().settings().hud.pollBarBackgroundColor());
+
+        y += ENTRY_VERTICAL_PADDING;
+        final int color = BetterChaosModClient.instance().settings().hud.pollBarForegroundColor();
+
+        graphics.drawString(font, entry.optionNumber + ".", MARGIN + 4, y, color, false);
+
+        String percentage = String.format("%.0f%%", entry.percentage * 100);
+        int w = font.width(percentage);
+        graphics.drawString(font, percentage, MARGIN - 4 + panelWidth - w, y, color, false);
+
         for (FormattedCharSequence line : entry.lines) {
-            graphics.drawString(font, line, MARGIN + 16, y, 0xFFFFFFFF);
+            graphics.drawString(font, line, MARGIN + 16, y, color, false);
             y += font.lineHeight + LINE_SPACE;
         }
     }

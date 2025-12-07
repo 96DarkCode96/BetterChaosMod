@@ -39,6 +39,8 @@
   "betterchaosmod.option.client.overlay.enabled": "Enable Overlay",
   "betterchaosmod.option.client.activeEvents.maxEntries": "Max entries",
   "betterchaosmod.option.client.poll.width": "Poll width",
+  "betterchaosmod.option.client.poll.bar.foreground": "Event text color",
+  "betterchaosmod.option.client.poll.bar.background": "Event bar color",
   "betterchaosmod.option.client.timer.height": "Timer height",
   "betterchaosmod.option.client.timer.foreground": "Timer foreground",
   "betterchaosmod.option.client.timer.background": "Timer background",
