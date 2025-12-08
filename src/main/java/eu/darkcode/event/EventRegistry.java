@@ -56,6 +56,8 @@ public class EventRegistry {
         register(registry, OnlySideways.ENTRY);
         register(registry, InvertedControls.ENTRY);
 
+        register(registry, SwapHands.ENTRY);
+
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
 

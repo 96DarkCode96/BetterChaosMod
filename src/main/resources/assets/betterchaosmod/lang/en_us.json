@@ -19,6 +19,7 @@
   "betterchaosmod.event.only_backwards": "Only Backwards Movement",
   "betterchaosmod.event.only_sideways": "Crab Movement",
   "betterchaosmod.event.inverted_controls": "Inverted Controls",
+  "betterchaosmod.event.swap_hands": "Swap Hands",
   "betterchaosmod.options.title": "Better Chaos Mod",
   "betterchaosmod.config.title": "CONFIGURATION",
   "betterchaosmod.option_section.server": "Server",
