@@ -9,10 +9,11 @@
 	],
 	"contact": {
         "email": "support@matejtomecek.eu",
-        "homepage": "https://store.matejtomecek.eu/betterchaosmod"
+        "homepage": "https://projects.matejtomecek.eu/p/betterchaosmod"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/betterchaosmod/icon.png",
+	"accessWidener": "betterchaosmod.classtweaker",
 	"environment": "*",
 	"entrypoints": {
 		"main": [

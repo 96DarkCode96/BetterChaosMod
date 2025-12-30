@@ -8,6 +8,8 @@ import java.util.function.UnaryOperator;
 public final class SharedProperties {
 
     public static @Nullable UnaryOperator<Input> moveEditor = null;
+    public static boolean disableSounds = false;
+    public static boolean jumpscareActive = false;
 
     private SharedProperties() {
     }

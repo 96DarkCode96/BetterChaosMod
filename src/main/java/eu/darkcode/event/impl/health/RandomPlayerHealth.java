@@ -1,4 +1,4 @@
-package eu.darkcode.event.impl;
+package eu.darkcode.event.impl.health;
 
 import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;

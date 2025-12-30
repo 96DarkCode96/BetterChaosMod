@@ -25,6 +25,7 @@ loom {
             sourceSet sourceSets.main
         }
     }
+    accessWidenerPath = file("src/main/resources/betterchaosmod.classtweaker")
 }
 
 dependencies {

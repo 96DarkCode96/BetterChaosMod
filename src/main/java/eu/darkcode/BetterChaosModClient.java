@@ -18,8 +18,17 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworkin
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -35,6 +44,17 @@ public class BetterChaosModClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static KeyMapping KEYBIND_OPEN_GAME_LOG;
     private static BetterChaosModClient instance;
+
+    public static final ResourceLocation jumpscareId = ResourceLocation.fromNamespaceAndPath("betterchaosmod", "jumpscare");
+    public static final SoundEvent jumpscareEvent = SoundEvent.createVariableRangeEvent(jumpscareId);
+
+    public static final OptionInstance<Double> jumpscareOption = new OptionInstance<>("soundCategory.jumpscare", OptionInstance.noTooltip(),
+            (component, d) -> d == 0.0 ? Options.genericValueLabel(component, CommonComponents.OPTION_OFF) :
+                    Component.translatable("options.percent_value", component, (int) (d * 100.0)), OptionInstance.UnitDouble.INSTANCE, 1.0, v -> {
+        Minecraft minecraft = Minecraft.getInstance();
+        SoundManager soundManager = minecraft.getSoundManager();
+        soundManager.updateSourceVolume(SoundSource.MASTER);
+    });
 
     public @NotNull UpdateStatus updateStatus = UpdateStatus.UNKNOWN;
     private ClientSettings settings = new ClientSettings();
@@ -93,6 +113,8 @@ public class BetterChaosModClient implements ClientModInitializer {
         });
 
         registerPlayNetworking();
+
+        Registry.register(BuiltInRegistries.SOUND_EVENT, jumpscareId, jumpscareEvent);
 
         OverlaySettings overlay = settings.overlay;
         if (overlay.enabled)

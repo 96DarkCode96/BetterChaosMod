@@ -19,6 +19,9 @@ public class HudManager {
         registry.put(Timer.class, new Timer());
         registry.put(ActiveEventsPanel.class, new ActiveEventsPanel());
         registry.put(CurrentPollPanel.class, new CurrentPollPanel());
+
+
+        registry.put(JumpscareImage.class, new JumpscareImage());
     }
 
     public void render(@NotNull GuiGraphics graphics, @NotNull DeltaTracker deltaTracker, boolean hideGui) {

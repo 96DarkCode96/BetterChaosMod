@@ -11,7 +11,10 @@
       "BossHealthOverlayMixin",
       "MinecraftMixin",
       "TitleScreenMixin",
-      "WindowMixin"
+      "WindowMixin",
+	  "SoundOptionsScreenMixin",
+	  "SoundEngineMixin",
+	  "OptionsMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1

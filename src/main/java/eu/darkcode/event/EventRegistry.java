@@ -2,6 +2,10 @@ package eu.darkcode.event;
 
 import com.mojang.serialization.Lifecycle;
 import eu.darkcode.event.impl.*;
+import eu.darkcode.event.impl.health.AddHeart;
+import eu.darkcode.event.impl.health.HalfHeart;
+import eu.darkcode.event.impl.health.RandomPlayerHealth;
+import eu.darkcode.event.impl.health.RemoveHeart;
 import eu.darkcode.event.impl.move.*;
 import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
@@ -35,7 +39,6 @@ public class EventRegistry {
         WritableRegistry<Entry<?>> registry = new MappedRegistry<>(REGISTRY_KEY, Lifecycle.stable());
 
         register(registry, RandomPlayerHeight.ENTRY);
-        register(registry, HalfHeart.ENTRY);
         register(registry, Adventure.ENTRY);
         register(registry, DropInventory.ENTRY);
         register(registry, DropItemInHand.ENTRY);
@@ -57,8 +60,15 @@ public class EventRegistry {
         register(registry, InvertedControls.ENTRY);
 
         register(registry, SwapHands.ENTRY);
-        register(registry, RandomPlayerHealth.ENTRY);
         register(registry, MadSecurity.ENTRY);
+
+        register(registry, RandomPlayerHealth.ENTRY);
+        register(registry, HalfHeart.ENTRY);
+        register(registry, AddHeart.ENTRY);
+        register(registry, RemoveHeart.ENTRY);
+
+        register(registry, Deaf.ENTRY);
+        register(registry, Jumpscare.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
@@ -85,7 +95,8 @@ public class EventRegistry {
 
     public record Entry<T extends Event>(@NotNull String key, @NotNull Supplier<T> constructor,
                                          @NotNull StreamCodec<RegistryFriendlyByteBuf, Event> codec,
-                                         @Nullable EventCategory category, @NotNull EventServerType serverType) {
+                                         @Nullable EventCategory category, @NotNull EventServerType serverType,
+                                         boolean disableAccessibility) {
         @Contract(pure = true, value = "-> new")
         public T construct() {
             return constructor.get();
@@ -98,6 +109,7 @@ public class EventRegistry {
         private @Nullable StreamCodec<RegistryFriendlyByteBuf, Event> codec;
         private @Nullable EventCategory category;
         private @NotNull EventServerType eventServerType = EventServerType.BOTH;
+        private boolean disableAccessibility = false;
 
         private Builder(@NotNull String key, @NotNull Supplier<T> constructor) {
             this.key = key;
@@ -122,6 +134,12 @@ public class EventRegistry {
             return this;
         }
 
+        @Contract("-> this")
+        public Builder<T> disableAccessibility() {
+            this.disableAccessibility = true;
+            return this;
+        }
+
         @Contract("-> new")
         public Entry<T> build() {
             if (codec == null) {
@@ -137,7 +155,7 @@ public class EventRegistry {
                     }
                 };
             }
-            return new Entry<>(key, constructor, codec, category, eventServerType);
+            return new Entry<>(key, constructor, codec, category, eventServerType, disableAccessibility);
         }
     }
 }

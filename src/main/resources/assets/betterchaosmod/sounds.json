@@ -1,0 +1,10 @@
+{
+  "jumpscare": {
+    "sounds": [
+      {
+        "name": "betterchaosmod:jumpscare",
+        "stream": false
+      }
+    ]
+  }
+}
