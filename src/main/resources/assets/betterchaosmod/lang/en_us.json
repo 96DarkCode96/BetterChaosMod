@@ -20,6 +20,8 @@
   "betterchaosmod.event.only_sideways": "Crab Movement",
   "betterchaosmod.event.inverted_controls": "Inverted Controls",
   "betterchaosmod.event.swap_hands": "Swap Hands",
+  "betterchaosmod.event.random_player_health": "Random Player Health",
+  "betterchaosmod.event.mad_security": "Mad Security",
   "betterchaosmod.options.title": "Better Chaos Mod",
   "betterchaosmod.config.title": "CONFIGURATION",
   "betterchaosmod.option_section.server": "Server",

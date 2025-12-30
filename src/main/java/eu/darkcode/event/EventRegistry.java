@@ -57,6 +57,8 @@ public class EventRegistry {
         register(registry, InvertedControls.ENTRY);
 
         register(registry, SwapHands.ENTRY);
+        register(registry, RandomPlayerHealth.ENTRY);
+        register(registry, MadSecurity.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
