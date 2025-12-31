@@ -4,7 +4,6 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.SharedProperties;
 import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;
-import eu.darkcode.event.InstantEvent;
 import eu.darkcode.event.TimedEvent;
 import eu.darkcode.server.EventManager;
 import net.fabricmc.api.EnvType;
@@ -13,12 +12,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.NotNull;
 
+import static eu.darkcode.event.EventCategory.VISUAL;
+
 /**
  * @author _dark_code_
  * @date 30.12.2025
  **/
 public class Jumpscare extends TimedEvent {
-    public static final EventRegistry.Entry<?> ENTRY = EventRegistry.entry("jumpscare", Jumpscare::new).disableAccessibility().build();
+    public static final EventRegistry.Entry<?> ENTRY = EventRegistry.entry("jumpscare", Jumpscare::new).disableAccessibility().category(VISUAL).build();
 
     @Override
     public void start(@NotNull EventManager manager) {

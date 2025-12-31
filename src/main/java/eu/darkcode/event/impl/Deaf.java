@@ -27,13 +27,13 @@ public class Deaf extends TimedEvent {
     @Override
     public void startClient() {
         super.startClient();
-        SharedProperties.disableSounds = true;
+        SharedProperties.soundVolumeEditor = (a, b) -> 0f;
     }
 
     @Override
     public void endClient() {
         super.endClient();
-        SharedProperties.disableSounds = false;
+        SharedProperties.soundVolumeEditor = null;
     }
 
     @Override

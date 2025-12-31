@@ -1,15 +1,20 @@
 package eu.darkcode.client;
 
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.world.entity.player.Input;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 
 public final class SharedProperties {
 
     public static @Nullable UnaryOperator<Input> moveEditor = null;
-    public static boolean disableSounds = false;
+    public static @Nullable BiFunction<Float, SoundInstance, Float> soundVolumeEditor = null;
+    public static @Nullable BiFunction<Float, SoundInstance, Float> soundPitchEditor = null;
     public static boolean jumpscareActive = false;
+    public static boolean noDrops = false;
+    public static boolean randomDrops = false;
 
     private SharedProperties() {
     }

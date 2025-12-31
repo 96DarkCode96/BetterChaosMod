@@ -55,6 +55,8 @@ public class EventRegistry {
         register(registry, NoJump.ENTRY);
         register(registry, ForceForwards.ENTRY);
         register(registry, ForceBackwards.ENTRY);
+        register(registry, ForceJump.ENTRY);
+        register(registry, ForceSneak.ENTRY);
         register(registry, OnlyBackwards.ENTRY);
         register(registry, OnlySideways.ENTRY);
         register(registry, InvertedControls.ENTRY);
@@ -69,6 +71,16 @@ public class EventRegistry {
 
         register(registry, Deaf.ENTRY);
         register(registry, Jumpscare.ENTRY);
+        register(registry, PotatoPC.ENTRY);
+
+        register(registry, CageTrap.ENTRY);
+        register(registry, Czechcloud.ENTRY);
+
+        register(registry, LowPitch.ENTRY);
+        register(registry, HighPitch.ENTRY);
+
+        register(registry, RandomDrops.ENTRY);
+        register(registry, NoDrops.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }

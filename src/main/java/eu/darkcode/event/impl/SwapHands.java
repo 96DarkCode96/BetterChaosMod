@@ -35,20 +35,25 @@ public class SwapHands extends TimedEvent {
         OptionInstance<HumanoidArm> opt = Minecraft.getInstance().options.mainHand();
         humanoidArm = opt.get();
         opt.set(humanoidArm.getOpposite());
+        Minecraft.getInstance().player.setMainArm(humanoidArm.getOpposite());
     }
 
     @Override
     public void endClient() {
         super.endClient();
-        if (humanoidArm != null)
+        if (humanoidArm != null) {
             Minecraft.getInstance().options.mainHand().set(humanoidArm);
+            Minecraft.getInstance().player.setMainArm(humanoidArm);
+        }
     }
 
     @Override
     public void tickClient() {
         super.tickClient();
-        if (humanoidArm != null)
+        if (humanoidArm != null) {
             Minecraft.getInstance().options.mainHand().set(humanoidArm.getOpposite());
+            Minecraft.getInstance().player.setMainArm(humanoidArm.getOpposite());
+        }
     }
 
     @Override

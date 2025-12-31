@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class FallingAnvil extends InstantEvent {
 
-    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("falling_anvil", FallingAnvil::new).build();
+    public static final EventRegistry.Entry<?> ENTRY = EventRegistry.entry("falling_anvil", FallingAnvil::new).build();
 
     @Override
     public void start(@NotNull EventManager manager) {

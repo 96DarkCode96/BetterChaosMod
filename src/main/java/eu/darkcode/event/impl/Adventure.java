@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class Adventure extends TimedEvent {
 
-    public static EventRegistry.Entry<?> ENTRY = EventRegistry.entry("adventure", Adventure::new).build();
+    public static final EventRegistry.Entry<?> ENTRY = EventRegistry.entry("adventure", Adventure::new).build();
 
     @Override
     public void start(@NotNull EventManager manager) {
