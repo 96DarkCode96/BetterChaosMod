@@ -45,7 +45,7 @@ public class EventManager {
 
     public void tick() {
         if (timerCount == 0) {
-            int selectCooldown = BetterChaosMod.instance().settings().eventSelectCooldown;
+            int selectCooldown = BetterChaosMod.instance().settings().eventRepetitionCooldown;
             Event pop;
             while (!this.activeEvents.isEmpty() && this.activeEvents.size() > selectCooldown && (pop = this.activeEvents.getFirst()) != null && pop.ended())
                 this.activeEvents.removeFirst();

@@ -12,6 +12,7 @@ import eu.darkcode.client.widgets.OreButton;
 import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
+import eu.darkcode.event.EventRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -26,7 +27,7 @@ public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
     private final @NotNull ClientSettings clientSettings;
     private @NotNull Category category = Category.SERVER;
-    private OrePanel panel;
+    private ScrollOrePanel panel;
     private OreInputOption overlayWebPort;
 
     public ConfigScreen(OptionsScreen parent) {
@@ -56,7 +57,7 @@ public class ConfigScreen extends BaseScreen {
                 setInitialFocus(option);
         }
 
-        panel = new OrePanel();
+        panel = new ScrollOrePanel();
 
         switch (category) {
             case Category.SERVER -> serverConfig();
@@ -94,6 +95,23 @@ public class ConfigScreen extends BaseScreen {
                 a -> settings.timerDuration = a * 20,
                 enabledOptions
         );
+        panel.addSlider(
+                "server.repetition_cooldown",
+                "server.repetition_cooldown.desc",
+                settings.eventRepetitionCooldown, 3, 10,
+                i -> Component.literal(i + " cycles"),
+                a -> settings.eventRepetitionCooldown = a,
+                enabledOptions
+        );
+        panel.addCategory(
+                Component.translatable("betterchaosmod.option.category.server.events"),
+                Component.literal("Total: " + EventRegistry.EVENTS.size() + " events")
+        );
+        for (EventRegistry.Entry<?> event : EventRegistry.EVENTS) {
+            panel.addSwitch(Component.translatable("betterchaosmod.event." + event.key()), null, true, b -> {
+
+            }, enabledOptions);
+        }
     }
 
     private void clientConfig() {
@@ -189,6 +207,14 @@ public class ConfigScreen extends BaseScreen {
         });
     }
 
+    @Override
+    public boolean mouseScrolled(double d, double e, double f, double g) {
+        panel.scrollAmount -= (int) (g * 5);
+        if (panel.scrollAmount < 0)
+            panel.scrollAmount = 0;
+        return super.mouseScrolled(d, e, f, g);
+    }
+
     private enum Category {
         SERVER("server", "server"),
         CLIENT("client", "client"),
@@ -210,4 +236,7 @@ public class ConfigScreen extends BaseScreen {
         }
     }
 
+    private static class ScrollOrePanel extends OrePanel {
+        private int scrollAmount = 0;
+    }
 }

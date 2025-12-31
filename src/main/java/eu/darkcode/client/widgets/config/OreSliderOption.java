@@ -27,7 +27,8 @@ public class OreSliderOption extends OreOption {
         descriptionLabel = description == null ? null : addChild(new OreLabel(description, Minecraft.getInstance().font).setColor(0xFFAAAAAA));
         slider = addChild(new OreSlider(value, min, max, val -> {
             valueConsumer.accept(val);
-            valueLabel.setText(formatter.apply(val));
+            valueLabel.setTextAndWidth(formatter.apply(val));
+            valueLabel.setX(getRight() - valueLabel.getWidth() - 18);
         }));
         slider.setActive(enabled);
     }

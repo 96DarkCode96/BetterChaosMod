@@ -10,7 +10,7 @@ public final class Settings {
         public void encode(FriendlyByteBuf buf, Settings settings) {
             buf.writeInt(settings.timerDuration);
             buf.writeInt(settings.eventDuration);
-            buf.writeInt(settings.eventSelectCooldown);
+            buf.writeInt(settings.eventRepetitionCooldown);
         }
 
         @Override
@@ -18,11 +18,11 @@ public final class Settings {
             Settings settings = new Settings();
             settings.timerDuration = buf.readInt();
             settings.eventDuration = buf.readInt();
-            settings.eventSelectCooldown = buf.readInt();
+            settings.eventRepetitionCooldown = buf.readInt();
             return settings;
         }
     };
     public int timerDuration = 900; // 45s
     public int eventDuration = 600; // 30s
-    public int eventSelectCooldown = 5; // Event is held as active for 5 timer cycles, then can be picked again
+    public int eventRepetitionCooldown = 6; // Event is held as active for 6 timer cycles, then can be picked again
 }

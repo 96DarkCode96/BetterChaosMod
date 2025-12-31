@@ -1,6 +1,8 @@
 package eu.darkcode.client.hud;
 
 import eu.darkcode.BetterChaosModClient;
+import eu.darkcode.client.EventManager;
+import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.voting.VotingSystem;
 import eu.darkcode.voting.PollDefinition;
 import net.minecraft.client.DeltaTracker;
@@ -100,7 +102,12 @@ public class CurrentPollPanel implements Hud {
 
     @Override
     public boolean enabled(boolean hideGui) {
-        return !hideGui;
+        if (hideGui)
+            return false;
+        EventManager eventManager = BetterChaosModClient.instance().eventManager();
+        if (eventManager == null)
+            return false;
+        return eventManager.votingSystem().canViewPoll() && !OverlayWebServer.running();
     }
 
     private void renderEntry(@NotNull GuiGraphics graphics, @NotNull DeltaTracker delta, int y, @NotNull CurrentPollPanel.ComputedEntry entry) {

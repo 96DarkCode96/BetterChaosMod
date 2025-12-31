@@ -82,6 +82,13 @@ public class EventRegistry {
         register(registry, RandomDrops.ENTRY);
         register(registry, NoDrops.ENTRY);
 
+        register(registry, Blind.ENTRY);
+        register(registry, Levitation.ENTRY);
+        register(registry, MiningFatigue.ENTRY);
+        register(registry, Blaze.ENTRY);
+        register(registry, Creeper.ENTRY);
+        register(registry, FastAndFurious.ENTRY);
+
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
 

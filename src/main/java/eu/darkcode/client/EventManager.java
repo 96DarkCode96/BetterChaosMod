@@ -50,7 +50,7 @@ public class EventManager {
             }
         });
 
-        if (timerCount % 20 == 15) {
+        if (timerCount % 10 == 5) {
             Poll poll = votingSystem.poll();
             if (poll != null)
                 poll.sendVotes();
