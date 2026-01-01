@@ -15,6 +15,9 @@ public final class SharedProperties {
     public static boolean jumpscareActive = false;
     public static boolean noDrops = false;
     public static boolean randomDrops = false;
+    public static boolean invertedMouse = false;
+    public static boolean noWorld = false;
+    public static boolean xray = false;
 
     private SharedProperties() {
     }

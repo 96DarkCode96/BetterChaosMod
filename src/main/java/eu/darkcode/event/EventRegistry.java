@@ -3,10 +3,7 @@ package eu.darkcode.event;
 import com.mojang.serialization.Lifecycle;
 import eu.darkcode.Settings;
 import eu.darkcode.event.impl.*;
-import eu.darkcode.event.impl.health.AddHeart;
-import eu.darkcode.event.impl.health.HalfHeart;
-import eu.darkcode.event.impl.health.RandomPlayerHealth;
-import eu.darkcode.event.impl.health.RemoveHeart;
+import eu.darkcode.event.impl.health.*;
 import eu.darkcode.event.impl.move.*;
 import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
@@ -46,6 +43,7 @@ public class EventRegistry {
         register(registry, CageTrap.ENTRY);
         register(registry, Creeper.ENTRY);
         register(registry, Czechcloud.ENTRY);
+        register(registry, DamageItems.ENTRY);
         register(registry, Deaf.ENTRY);
         register(registry, DropInventory.ENTRY);
         register(registry, DropItemInHand.ENTRY);
@@ -66,6 +64,7 @@ public class EventRegistry {
         register(registry, LowPitch.ENTRY);
         register(registry, LowSensitivity.ENTRY);
         register(registry, MadSecurity.ENTRY);
+        register(registry, Medkit.ENTRY);
         register(registry, MiningFatigue.ENTRY);
         register(registry, NoDrops.ENTRY);
         register(registry, NoJump.ENTRY);
@@ -77,9 +76,14 @@ public class EventRegistry {
         register(registry, RandomPlayerHealth.ENTRY);
         register(registry, RandomPlayerHeight.ENTRY);
         register(registry, RemoveHeart.ENTRY);
+        register(registry, Sandstorm.ENTRY);
+        register(registry, Sinkhole.ENTRY);
+        register(registry, SpawnRandomEnemies.ENTRY);
         register(registry, SwapHands.ENTRY);
+        register(registry, TNT.ENTRY);
         register(registry, Warden.ENTRY);
         register(registry, WeakLegs.ENTRY);
+        register(registry, WhereIsMyWorld.ENTRY);
         register(registry, Wither.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();

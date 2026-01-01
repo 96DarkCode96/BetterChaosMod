@@ -33,11 +33,13 @@ public class InvertedControls extends TimedEvent {
     public void startClient() {
         super.startClient();
         SharedProperties.moveEditor = input -> new Input(input.backward(), input.forward(), input.right(), input.left(), input.shift(), input.sprint(), input.jump());
+        SharedProperties.invertedMouse = true;
     }
 
     @Override
     public void endClient() {
         super.endClient();
         SharedProperties.moveEditor = null;
+        SharedProperties.invertedMouse = false;
     }
 }

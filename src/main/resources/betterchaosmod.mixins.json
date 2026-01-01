@@ -15,7 +15,8 @@
       "WindowMixin",
 	  "SoundOptionsScreenMixin",
 	  "SoundEngineMixin",
-	  "OptionsMixin"
+	  "OptionsMixin",
+	  "MouseHandlerMixin"
     ],
 	"injectors": {
 		"defaultRequire": 1
