@@ -90,6 +90,11 @@ public final class OverlayWebServer {
         return http != null;
     }
 
+    public static void sendPollVotes(int totalVotes, int @NotNull [] votes){
+        if(wsServer != null)
+            wsServer.broadcastPollVotes(totalVotes, votes);
+    }
+
     public static void sendPollUpdate(@Nullable Poll poll) {
         if (wsServer != null)
             wsServer.broadcastNewPoll(poll);

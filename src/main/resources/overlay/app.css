@@ -37,9 +37,38 @@ body {
     gap: 6px;
 }
 #poll .poll-entry{
+    --percentage: 0%;
+
+    position: relative;
     display: flex;
     flex-direction: row;
     gap: calc(8px * var(--var_scale, 1));
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+
+    /* Base background */
+    background: #1f2933; /* dark gray */
+    color: white;
+}
+#poll .poll-entry::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    width: var(--percentage, 0);
+    background: linear-gradient(
+            90deg,
+            #22c55e,
+            #16a34a
+    );
+
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+    z-index: 0;
+}
+#poll .poll-entry > *{
+    position: relative;
+    z-index: 1;
 }
 #poll .poll-entry .entry-name{
     word-wrap: break-word;

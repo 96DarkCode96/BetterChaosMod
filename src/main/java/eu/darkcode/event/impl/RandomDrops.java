@@ -29,4 +29,9 @@ public class RandomDrops extends TimedEvent {
     public @NotNull EventRegistry.Entry<? extends Event> entry() {
         return ENTRY;
     }
+
+    @Override
+    public int duration() {
+        return super.duration() / 2;
+    }
 }

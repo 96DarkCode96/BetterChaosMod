@@ -62,6 +62,7 @@ public class VotingSystem {
         if (poll == null || poll.id() != pollId)
             return;
         poll.receiveUpdate(totalVotes, votes);
+        OverlayWebServer.sendPollVotes(totalVotes, votes);
     }
 
     public void end() {

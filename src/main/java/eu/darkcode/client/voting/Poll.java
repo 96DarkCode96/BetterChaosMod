@@ -33,6 +33,10 @@ public class Poll {
         return this.totalVotes;
     }
 
+    public int[] votes(){
+        return this.votes;
+    }
+
     public @NotNull PollDefinition definition() {
         return this.pollDefinition;
     }

@@ -23,17 +23,36 @@
         poll.appendChild(entriesDiv);
     }
 
+    function updateVotes(object){
+        let totalVotes = object['totalVotes'];
+        let votes = object['votes']; // jsonarray of votes of indexes 0-3
+        console.log(totalVotes);
+        console.log(votes);
+        document.getElementById('total-votes').innerHTML = totalVotes;
+
+        for (let i = 0; i < object['votes'].length; i++) {
+            let vote = totalVotes === 0 ? 0 : (votes[i] / totalVotes);
+            let percent = Math.round(vote * 100);
+
+            let el = document.getElementById(`entry-${i}`);
+            el.style.setProperty('--percentage', percent + "%");
+            document.getElementById(`votes-${i}`).textContent = percent;
+        }
+    }
+
     let ws;
 
     function updateStyle(object) {
+        let style = document.body.style;
         if (object['gui_scale'])
-            document.body.style.setProperty('--var_scale', object['gui_scale']);
+            style.setProperty('--var_scale', object['gui_scale']);
         if (object['timer_height'])
-            document.body.style.setProperty('--var_timer_height', object['timer_height'] + 'px');
+            style.setProperty('--var_timer_height', object['timer_height'] + 'px');
     }
 
     function connect() {
         ws = new WebSocket('ws://localhost:6180');
+        poll.innerHTML = 'Connecting...';
         ws.onopen = () => console.log('WS connected');
         ws.onmessage = (ev) => {
             const obj = JSON.parse(ev.data);
@@ -47,6 +66,9 @@
                     break;
                 case 'update_style':
                     updateStyle(obj['style']);
+                    break;
+                case 'poll_votes':
+                    updateVotes(obj['data']);
                     break;
                 default:
                     console.warn('Unknown message type: ' + type);
