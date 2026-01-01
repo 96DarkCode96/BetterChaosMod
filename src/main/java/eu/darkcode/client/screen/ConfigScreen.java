@@ -26,8 +26,8 @@ import static eu.darkcode.client.widgets.utils.Ore.PASSWORD_FORMATTER;
 public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
     private final @NotNull ClientSettings clientSettings;
-    private @NotNull Category category = Category.SERVER;
-    private ScrollOrePanel panel;
+    private @NotNull Category category = Category.GENERAL;
+    private OrePanel panel = null;
     private OreInputOption overlayWebPort;
 
     public ConfigScreen(OptionsScreen parent) {
@@ -57,11 +57,14 @@ public class ConfigScreen extends BaseScreen {
                 setInitialFocus(option);
         }
 
-        panel = new ScrollOrePanel();
+        int preserveScroll = 0;
+        if (panel != null)
+            preserveScroll = panel.scrollAmount();
+        panel = new OrePanel();
 
         switch (category) {
-            case Category.SERVER -> serverConfig();
-            case Category.CLIENT -> clientConfig();
+            case Category.GENERAL -> generalConfig();
+            case Category.GRAPHICS -> clientConfig();
             default -> integrationConfig();
         }
 
@@ -69,6 +72,7 @@ public class ConfigScreen extends BaseScreen {
         this.layout.addToContents(sidebar);
         this.layout.addToContents(panel);
         super.init();
+        panel.scrollTo(preserveScroll);
     }
 
     public void reinit() {
@@ -77,7 +81,7 @@ public class ConfigScreen extends BaseScreen {
         this.init();
     }
 
-    private void serverConfig() {
+    private void generalConfig() {
         boolean enabledOptions = Minecraft.getInstance().level == null;
         panel.addSlider(
                 "server.duration.event",
@@ -103,14 +107,25 @@ public class ConfigScreen extends BaseScreen {
                 a -> settings.eventRepetitionCooldown = a,
                 enabledOptions
         );
+        panel.addCategory("server.accessibility", null);
+        panel.addSwitch("server.accessibility", "server.accessibility.desc", settings.disableAccessibility, b -> {
+            settings.disableAccessibility = b;
+            reinit();
+        }, enabledOptions);
         panel.addCategory(
                 Component.translatable("betterchaosmod.option.category.server.events"),
                 Component.literal("Total: " + EventRegistry.EVENTS.size() + " events")
         );
+        boolean minEvents = EventRegistry.EVENTS.size() - settings.disabledEvents.size() <= 10;
         for (EventRegistry.Entry<?> event : EventRegistry.EVENTS) {
-            panel.addSwitch(Component.translatable("betterchaosmod.event." + event.key()), null, true, b -> {
-
-            }, enabledOptions);
+            boolean enabled = event.enabled(settings);
+            panel.addSwitch(Component.translatable("betterchaosmod.event." + event.key()), null, enabled, b -> {
+                if (Boolean.FALSE.equals(b))
+                    settings.disabledEvents.add(event.key());
+                else
+                    settings.disabledEvents.removeIf(a -> a.equals(event.key()));
+                reinit();
+            }, enabledOptions && !event.disabledByAccessibility(settings) && (!enabled || !minEvents));
         }
     }
 
@@ -209,16 +224,14 @@ public class ConfigScreen extends BaseScreen {
 
     @Override
     public boolean mouseScrolled(double d, double e, double f, double g) {
-        panel.scrollAmount -= (int) (g * 5);
-        if (panel.scrollAmount < 0)
-            panel.scrollAmount = 0;
+        this.layout.scrollContent(d, e, f, g);
         return super.mouseScrolled(d, e, f, g);
     }
 
     private enum Category {
-        SERVER("server", "server"),
-        CLIENT("client", "client"),
-        INTEGRATION("client.integration", "integration");
+        GENERAL("general", "server"),
+        GRAPHICS("graphics", "client"),
+        INTEGRATION("integration", "integration");
         private final @NotNull String key;
         private final @Nullable String sprite;
 
@@ -236,7 +249,4 @@ public class ConfigScreen extends BaseScreen {
         }
     }
 
-    private static class ScrollOrePanel extends OrePanel {
-        private int scrollAmount = 0;
-    }
 }

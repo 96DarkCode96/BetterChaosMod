@@ -96,4 +96,11 @@ public class ScreenLayout extends AbstractLayout<OreElement> {
     public int getHeight() {
         return this.screen.height;
     }
+
+    public void scrollContent(double x, double y, double sx, double sy) {
+        this.contents.visitChildren(oreElement -> {
+            if(oreElement instanceof OrePanel op)
+                op.scrollBy(sy);
+        });
+    }
 }

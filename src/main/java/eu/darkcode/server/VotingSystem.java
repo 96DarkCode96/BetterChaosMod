@@ -1,5 +1,6 @@
 package eu.darkcode.server;
 
+import eu.darkcode.BetterChaosMod;
 import eu.darkcode.event.Event;
 import eu.darkcode.event.EventCategory;
 import eu.darkcode.event.EventRegistry;
@@ -96,7 +97,8 @@ public class VotingSystem {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        return EventRegistry.pickRandomEvent(entry -> !activeSet.contains(entry) && !alreadyPicked.contains(entry) && (entry.category() == null || !activeCategories.contains(entry.category())));
+        return EventRegistry.pickRandomEvent(entry ->
+                entry.enabled(BetterChaosMod.instance().settings()) && !activeSet.contains(entry) && !alreadyPicked.contains(entry) && (entry.category() == null || !activeCategories.contains(entry.category())));
     }
 
     public record PollResult(int pollId, int totalVotes, int[] votes, int selected, @NotNull Event event) {

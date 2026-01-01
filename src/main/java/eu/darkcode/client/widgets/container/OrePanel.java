@@ -3,8 +3,10 @@ package eu.darkcode.client.widgets.container;
 import eu.darkcode.client.widgets.OreElement;
 import eu.darkcode.client.widgets.config.*;
 import eu.darkcode.client.widgets.utils.Ore;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,9 @@ public class OrePanel extends AbstractLayout<OrePanel.ChildWrapper> implements R
     private int paddingBottom;
     private int paddingRight;
     private int spacing;
+
+    private int scrollAmount = 0;
+    private int unscrolledY;
 
     public OrePanel() {
         this(1, 1, 1, 1, 1);
@@ -131,6 +136,46 @@ public class OrePanel extends AbstractLayout<OrePanel.ChildWrapper> implements R
             posY -= spacing;
         width += paddingLeft + paddingRight;
         height = posY + paddingBottom;
+    }
+
+    public int scrollAmount(){
+        return this.scrollAmount;
+    }
+
+    public void scrollUp() {
+        scrollTo(0);
+    }
+
+    public void scrollDown() {
+        scrollTo(maxScrollAmount());
+    }
+
+    public void scrollTo(int value) {
+        value = Math.min(value, maxScrollAmount());
+        value = Math.max(value, 0);
+
+        updateScrollPositions(value - this.scrollAmount);
+
+        this.scrollAmount = value;
+    }
+
+    public void scrollBy(double yDelta) {
+        scrollTo(this.scrollAmount - (int) (yDelta * 10));
+    }
+
+    public int maxScrollAmount() {
+        Screen screen = Minecraft.getInstance().screen;
+        return screen != null ? -(screen.height - height - unscrolledY - 10) : 0;
+    }
+
+    private void updateScrollPositions(int deltaAdd) {
+        super.setY(getY() - deltaAdd);
+    }
+
+    @Override
+    public void setY(int i) {
+        this.unscrolledY = i;
+        super.setY(i - scrollAmount);
     }
 
     public static class ChildWrapper {

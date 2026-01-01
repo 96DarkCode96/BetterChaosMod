@@ -52,8 +52,8 @@ public class OreColorOption extends OreOption {
 
         setHeight(height);
 
-        if (colorWidget.getHeight() + 24 > height)
-            setHeight(colorWidget.getHeight() + 24);
+        if (colorWidget.getHeight() + 16 > height)
+            setHeight(colorWidget.getHeight() + 16);
 
         colorWidget.setX(getRight() - 18 - colorWidget.getWidth());
         colorWidget.setY(getY() + (getHeight() - colorWidget.getHeight()) / 2);

@@ -1,6 +1,7 @@
 package eu.darkcode.event;
 
 import com.mojang.serialization.Lifecycle;
+import eu.darkcode.Settings;
 import eu.darkcode.event.impl.*;
 import eu.darkcode.event.impl.health.AddHeart;
 import eu.darkcode.event.impl.health.HalfHeart;
@@ -38,56 +39,48 @@ public class EventRegistry {
     private static Registry<Entry<?>> bakeEvents() {
         WritableRegistry<Entry<?>> registry = new MappedRegistry<>(REGISTRY_KEY, Lifecycle.stable());
 
-        register(registry, RandomPlayerHeight.ENTRY);
+        register(registry, AddHeart.ENTRY);
         register(registry, Adventure.ENTRY);
+        register(registry, Blaze.ENTRY);
+        register(registry, Blind.ENTRY);
+        register(registry, CageTrap.ENTRY);
+        register(registry, Creeper.ENTRY);
+        register(registry, Czechcloud.ENTRY);
+        register(registry, Deaf.ENTRY);
         register(registry, DropInventory.ENTRY);
         register(registry, DropItemInHand.ENTRY);
-        register(registry, WeakLegs.ENTRY);
-        register(registry, Wither.ENTRY);
-        register(registry, Warden.ENTRY);
-        register(registry, LowSensitivity.ENTRY);
-        register(registry, HighSensitivity.ENTRY);
-        register(registry, Invulnerability.ENTRY);
-        register(registry, FallingLava.ENTRY);
         register(registry, FallingAnvil.ENTRY);
-
-        register(registry, NoMove.ENTRY);
-        register(registry, NoJump.ENTRY);
+        register(registry, FallingLava.ENTRY);
+        register(registry, FastAndFurious.ENTRY);
         register(registry, ForceForwards.ENTRY);
         register(registry, ForceBackwards.ENTRY);
         register(registry, ForceJump.ENTRY);
         register(registry, ForceSneak.ENTRY);
+        register(registry, HalfHeart.ENTRY);
+        register(registry, HighPitch.ENTRY);
+        register(registry, HighSensitivity.ENTRY);
+        register(registry, InvertedControls.ENTRY);
+        register(registry, Invulnerability.ENTRY);
+        register(registry, Jumpscare.ENTRY);
+        register(registry, Levitation.ENTRY);
+        register(registry, LowPitch.ENTRY);
+        register(registry, LowSensitivity.ENTRY);
+        register(registry, MadSecurity.ENTRY);
+        register(registry, MiningFatigue.ENTRY);
+        register(registry, NoDrops.ENTRY);
+        register(registry, NoJump.ENTRY);
+        register(registry, NoMove.ENTRY);
         register(registry, OnlyBackwards.ENTRY);
         register(registry, OnlySideways.ENTRY);
-        register(registry, InvertedControls.ENTRY);
-
-        register(registry, SwapHands.ENTRY);
-        register(registry, MadSecurity.ENTRY);
-
-        register(registry, RandomPlayerHealth.ENTRY);
-        register(registry, HalfHeart.ENTRY);
-        register(registry, AddHeart.ENTRY);
-        register(registry, RemoveHeart.ENTRY);
-
-        register(registry, Deaf.ENTRY);
-        register(registry, Jumpscare.ENTRY);
         register(registry, PotatoPC.ENTRY);
-
-        register(registry, CageTrap.ENTRY);
-        register(registry, Czechcloud.ENTRY);
-
-        register(registry, LowPitch.ENTRY);
-        register(registry, HighPitch.ENTRY);
-
         register(registry, RandomDrops.ENTRY);
-        register(registry, NoDrops.ENTRY);
-
-        register(registry, Blind.ENTRY);
-        register(registry, Levitation.ENTRY);
-        register(registry, MiningFatigue.ENTRY);
-        register(registry, Blaze.ENTRY);
-        register(registry, Creeper.ENTRY);
-        register(registry, FastAndFurious.ENTRY);
+        register(registry, RandomPlayerHealth.ENTRY);
+        register(registry, RandomPlayerHeight.ENTRY);
+        register(registry, RemoveHeart.ENTRY);
+        register(registry, SwapHands.ENTRY);
+        register(registry, Warden.ENTRY);
+        register(registry, WeakLegs.ENTRY);
+        register(registry, Wither.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }
@@ -119,6 +112,14 @@ public class EventRegistry {
         @Contract(pure = true, value = "-> new")
         public T construct() {
             return constructor.get();
+        }
+
+        public boolean enabled(@NotNull Settings settings) {
+            return !disabledByAccessibility(settings) && !settings.disabledEvents.contains(key);
+        }
+
+        public boolean disabledByAccessibility(@NotNull Settings settings) {
+            return disableAccessibility && settings.disableAccessibility;
         }
     }
 

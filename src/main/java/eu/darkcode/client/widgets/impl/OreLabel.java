@@ -46,13 +46,18 @@ public class OreLabel extends AbstractOreElement implements Renderable {
     public void setTextAndWidth(@NotNull Component text) {
         this.text = text;
         setWidth(font.width(text.getVisualOrderText()));
-        updateText();
     }
 
     private void updateText() {
         cachedText = font.split(text, getWidth());
         int textHeight = cachedText.size() * font.lineHeight - 1;
         this.setHeight(textHeight);
+    }
+
+    @Override
+    public void setWidth(int width) {
+        super.setWidth(width);
+        updateText();
     }
 
     @Override

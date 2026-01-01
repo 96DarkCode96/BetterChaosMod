@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 
 public class OreSwitch extends OreBiStateElement {
 
-    private static final @NotNull SpriteAtlas SWITCH_ON = new SpriteAtlas("widget/switch_on", "widget/switch_on_hover", null, null);
-    private static final @NotNull SpriteAtlas SWITCH_OFF = new SpriteAtlas("widget/switch_off", "widget/switch_off_hover", null, null);
+    private static final @NotNull SpriteAtlas SWITCH_ON = new SpriteAtlas("widget/switch_on", "widget/switch_on_hover", "widget/switch_on_disabled", null);
+    private static final @NotNull SpriteAtlas SWITCH_OFF = new SpriteAtlas("widget/switch_off", "widget/switch_off_hover", "widget/switch_off_disabled", null);
 
     private final @NotNull Consumer<Boolean> onChange;
 

@@ -15,6 +15,7 @@ public class OreSwitchOption extends OreOption {
 
     private final @NotNull OreLabel nameLabel;
     private final @Nullable OreLabel descriptionLabel;
+
     private final @NotNull OreSwitch switchWidget;
 
     public OreSwitchOption(@NotNull Component name, @Nullable Component description, boolean value, @NotNull Consumer<Boolean> valueConsumer, boolean enabled) {
@@ -42,6 +43,7 @@ public class OreSwitchOption extends OreOption {
 
         if (descriptionLabel != null) {
             height += 4;
+            descriptionLabel.setWidth(getWidth() - 44 - switchWidget.getWidth());
             descriptionLabel.setX(getX() + 18);
             descriptionLabel.setY(getY() + height);
             height += descriptionLabel.getHeight();
@@ -51,8 +53,8 @@ public class OreSwitchOption extends OreOption {
 
         setHeight(height);
 
-        if (switchWidget.getHeight() + 24 > height)
-            setHeight(switchWidget.getHeight() + 24);
+        if (switchWidget.getHeight() + 16 > height)
+            setHeight(switchWidget.getHeight() + 16);
 
         switchWidget.setX(getRight() - 18 - switchWidget.getWidth());
         switchWidget.setY(getY() + (getHeight() - switchWidget.getHeight()) / 2);
