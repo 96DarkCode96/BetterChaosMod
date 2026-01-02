@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 
 public class EventRegistry {
 
-    private static final ResourceKey<Registry<Entry<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("betterchaosmod", "events"));
+    public static final ResourceKey<Registry<Entry<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("betterchaosmod", "events"));
     public static final StreamCodec<RegistryFriendlyByteBuf, Event> CODEC = ByteBufCodecs.registry(REGISTRY_KEY).dispatch(Event::entry, Entry::codec);
     public static final Registry<Entry<?>> EVENTS = bakeEvents();
 
@@ -41,12 +41,14 @@ public class EventRegistry {
         register(registry, Blaze.ENTRY);
         register(registry, Blind.ENTRY);
         register(registry, CageTrap.ENTRY);
+        register(registry, Cobweb.ENTRY);
         register(registry, Creeper.ENTRY);
         register(registry, Czechcloud.ENTRY);
         register(registry, DamageItems.ENTRY);
         register(registry, Deaf.ENTRY);
         register(registry, DropInventory.ENTRY);
         register(registry, DropItemInHand.ENTRY);
+        register(registry, ExplodeNearbyEntities.ENTRY);
         register(registry, FallingAnvil.ENTRY);
         register(registry, FallingLava.ENTRY);
         register(registry, FastAndFurious.ENTRY);
@@ -60,22 +62,31 @@ public class EventRegistry {
         register(registry, InvertedControls.ENTRY);
         register(registry, Invulnerability.ENTRY);
         register(registry, Jumpscare.ENTRY);
+        register(registry, Lava.ENTRY);
         register(registry, Levitation.ENTRY);
         register(registry, LowPitch.ENTRY);
         register(registry, LowSensitivity.ENTRY);
         register(registry, MadSecurity.ENTRY);
         register(registry, Medkit.ENTRY);
+        register(registry, MeteorRain.ENTRY);
+        register(registry, MidasTouch.ENTRY);
         register(registry, MiningFatigue.ENTRY);
+        register(registry, MobRevolution.ENTRY);
         register(registry, NoDrops.ENTRY);
         register(registry, NoJump.ENTRY);
         register(registry, NoMove.ENTRY);
         register(registry, OnlyBackwards.ENTRY);
         register(registry, OnlySideways.ENTRY);
+        register(registry, OrichalcumTouch.ENTRY);
         register(registry, PotatoPC.ENTRY);
         register(registry, RandomDrops.ENTRY);
         register(registry, RandomPlayerHealth.ENTRY);
         register(registry, RandomPlayerHeight.ENTRY);
+        register(registry, RandomPotionEffect.ENTRY);
         register(registry, RemoveHeart.ENTRY);
+        register(registry, RemoveEnchantments.ENTRY);
+        register(registry, RemoveRandomItem.ENTRY);
+        register(registry, Resistance.ENTRY);
         register(registry, Sandstorm.ENTRY);
         register(registry, Sinkhole.ENTRY);
         register(registry, SpawnRandomEnemies.ENTRY);

@@ -52,13 +52,8 @@ public class EventManager {
 
             try {
                 VotingSystem.PollResult res = this.votingSystem.endPoll();
-
-                activeEvents.add(res.event());
-                res.event().start(this);
-
-                ClientboundEventStartPayload packet = new ClientboundEventStartPayload(res.event());
-                PlayerLookup.all(server).forEach(player -> ServerPlayNetworking.send(player, packet));
-
+                Event event = res.event();
+                executeEvent(event);
             } catch (Throwable e) {
                 BetterChaosMod.LOGGER.error("Error when processing events", e);
             }
@@ -78,6 +73,14 @@ public class EventManager {
         PlayerLookup.all(server).forEach(player -> ServerPlayNetworking.send(player, packet));
 
         timerCount--;
+    }
+
+    public void executeEvent(@NotNull Event event) {
+        activeEvents.add(event);
+        event.start(this);
+
+        ClientboundEventStartPayload packet = new ClientboundEventStartPayload(event);
+        PlayerLookup.all(server).forEach(player -> ServerPlayNetworking.send(player, packet));
     }
 
     public void end() {

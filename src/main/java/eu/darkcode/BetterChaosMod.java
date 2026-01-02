@@ -1,5 +1,7 @@
 package eu.darkcode;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.nimbusds.jose.util.Resource;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.ClientboundPollStartPayload;
 import eu.darkcode.networking.ClientboundPollUpdateVotesPayload;
@@ -10,8 +12,14 @@ import eu.darkcode.server.EventManager;
 import eu.darkcode.server.Poll;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.*;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.ResourceArgument;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +63,7 @@ public class BetterChaosMod implements ModInitializer {
                 handler.addTask(new IntegrationCheckTask());
                 return;
             }
-            handler.disconnect(Component.literal("Please download BetterChaosMod! https://projects.matejtomecek.eu/p/betterchaosmod/"));
+            handler.disconnect(Component.literal("Please download BetterChaosMod! https://www.matejtomecek.eu/betterchaosmod/"));
         });
 
         ServerConfigurationNetworking.registerGlobalReceiver(Payloads.C2S_HANDSHAKE_ACK, (payload, context) -> {
@@ -99,6 +107,22 @@ public class BetterChaosMod implements ModInitializer {
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             if (eventManager != null)
                 eventManager.tick();
+        });
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("betterchaosmod");
+            LiteralArgumentBuilder<CommandSourceStack> execute = Commands.literal("execute")
+                    .requires(source -> source.hasPermission(3))
+                    .then(Commands.argument("event", ResourceArgument.resource(registryAccess, EventRegistry.REGISTRY_KEY))
+                            .executes(context -> {
+                                Holder.Reference<EventRegistry.Entry<?>> event = ResourceArgument.getResource(context, "event", EventRegistry.REGISTRY_KEY);
+
+                                if(eventManager != null)
+                                    eventManager.executeEvent(event.value().construct());
+
+                                return 1;
+                            }));
+            dispatcher.register(root.then(execute));
         });
     }
 

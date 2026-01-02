@@ -86,8 +86,6 @@ public class BetterChaosModClient implements ClientModInitializer {
 
         loadSettings();
 
-        settings.lastShownChangelog = null;
-
         hudManager = new HudManager();
         updateStatus = UpdateStatus.checkVersion();
 

@@ -1,0 +1,12 @@
+{
+  "values": [
+    "#betterchaosmod:do_not_replace",
+    "minecraft:water",
+    "minecraft:lava",
+    "minecraft:air",
+    "minecraft:powder_snow",
+    "#minecraft:copper",
+    "#minecraft:copper_ores",
+    "minecraft:raw_copper_block"
+  ]
+}

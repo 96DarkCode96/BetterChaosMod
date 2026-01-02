@@ -1,0 +1,14 @@
+{
+  "values": [
+    "#minecraft:copper",
+    "#minecraft:copper_chests",
+    "#minecraft:copper_ores",
+    "#minecraft:copper_tool_materials",
+    "minecraft:raw_copper",
+    "minecraft:raw_copper_block",
+    "minecraft:carrot",
+    "minecraft:bread",
+    "minecraft:apple",
+    "minecraft:rotten_flesh"
+  ]
+}
