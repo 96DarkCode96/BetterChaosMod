@@ -69,7 +69,7 @@ public class CurrentPollPanel implements Hud {
     }
 
     @Override
-    public void render(HudSettings settings, @NotNull GuiGraphics graphics, @NotNull DeltaTracker deltaTracker) {
+    public void render(HudSettings settings, @NotNull GuiGraphics graphics) {
         if (poll == null)
             return;
 
@@ -94,7 +94,7 @@ public class CurrentPollPanel implements Hud {
 
         // [ENTRIES]
         for (ComputedEntry entry : this.entries) {
-            renderEntry(graphics, deltaTracker, y, entry);
+            renderEntry(graphics, y, entry);
             y += entry.height;
         }
         graphics.pose().popMatrix();
@@ -110,7 +110,7 @@ public class CurrentPollPanel implements Hud {
         return eventManager.votingSystem().canViewPoll() && !OverlayWebServer.running();
     }
 
-    private void renderEntry(@NotNull GuiGraphics graphics, @NotNull DeltaTracker delta, int y, @NotNull CurrentPollPanel.ComputedEntry entry) {
+    private void renderEntry(@NotNull GuiGraphics graphics, int y, @NotNull CurrentPollPanel.ComputedEntry entry) {
         final Font font = Minecraft.getInstance().font;
 
         double percDelta;

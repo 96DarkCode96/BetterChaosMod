@@ -22,7 +22,7 @@ abstract class GuiMixin {
     @Inject(method = "render", at = @At("TAIL"))
     private void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         if (!(minecraft.screen instanceof LevelLoadingScreen)) {
-            BetterChaosModClient.instance().hudManager().render(guiGraphics, deltaTracker, this.minecraft.options.hideGui);
+            BetterChaosModClient.instance().hudManager().render(guiGraphics, this.minecraft.options.hideGui);
         }
     }
 }

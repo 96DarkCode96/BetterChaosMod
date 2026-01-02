@@ -1,7 +1,6 @@
 package eu.darkcode;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.nimbusds.jose.util.Resource;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.networking.ClientboundPollStartPayload;
 import eu.darkcode.networking.ClientboundPollUpdateVotesPayload;
@@ -12,7 +11,6 @@ import eu.darkcode.server.EventManager;
 import eu.darkcode.server.Poll;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.*;
@@ -117,7 +115,7 @@ public class BetterChaosMod implements ModInitializer {
                             .executes(context -> {
                                 Holder.Reference<EventRegistry.Entry<?>> event = ResourceArgument.getResource(context, "event", EventRegistry.REGISTRY_KEY);
 
-                                if(eventManager != null)
+                                if (eventManager != null)
                                     eventManager.executeEvent(event.value().construct());
 
                                 return 1;

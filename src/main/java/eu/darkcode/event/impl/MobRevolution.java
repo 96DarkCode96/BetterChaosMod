@@ -24,10 +24,8 @@ public class MobRevolution extends InstantEvent {
             Vec3 position = player.position();
             AABB area = new AABB(position.add(-80, -80, -80), position.add(80, 80, 80));
             player.level().getEntities(player, area, NeutralMob.class::isInstance).forEach(entity -> {
-                if (entity instanceof NeutralMob nm) {
+                if (entity instanceof NeutralMob nm)
                     nm.setTarget(player);
-                    System.out.println("Revolution entity: " + entity.getClass().getName());
-                }
             });
         });
     }

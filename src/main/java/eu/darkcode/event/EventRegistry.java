@@ -7,6 +7,10 @@ import eu.darkcode.event.impl.health.*;
 import eu.darkcode.event.impl.move.*;
 import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
+import eu.darkcode.event.impl.teleport.TeleportHeaven;
+import eu.darkcode.event.impl.teleport.TeleportRandom;
+import eu.darkcode.event.impl.teleport.TeleportSky;
+import eu.darkcode.event.impl.teleport.TeleportSpawn;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistrationInfo;
@@ -43,6 +47,7 @@ public class EventRegistry {
         register(registry, CageTrap.ENTRY);
         register(registry, Cobweb.ENTRY);
         register(registry, Creeper.ENTRY);
+        register(registry, CreeperAnxiety.ENTRY);
         register(registry, Czechcloud.ENTRY);
         register(registry, DamageItems.ENTRY);
         register(registry, Deaf.ENTRY);
@@ -62,6 +67,7 @@ public class EventRegistry {
         register(registry, InvertedControls.ENTRY);
         register(registry, Invulnerability.ENTRY);
         register(registry, Jumpscare.ENTRY);
+        register(registry, KillerBunny.ENTRY);
         register(registry, Lava.ENTRY);
         register(registry, Levitation.ENTRY);
         register(registry, LowPitch.ENTRY);
@@ -79,6 +85,7 @@ public class EventRegistry {
         register(registry, OnlySideways.ENTRY);
         register(registry, OrichalcumTouch.ENTRY);
         register(registry, PotatoPC.ENTRY);
+        register(registry, Quicksand.ENTRY);
         register(registry, RandomDrops.ENTRY);
         register(registry, RandomPlayerHealth.ENTRY);
         register(registry, RandomPlayerHeight.ENTRY);
@@ -87,10 +94,20 @@ public class EventRegistry {
         register(registry, RemoveEnchantments.ENTRY);
         register(registry, RemoveRandomItem.ENTRY);
         register(registry, Resistance.ENTRY);
+        register(registry, RollCredits.ENTRY);
         register(registry, Sandstorm.ENTRY);
+        register(registry, ShuffleInventory.ENTRY);
         register(registry, Sinkhole.ENTRY);
+        register(registry, SlimeArmy.ENTRY);
         register(registry, SpawnRandomEnemies.ENTRY);
+        register(registry, StarterPack.ENTRY);
         register(registry, SwapHands.ENTRY);
+
+        register(registry, TeleportHeaven.ENTRY);
+        register(registry, TeleportRandom.ENTRY);
+        register(registry, TeleportSky.ENTRY);
+        register(registry, TeleportSpawn.ENTRY);
+
         register(registry, TNT.ENTRY);
         register(registry, Warden.ENTRY);
         register(registry, WeakLegs.ENTRY);

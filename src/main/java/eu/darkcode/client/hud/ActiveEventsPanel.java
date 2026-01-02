@@ -15,7 +15,7 @@ public class ActiveEventsPanel implements Hud {
     private static final int TOP_PADDING = 20;
 
     @Override
-    public void render(HudSettings settings, @NotNull GuiGraphics graphics, @NotNull DeltaTracker deltaTracker) {
+    public void render(HudSettings settings, @NotNull GuiGraphics graphics) {
         List<Event> activeEvents = BetterChaosModClient.instance().eventManager().getActiveEvents();
         int y = settings.timerHeight() + TOP_PADDING;
         for (Event activeEvent : activeEvents) {

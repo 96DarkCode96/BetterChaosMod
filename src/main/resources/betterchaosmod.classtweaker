@@ -11,3 +11,5 @@ accessible method net/minecraft/client/Options$FieldAccess process (Ljava/lang/S
 accessible class net/minecraft/client/Options$OptionAccess
 
 accessible method net/minecraft/client/Options$OptionAccess process (Ljava/lang/String;Lnet/minecraft/client/OptionInstance;)V
+
+accessible method net/minecraft/world/entity/animal/Rabbit setVariant (Lnet/minecraft/world/entity/animal/Rabbit$Variant;)V

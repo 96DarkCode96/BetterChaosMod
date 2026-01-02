@@ -24,10 +24,10 @@ public class HudManager {
         registry.put(JumpscareImage.class, new JumpscareImage());
     }
 
-    public void render(@NotNull GuiGraphics graphics, @NotNull DeltaTracker deltaTracker, boolean hideGui) {
+    public void render(@NotNull GuiGraphics graphics, boolean hideGui) {
         registry.forEach((aClass, hud) -> {
             if (hud.enabled(hideGui))
-                hud.render(BetterChaosModClient.instance().settings().hud, graphics, deltaTracker);
+                hud.render(BetterChaosModClient.instance().settings().hud, graphics);
         });
     }
 
