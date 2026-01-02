@@ -2,19 +2,16 @@ package eu.darkcode.mixin;
 
 import eu.darkcode.client.SharedProperties;
 import eu.darkcode.utils.Utils;
-import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Supplier;
 
@@ -38,14 +35,6 @@ public class BlockMixin {
             itemEntity.setItem(itemStack1);
             itemEntity.setDefaultPickUpDelay();
             level.addFreshEntity(itemEntity);
-        }
-    }
-
-    @Inject(method = "shouldRenderFace", at = @At("HEAD"), cancellable = true)
-    private static void renderFace(BlockState blockState, BlockState blockState2, Direction direction, CallbackInfoReturnable<Boolean> cir) {
-        if (SharedProperties.noWorld) {
-            cir.setReturnValue(false);
-            return;
         }
     }
 

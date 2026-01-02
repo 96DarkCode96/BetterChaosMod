@@ -1,27 +1,28 @@
 {
-	"required": true,
-	"package": "eu.darkcode.mixin",
-	"compatibilityLevel": "JAVA_21",
-	"mixins": [
-	  "BlockMixin"
-	],
-    "client": [
-      "GuiMixin",
-      "OptionsScreenMixin",
-      "KeyboardInputMixin",
-      "BossHealthOverlayMixin",
-      "MinecraftMixin",
-      "TitleScreenMixin",
-      "WindowMixin",
-	  "SoundOptionsScreenMixin",
-	  "SoundEngineMixin",
-	  "OptionsMixin",
-	  "MouseHandlerMixin"
-    ],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	}
+  "required": true,
+  "package": "eu.darkcode.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "BlockMixin"
+  ],
+  "client": [
+    "LevelRendererMixin",
+    "BossHealthOverlayMixin",
+    "GuiMixin",
+    "KeyboardInputMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "OptionsMixin",
+    "OptionsScreenMixin",
+    "SoundEngineMixin",
+    "SoundOptionsScreenMixin",
+    "TitleScreenMixin",
+    "WindowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
 }
