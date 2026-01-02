@@ -65,6 +65,7 @@ public class EventRegistry {
         register(registry, HalfHeart.ENTRY);
         register(registry, HighPitch.ENTRY);
         register(registry, HighSensitivity.ENTRY);
+        register(registry, HungerGames.ENTRY);
         register(registry, InvertedControls.ENTRY);
         register(registry, Invulnerability.ENTRY);
         register(registry, Jumpscare.ENTRY);
