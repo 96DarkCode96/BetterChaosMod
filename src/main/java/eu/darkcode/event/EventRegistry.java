@@ -7,10 +7,7 @@ import eu.darkcode.event.impl.health.*;
 import eu.darkcode.event.impl.move.*;
 import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
-import eu.darkcode.event.impl.teleport.TeleportHeaven;
-import eu.darkcode.event.impl.teleport.TeleportRandom;
-import eu.darkcode.event.impl.teleport.TeleportSky;
-import eu.darkcode.event.impl.teleport.TeleportSpawn;
+import eu.darkcode.event.impl.teleport.*;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistrationInfo;
@@ -54,13 +51,17 @@ public class EventRegistry {
         register(registry, DropInventory.ENTRY);
         register(registry, DropItemInHand.ENTRY);
         register(registry, ExplodeNearbyEntities.ENTRY);
+        register(registry, FakeTeleport.ENTRY);
         register(registry, FallingAnvil.ENTRY);
         register(registry, FallingLava.ENTRY);
         register(registry, FastAndFurious.ENTRY);
+        register(registry, FixItems.ENTRY);
         register(registry, ForceForwards.ENTRY);
         register(registry, ForceBackwards.ENTRY);
         register(registry, ForceJump.ENTRY);
         register(registry, ForceSneak.ENTRY);
+        register(registry, GiveRandomItems.ENTRY);
+        register(registry, GlowingMobs.ENTRY);
         register(registry, HalfHeart.ENTRY);
         register(registry, HighPitch.ENTRY);
         register(registry, HighSensitivity.ENTRY);
@@ -107,6 +108,7 @@ public class EventRegistry {
         register(registry, TeleportRandom.ENTRY);
         register(registry, TeleportSky.ENTRY);
         register(registry, TeleportSpawn.ENTRY);
+        register(registry, TimeToFly.ENTRY);
 
         register(registry, TNT.ENTRY);
         register(registry, Warden.ENTRY);
@@ -138,7 +140,7 @@ public class EventRegistry {
     }
 
     public record Entry<T extends Event>(@NotNull String key, @NotNull Supplier<T> constructor,
-                                         @NotNull StreamCodec<RegistryFriendlyByteBuf, Event> codec,
+                                         @NotNull StreamCodec<RegistryFriendlyByteBuf, T> codec,
                                          @Nullable EventCategory category, @NotNull EventServerType serverType,
                                          boolean disableAccessibility) {
         @Contract(pure = true, value = "-> new")
@@ -158,7 +160,7 @@ public class EventRegistry {
     public static class Builder<T extends Event> {
         private final @NotNull String key;
         private final @NotNull Supplier<T> constructor;
-        private @Nullable StreamCodec<RegistryFriendlyByteBuf, Event> codec;
+        private @Nullable StreamCodec<RegistryFriendlyByteBuf, T> codec;
         private @Nullable EventCategory category;
         private @NotNull EventServerType eventServerType = EventServerType.BOTH;
         private boolean disableAccessibility = false;
@@ -169,7 +171,7 @@ public class EventRegistry {
         }
 
         @Contract("_ -> this")
-        public Builder<T> codec(@Nullable StreamCodec<RegistryFriendlyByteBuf, Event> codec) {
+        public Builder<T> codec(@Nullable StreamCodec<RegistryFriendlyByteBuf, T> codec) {
             this.codec = codec;
             return this;
         }
@@ -197,7 +199,7 @@ public class EventRegistry {
             if (codec == null) {
                 codec = new StreamCodec<>() {
                     @Override
-                    public Event decode(RegistryFriendlyByteBuf object) {
+                    public T decode(RegistryFriendlyByteBuf object) {
                         return constructor.get();
                     }
 

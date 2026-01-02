@@ -1,12 +1,18 @@
 package eu.darkcode.utils;
 
 import com.google.gson.Gson;
+import eu.darkcode.ChaosTags;
+import eu.darkcode.server.EventManager;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -23,6 +29,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -125,5 +132,33 @@ public final class Utils {
         BlockHitResult blockHitResult = level.clip(new ClipContext(position, position.subtract(0, -6, 0), ClipContext.Block.OUTLINE, ClipContext.Fluid.ANY, player));
         if (blockHitResult.getType() == HitResult.Type.MISS || level.getBlockState(blockHitResult.getBlockPos()).liquid())
             level.setBlockAndUpdate(blockPos.below(), Blocks.STONE.defaultBlockState());
+    }
+
+    @NotNull
+    public static Holder.Reference<Item> getRandomItem(@NotNull ServerLevel serverLevel) {
+        Holder.Reference<Item> holder;
+        do {
+            holder = BuiltInRegistries.ITEM.getRandom(RandomSource.create()).orElseThrow();
+        } while (holder.is(ChaosTags.DO_NOT_DROP_RANDOMLY) || !holder.value().requiredFeatures().isSubsetOf(serverLevel.enabledFeatures()));
+        return holder;
+    }
+
+    public static void savePositions(@NotNull EventManager eventManager, @NotNull Map<ServerPlayer, TeleportInfo> positions) {
+        eventManager.activePlayers().forEach(player -> {
+            BlockPos pos = player.blockPosition();
+            positions.put(player, new TeleportInfo(player.level(), pos.getX(), pos.getY(), pos.getZ(), player.getYHeadRot(), player.getXRot()));
+        });
+    }
+
+    public static void loadPositions(@NotNull EventManager eventManager, @NotNull Map<ServerPlayer, TeleportInfo> positions) {
+        eventManager.activePlayers().forEach(player -> {
+            TeleportInfo info = positions.get(player);
+
+            player.fallDistance = 0;
+            player.teleportTo(info.level, info.x + 0.5D, info.y, info.z + 0.5D, Set.of(), info.yaw, info.pitch, true);
+        });
+    }
+
+    public record TeleportInfo(@NotNull ServerLevel level, int x, int y, int z, float yaw, float pitch) {
     }
 }

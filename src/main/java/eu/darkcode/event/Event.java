@@ -60,4 +60,8 @@ public interface Event extends GameLogScreen.GameLogEntry {
 
         return 30;
     }
+
+    default boolean renderDurationBar() {
+        return true;
+    }
 }
