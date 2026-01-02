@@ -45,6 +45,7 @@ public class SpawnRandomEnemies extends InstantEvent {
             EntityType.BLAZE,
             EntityType.BOGGED,
             EntityType.BREEZE,
+            EntityType.BREEZE,
             EntityType.EVOKER,
             EntityType.EVOKER,
             EntityType.ENDERMITE,
@@ -68,7 +69,7 @@ public class SpawnRandomEnemies extends InstantEvent {
     public void start(@NotNull EventManager manager) {
         manager.activePlayers().forEach(player ->{
             RandomSource random = player.getRandom();
-            int max = random.nextInt(2, 10);
+            int max = random.nextInt(4, 20);
             for (int i = 0; i < max; i++) {
                 ENEMY_TYPES.get(random.nextInt(ENEMY_TYPES.size())).spawn(player.level(),
                         monster -> monster.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, -1, 1, false, false, false)),

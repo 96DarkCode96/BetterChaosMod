@@ -46,6 +46,11 @@ public interface Event extends GameLogScreen.GameLogEntry {
         return Component.translatable("betterchaosmod.event." + entry().key());
     }
 
+    @NotNull
+    default Component getVoteName() {
+        return getName();
+    }
+
     @Override
     default int renderGameLogEntry(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float delta, int x, int y, int width) {
         Font font = Minecraft.getInstance().font;

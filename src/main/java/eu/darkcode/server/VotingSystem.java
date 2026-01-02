@@ -46,7 +46,7 @@ public class VotingSystem {
         }
 
         List<Component> eventNames = new ArrayList<>();
-        this.events.forEach(e -> eventNames.add(e.getName()));
+        this.events.forEach(e -> eventNames.add(e.getVoteName()));
         eventNames.add(Component.translatable("betterchaosmod.event.random"));
 
         this.poll = new Poll(new PollDefinition(POLL_ID.incrementAndGet(), eventNames, TriState.DEFAULT));
@@ -91,7 +91,6 @@ public class VotingSystem {
     private EventRegistry.Entry<?> pickRandomEvent(@NotNull Set<EventRegistry.Entry<?>> alreadyPicked) {
         Set<EventRegistry.Entry<?>> activeSet = eventManager.activeEvents().map(Event::entry).collect(Collectors.toSet());
         Set<EventCategory> activeCategories = eventManager.activeEvents()
-                .filter(event -> !event.ended())
                 .map(Event::entry)
                 .map(EventRegistry.Entry::category)
                 .filter(Objects::nonNull)

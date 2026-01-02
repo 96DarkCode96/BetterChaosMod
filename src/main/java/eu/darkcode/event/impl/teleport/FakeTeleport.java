@@ -75,4 +75,9 @@ public class FakeTeleport extends TimedEvent {
     public @NotNull Component getName() {
         return ended() ? super.getName() : teleportEvent.getName();
     }
+
+    @Override
+    public @NotNull Component getVoteName() {
+        return super.getName();
+    }
 }
