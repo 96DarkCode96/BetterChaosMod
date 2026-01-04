@@ -7,6 +7,7 @@ import eu.darkcode.event.impl.health.*;
 import eu.darkcode.event.impl.move.*;
 import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
+import eu.darkcode.event.impl.sensitivity.MouseDrifting;
 import eu.darkcode.event.impl.teleport.*;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
@@ -39,12 +40,14 @@ public class EventRegistry {
 
         register(registry, AddHeart.ENTRY);
         register(registry, Adventure.ENTRY);
+        register(registry, AppleMania.ENTRY);
         register(registry, Blaze.ENTRY);
         register(registry, Blind.ENTRY);
         register(registry, CageTrap.ENTRY);
         register(registry, Cobweb.ENTRY);
         register(registry, Creeper.ENTRY);
         register(registry, CreeperAnxiety.ENTRY);
+        register(registry, CurseArmor.ENTRY);
         register(registry, Czechcloud.ENTRY);
         register(registry, DamageItems.ENTRY);
         register(registry, Deaf.ENTRY);
@@ -72,6 +75,7 @@ public class EventRegistry {
         register(registry, KillerBunny.ENTRY);
         register(registry, Lava.ENTRY);
         register(registry, Levitation.ENTRY);
+        register(registry, LowGravity.ENTRY);
         register(registry, LowPitch.ENTRY);
         register(registry, LowSensitivity.ENTRY);
         register(registry, MadSecurity.ENTRY);
@@ -80,9 +84,11 @@ public class EventRegistry {
         register(registry, MidasTouch.ENTRY);
         register(registry, MiningFatigue.ENTRY);
         register(registry, MobRevolution.ENTRY);
+        register(registry, MouseDrifting.ENTRY);
         register(registry, NoDrops.ENTRY);
         register(registry, NoJump.ENTRY);
         register(registry, NoMove.ENTRY);
+        register(registry, NoSneak.ENTRY);
         register(registry, OnlyBackwards.ENTRY);
         register(registry, OnlySideways.ENTRY);
         register(registry, OrichalcumTouch.ENTRY);
@@ -96,6 +102,7 @@ public class EventRegistry {
         register(registry, RemoveEnchantments.ENTRY);
         register(registry, RemoveRandomItem.ENTRY);
         register(registry, Resistance.ENTRY);
+        register(registry, RideClosestMob.ENTRY);
         register(registry, RollCredits.ENTRY);
         register(registry, Sandstorm.ENTRY);
         register(registry, ShuffleInventory.ENTRY);
@@ -106,6 +113,7 @@ public class EventRegistry {
         register(registry, SwapHands.ENTRY);
 
         register(registry, TeleportHeaven.ENTRY);
+        register(registry, TeleportNearbyEntities.ENTRY);
         register(registry, TeleportRandom.ENTRY);
         register(registry, TeleportSky.ENTRY);
         register(registry, TeleportSpawn.ENTRY);

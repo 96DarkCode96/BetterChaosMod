@@ -18,6 +18,8 @@ public final class SharedProperties {
     public static boolean invertedMouse = false;
     public static boolean noWorld = false;
     public static boolean xray = false;
+    public static double mouseDX = 0;
+    public static double mouseDY = 0;
 
     private SharedProperties() {
     }

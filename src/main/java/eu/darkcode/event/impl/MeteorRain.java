@@ -33,7 +33,7 @@ public class MeteorRain extends TimedEvent {
             manager.activePlayers().forEach(player -> {
                 RandomSource random = player.getRandom();
                 for (int i = 0; i < 7; i++) {
-                    LargeFireball meteor = new LargeFireball(player.level(), player, new Vec3(0, -1d * (random.nextInt(4) + 1), 0), 2);
+                    LargeFireball meteor = new LargeFireball(player.level(), player, new Vec3(0, -1d * (random.nextInt(4) + 1), 0), 4);
                     meteor.snapTo(player.getX() + (random.nextInt(100) - 50), player.getY() + 50 + (random.nextInt(10) - 5), player.getZ() + (random.nextInt(100) - 50), meteor.getYRot(), meteor.getXRot());
                     player.level().addFreshEntity(meteor);
                 }
