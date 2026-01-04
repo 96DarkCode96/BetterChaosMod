@@ -3,6 +3,7 @@ package eu.darkcode.client.screen;
 import eu.darkcode.BetterChaosMod;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
+import eu.darkcode.UpdateStatus;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.overlay.OverlayWebServer;
@@ -13,6 +14,7 @@ import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
 import eu.darkcode.event.EventRegistry;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -37,15 +39,6 @@ public class ConfigScreen extends BaseScreen {
     }
 
     @Override
-    public void onClose() {
-        // [SAVE SERVER SETTINGS]
-        BetterChaosMod.instance().saveSettings();
-        // [SAVE CLIENT SETTINGS]
-        BetterChaosModClient.instance().saveSettings();
-        super.onClose();
-    }
-
-    @Override
     protected void init() {
         OrePanel sidebar = new OrePanel(1, 7, 1, 7, 0);
         for (Category value : Category.values()) {
@@ -55,6 +48,16 @@ public class ConfigScreen extends BaseScreen {
             });
             if (category == value)
                 setInitialFocus(option);
+        }
+
+        UpdateStatus updateStatus = BetterChaosModClient.instance().updateStatus;
+        if (updateStatus == UpdateStatus.OUTDATED) {
+            sidebar.addChild(new OreButton(0, 0, 100, 20, Component.literal("Update available!")) {
+                @Override
+                public void onPress(InputWithModifiers inputWithModifiers) {
+                    Util.getPlatform().openUri(UpdateStatus.UPDATE_LINK);
+                }
+            }, a -> a.margin(10, 0, 10, 0));
         }
 
         int preserveScroll = 0;
@@ -73,6 +76,21 @@ public class ConfigScreen extends BaseScreen {
         this.layout.addToContents(panel);
         super.init();
         panel.scrollTo(preserveScroll);
+    }
+
+    @Override
+    public boolean mouseScrolled(double d, double e, double f, double g) {
+        this.layout.scrollContent(d, e, f, g);
+        return super.mouseScrolled(d, e, f, g);
+    }
+
+    @Override
+    public void onClose() {
+        // [SAVE SERVER SETTINGS]
+        BetterChaosMod.instance().saveSettings();
+        // [SAVE CLIENT SETTINGS]
+        BetterChaosModClient.instance().saveSettings();
+        super.onClose();
     }
 
     public void reinit() {
@@ -220,12 +238,6 @@ public class ConfigScreen extends BaseScreen {
                 return false;
             }
         });
-    }
-
-    @Override
-    public boolean mouseScrolled(double d, double e, double f, double g) {
-        this.layout.scrollContent(d, e, f, g);
-        return super.mouseScrolled(d, e, f, g);
     }
 
     private enum Category {

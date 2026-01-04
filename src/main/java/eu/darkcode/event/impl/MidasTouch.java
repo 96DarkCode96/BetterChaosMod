@@ -27,52 +27,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
+import static eu.darkcode.event.EventCategory.TOUCH;
+
 /**
  * @author _dark_code_
  * @date 02.01.2026
  **/
 public class MidasTouch extends TimedEvent {
 
-    public static final @NotNull EventRegistry.Entry<?> ENTRY = EventRegistry.entry("midas_touch", MidasTouch::new).build();
-
-    @Override
-    public void start(@NotNull EventManager manager) {
-        // ignored
-    }
-
-    @Override
-    public void tick(@NotNull EventManager manager) {
-        super.tick(manager);
-        manager.activePlayers().forEach(player -> {
-            int minX = (int) (player.getX() - (player.getX() < 0 ? 2.5 : 1.5));
-            int minY = (int) player.getY() - 1;
-            int minZ = (int) (player.getZ() - (player.getZ() < 0 ? 2.5 : 1.5));
-            int maxX = minX + 2;
-            int maxY = minY + 3;
-            int maxZ = minZ + 2;
-
-            ServerLevel world = player.level();
-
-            replaceItems(player);
-            killEntities(player, minX, minY, minZ, maxX, maxY, maxZ, world);
-            replaceBlocks(player, minX, maxX, minY, maxY, minZ, maxZ, world);
-        });
-    }
-
-    @Override
-    public void end(@NotNull EventManager manager) {
-        // ignored
-    }
-
-    @Override
-    public @NotNull EventRegistry.Entry<? extends Event> entry() {
-        return ENTRY;
-    }
-
-    @Override
-    public int duration() {
-        return super.duration() / 5;
-    }
+    public static final @NotNull EventRegistry.Entry<?> ENTRY = EventRegistry.entry("midas_touch", MidasTouch::new).category(TOUCH).build();
 
     private static void replaceItems(@NotNull ServerPlayer player) {
         Inventory inventory = player.getInventory();
@@ -193,5 +156,44 @@ public class MidasTouch extends TimedEvent {
                 }
             }
         }
+    }
+
+    @Override
+    public int duration() {
+        return super.duration() / 5;
+    }
+
+    @Override
+    public void end(@NotNull EventManager manager) {
+        // ignored
+    }
+
+    @Override
+    public @NotNull EventRegistry.Entry<? extends Event> entry() {
+        return ENTRY;
+    }
+
+    @Override
+    public void start(@NotNull EventManager manager) {
+        // ignored
+    }
+
+    @Override
+    public void tick(@NotNull EventManager manager) {
+        super.tick(manager);
+        manager.activePlayers().forEach(player -> {
+            int minX = (int) (player.getX() - (player.getX() < 0 ? 2.5 : 1.5));
+            int minY = (int) player.getY() - 1;
+            int minZ = (int) (player.getZ() - (player.getZ() < 0 ? 2.5 : 1.5));
+            int maxX = minX + 2;
+            int maxY = minY + 3;
+            int maxZ = minZ + 2;
+
+            ServerLevel world = player.level();
+
+            replaceItems(player);
+            killEntities(player, minX, minY, minZ, maxX, maxY, maxZ, world);
+            replaceBlocks(player, minX, maxX, minY, maxY, minZ, maxZ, world);
+        });
     }
 }

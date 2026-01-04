@@ -26,13 +26,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
+import static eu.darkcode.event.EventCategory.TOUCH;
+
 /**
  * @author _dark_code_
  * @date 02.01.2026
  **/
 public class OrichalcumTouch extends TimedEvent {
 
-    public static final @NotNull EventRegistry.Entry<?> ENTRY = EventRegistry.entry("orichalcum_touch", OrichalcumTouch::new).build();
+    public static final @NotNull EventRegistry.Entry<?> ENTRY = EventRegistry.entry("orichalcum_touch", OrichalcumTouch::new).category(TOUCH).build();
 
     @Override
     public void start(@NotNull EventManager manager) {
