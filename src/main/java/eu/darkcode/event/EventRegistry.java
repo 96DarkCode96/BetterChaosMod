@@ -43,6 +43,7 @@ public class EventRegistry {
         register(registry, AppleMania.ENTRY);
         register(registry, Blaze.ENTRY);
         register(registry, Blind.ENTRY);
+        register(registry, BruteForce.ENTRY);
         register(registry, CageTrap.ENTRY);
         register(registry, Cobweb.ENTRY);
         register(registry, Creeper.ENTRY);

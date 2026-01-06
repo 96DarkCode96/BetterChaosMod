@@ -13,3 +13,8 @@ accessible class net/minecraft/client/Options$OptionAccess
 accessible method net/minecraft/client/Options$OptionAccess process (Ljava/lang/String;Lnet/minecraft/client/OptionInstance;)V
 
 accessible method net/minecraft/world/entity/animal/Rabbit setVariant (Lnet/minecraft/world/entity/animal/Rabbit$Variant;)V
+
+accessible field net/minecraft/world/entity/Mob goalSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+accessible field net/minecraft/world/entity/Mob targetSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
+
+accessible field net/minecraft/world/entity/ai/attributes/AttributeMap attributes Ljava/util/Map;
