@@ -4,9 +4,10 @@ import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.InstantEvent;
 import eu.darkcode.server.EventManager;
+import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.golem.IronGolem;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -24,8 +25,8 @@ public class MadSecurity extends InstantEvent {
             if (golem == null)
                 return;
             golem.setTarget(player);
-            golem.setPersistentAngerTarget(player.getUUID());
-            golem.setRemainingPersistentAngerTime(20_000);
+            golem.setPersistentAngerTarget(EntityReference.of(player.getUUID()));
+            golem.setTimeToRemainAngry(20_000);
         });
     }
 

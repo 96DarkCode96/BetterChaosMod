@@ -5,7 +5,7 @@ import eu.darkcode.client.widgets.utils.SpriteAtlas;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class OreBiStateElement extends OreWidget {
@@ -20,7 +20,7 @@ public abstract class OreBiStateElement extends OreWidget {
 
     @Override
     protected void renderWidget(@NotNull GuiGraphics g, int mouseX, int mouseY, float delta) {
-        ResourceLocation resourceLocation = getSpriteAtlas().get(isHovered(), isFocused(), isActive());
+        Identifier resourceLocation = getSpriteAtlas().get(isHovered(), isFocused(), isActive());
         g.blitSprite(RenderPipelines.GUI_TEXTURED, resourceLocation, getX(), getY(), getWidth(), getHeight(), 0xFFFFFFFF);
         if (this.isHovered())
             g.requestCursor(this.isActive() ? CursorTypes.POINTING_HAND : CursorTypes.NOT_ALLOWED);

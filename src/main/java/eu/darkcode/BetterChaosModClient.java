@@ -26,7 +26,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.NotNull;
@@ -40,12 +40,12 @@ import static eu.darkcode.utils.Utils.MOD_ID;
 
 public class BetterChaosModClient implements ClientModInitializer {
     private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/client_config.json";
-    private static final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("betterchaosmod", "main"));
+    private static final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("betterchaosmod", "main"));
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static KeyMapping KEYBIND_OPEN_GAME_LOG;
     private static BetterChaosModClient instance;
 
-    public static final ResourceLocation jumpscareId = ResourceLocation.fromNamespaceAndPath("betterchaosmod", "jumpscare");
+    public static final Identifier jumpscareId = Identifier.fromNamespaceAndPath("betterchaosmod", "jumpscare");
     public static final SoundEvent jumpscareEvent = SoundEvent.createVariableRangeEvent(jumpscareId);
 
     public static final OptionInstance<Double> jumpscareOption = new OptionInstance<>("soundCategory.jumpscare", OptionInstance.noTooltip(),
@@ -53,7 +53,7 @@ public class BetterChaosModClient implements ClientModInitializer {
                     Component.translatable("options.percent_value", component, (int) (d * 100.0)), OptionInstance.UnitDouble.INSTANCE, 1.0, v -> {
         Minecraft minecraft = Minecraft.getInstance();
         SoundManager soundManager = minecraft.getSoundManager();
-        soundManager.updateSourceVolume(SoundSource.MASTER);
+        soundManager.refreshCategoryVolume(SoundSource.MASTER);
     });
 
     public @NotNull UpdateStatus updateStatus = UpdateStatus.UNKNOWN;

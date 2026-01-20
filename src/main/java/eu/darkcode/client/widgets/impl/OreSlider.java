@@ -14,7 +14,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.IntConsumer;
@@ -22,7 +22,7 @@ import java.util.function.IntFunction;
 
 public class OreSlider extends OreWidget {
 
-    private static final @NotNull ResourceLocation SPRITE_BAR = Utils.resourceLocation("widget/slider_bar");
+    private static final @NotNull Identifier SPRITE_BAR = Utils.resourceLocation("widget/slider_bar");
 
     private static final @NotNull SpriteAtlas HANDLE_SPRITES = new SpriteAtlas("widget/slider_handle");
 
@@ -58,7 +58,7 @@ public class OreSlider extends OreWidget {
         g.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITE_BAR, getX(), getY() + 4, posX + 2 - getX(), 6, isActive() ? 0xFF639D52 : 0xFF999999);
         g.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITE_BAR, posX, getY() + 4, getRight() - posX, 6, isActive() ? 0xFFA3A4A6 : 0xFF999999);
 
-        final ResourceLocation sprite = HANDLE_SPRITES.get(isHovered(), isFocused(), isActive());
+        final Identifier sprite = HANDLE_SPRITES.get(isHovered(), isFocused(), isActive());
 
         if (isFocused())
             g.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, posX - 1, getY() - 1, HANDLE_WIDTH + 2, HANDLE_HEIGHT + 2, 0xFFFFFFFF);

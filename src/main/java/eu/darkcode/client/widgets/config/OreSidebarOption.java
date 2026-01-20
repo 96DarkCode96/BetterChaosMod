@@ -10,7 +10,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +18,7 @@ public class OreSidebarOption extends OreWidget {
     private static final int ICON_SIZE = 24;
     private final boolean selected;
     private final @NotNull Runnable onClick;
-    private final @Nullable ResourceLocation sprite;
+    private final @Nullable Identifier sprite;
     private final @NotNull Component text;
 
     public OreSidebarOption(@NotNull Component component, @Nullable String spriteLocation, boolean selected, @NotNull Runnable onClick) {

@@ -14,7 +14,7 @@ import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
 import eu.darkcode.event.EventRegistry;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.input.InputWithModifiers;

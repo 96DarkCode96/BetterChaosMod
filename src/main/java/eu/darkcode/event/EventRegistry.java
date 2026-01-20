@@ -9,6 +9,7 @@ import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
 import eu.darkcode.event.impl.sensitivity.MouseDrifting;
 import eu.darkcode.event.impl.teleport.*;
+import eu.darkcode.utils.Utils;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.RegistrationInfo;
@@ -17,8 +18,8 @@ import net.minecraft.core.WritableRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +31,7 @@ import java.util.function.Supplier;
 
 public class EventRegistry {
 
-    public static final ResourceKey<Registry<Entry<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath("betterchaosmod", "events"));
+    public static final ResourceKey<Registry<Entry<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(Utils.resourceLocation("events"));
     public static final StreamCodec<RegistryFriendlyByteBuf, Event> CODEC = ByteBufCodecs.registry(REGISTRY_KEY).dispatch(Event::entry, Entry::codec);
     public static final Registry<Entry<?>> EVENTS = bakeEvents();
 
@@ -130,7 +131,7 @@ public class EventRegistry {
     }
 
     private static <T extends Event> void register(@NotNull WritableRegistry<Entry<?>> registry, @NotNull Entry<T> entry) {
-        registry.register(ResourceKey.create(REGISTRY_KEY, ResourceLocation.fromNamespaceAndPath("betterchaosmod", entry.key)), entry, RegistrationInfo.BUILT_IN);
+        registry.register(ResourceKey.create(REGISTRY_KEY, Identifier.fromNamespaceAndPath("betterchaosmod", entry.key)), entry, RegistrationInfo.BUILT_IN);
     }
 
     public static <T extends Event> Builder<T> entry(@NotNull String key, @NotNull Supplier<T> constructor) {

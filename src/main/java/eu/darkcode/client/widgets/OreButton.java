@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

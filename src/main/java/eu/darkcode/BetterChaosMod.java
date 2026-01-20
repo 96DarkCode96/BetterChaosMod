@@ -19,6 +19,8 @@ import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ public class BetterChaosMod implements ModInitializer {
     private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/config.json";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static BetterChaosMod instance;
+    private static final Permission.HasCommandLevel PERMISSION = new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS);
     private @Nullable EventManager eventManager;
     private Settings settings = new Settings();
 
@@ -110,7 +113,7 @@ public class BetterChaosMod implements ModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             LiteralArgumentBuilder<CommandSourceStack> root = Commands.literal("betterchaosmod");
             LiteralArgumentBuilder<CommandSourceStack> execute = Commands.literal("execute")
-                    .requires(source -> source.hasPermission(3))
+                    .requires(source -> source.permissions().hasPermission(PERMISSION))
                     .then(Commands.argument("event", ResourceArgument.resource(registryAccess, EventRegistry.REGISTRY_KEY))
                             .executes(context -> {
                                 Holder.Reference<EventRegistry.Entry<?>> event = ResourceArgument.getResource(context, "event", EventRegistry.REGISTRY_KEY);

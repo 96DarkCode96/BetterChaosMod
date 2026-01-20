@@ -1,12 +1,12 @@
 package eu.darkcode.client.widgets.utils;
 
 import eu.darkcode.utils.Utils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public record SpriteAtlas(@NotNull ResourceLocation normal, @Nullable ResourceLocation hovered,
-                          @Nullable ResourceLocation disabled, @Nullable ResourceLocation focused) {
+public record SpriteAtlas(@NotNull Identifier normal, @Nullable Identifier hovered,
+                          @Nullable Identifier disabled, @Nullable Identifier focused) {
 
     public SpriteAtlas(@NotNull String basePath, @Nullable String hoveredPath, @Nullable String disabledPath, @Nullable String focusedPath) {
         this(
@@ -27,7 +27,7 @@ public record SpriteAtlas(@NotNull ResourceLocation normal, @Nullable ResourceLo
     }
 
     @NotNull
-    public ResourceLocation get(boolean hovered, boolean focused, boolean active) {
+    public Identifier get(boolean hovered, boolean focused, boolean active) {
         if (!active && this.disabled != null)
             return this.disabled;
         if (focused && this.focused != null)

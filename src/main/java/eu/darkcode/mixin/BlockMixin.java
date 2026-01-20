@@ -5,9 +5,9 @@ import eu.darkcode.utils.Utils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,7 +28,7 @@ public class BlockMixin {
         if (SharedProperties.noDrops || SharedProperties.randomDrops)
             ci.cancel();
 
-        if (SharedProperties.randomDrops && level instanceof ServerLevel serverLevel && !itemStack.isEmpty() && serverLevel.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+        if (SharedProperties.randomDrops && level instanceof ServerLevel serverLevel && !itemStack.isEmpty() && serverLevel.getGameRules().get(GameRules.BLOCK_DROPS)) {
             ItemEntity itemEntity = supplier.get();
             ItemStack itemStack1 = new ItemStack(Utils.getRandomItem(serverLevel));
             itemStack1.setCount(serverLevel.random.nextIntBetweenInclusive(1, itemStack1.getMaxStackSize()));

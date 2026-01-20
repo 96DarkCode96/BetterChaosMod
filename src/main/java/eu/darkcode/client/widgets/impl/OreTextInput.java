@@ -5,7 +5,7 @@ import eu.darkcode.client.widgets.OreWidget;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,7 +19,7 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
@@ -33,7 +33,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class OreTextInput extends OreWidget {
-    private static final ResourceLocation SPRITE = Utils.resourceLocation("widget/text_field");
+    private static final Identifier SPRITE = Utils.resourceLocation("widget/text_field");
     private final @NotNull Font font;
     private final List<TextFormatter> formatters = new ArrayList<>();
     private String value = "";
@@ -115,7 +115,7 @@ public class OreTextInput extends OreWidget {
 
         if (n != l) {
             int p = this.textX + this.font.width(string.substring(0, n));
-            g.textHighlight(Math.min(o, getRight()), this.textY - 1, Math.min(p - 1, getRight()), this.textY + 1 + 9);
+            g.textHighlight(Math.min(o, getRight()), this.textY - 1, Math.min(p - 1, getRight()), this.textY + 1 + 9, true);
         }
 
         if (bl2) {

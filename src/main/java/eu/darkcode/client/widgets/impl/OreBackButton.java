@@ -11,12 +11,12 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public class OreBackButton extends OreWidget {
 
-    private static final @NotNull ResourceLocation SPRITE = Utils.resourceLocation("widget/button_back");
+    private static final @NotNull Identifier SPRITE = Utils.resourceLocation("widget/button_back");
     private final @NotNull BaseScreen screen;
 
     public OreBackButton(@NotNull BaseScreen screen) {

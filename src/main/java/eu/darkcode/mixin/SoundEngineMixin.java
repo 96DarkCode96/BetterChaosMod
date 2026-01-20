@@ -26,7 +26,7 @@ public class SoundEngineMixin {
             ordinal = 2
     )
     private float modifyVolumeVariable(float h, @Local(argsOnly = true) SoundInstance soundInstance) {
-        if (soundInstance != null && soundInstance.getLocation().equals(BetterChaosModClient.jumpscareId))
+        if (soundInstance != null && soundInstance.getIdentifier().equals(BetterChaosModClient.jumpscareId))
             return Math.clamp(BetterChaosModClient.jumpscareOption.get().floatValue(), 0f, 1f);
 
         BiFunction<Float, SoundInstance, Float> soundVolumeEditor = SharedProperties.soundVolumeEditor;

@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -80,8 +80,8 @@ public final class Utils {
 
     @NotNull
     @Contract("_ -> new")
-    public static ResourceLocation resourceLocation(@NotNull String name) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+    public static Identifier resourceLocation(@NotNull String name) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static void teleportPlayer(@NotNull ServerPlayer player, double x, double y, double z) {

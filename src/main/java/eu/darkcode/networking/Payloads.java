@@ -10,7 +10,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 public final class Payloads {
@@ -53,7 +53,7 @@ public final class Payloads {
     }
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> reg(@NotNull String packetId) {
-        return new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(Utils.MOD_ID, packetId));
+        return new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(Utils.MOD_ID, packetId));
     }
 
 }

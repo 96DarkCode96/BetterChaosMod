@@ -5,7 +5,7 @@ import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.TimedEvent;
 import eu.darkcode.server.EventManager;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.projectile.LargeFireball;
+import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 

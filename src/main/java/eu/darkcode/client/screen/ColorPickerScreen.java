@@ -156,10 +156,10 @@ public class ColorPickerScreen extends Screen {
     }
 
     @Override
-    public void resize(Minecraft minecraft, int i, int j) {
-        super.resize(minecraft, i, j);
+    public void resize(int i, int j) {
+        super.resize(i, j);
         if (this.parent != null)
-            this.parent.resize(minecraft, i, j);
+            this.parent.resize(i, j);
     }
 
     private void printInfo(@NotNull GuiGraphics g, int curA, float curHue, float curSat, float curVal) {

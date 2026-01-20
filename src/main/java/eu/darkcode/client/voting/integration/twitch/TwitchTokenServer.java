@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpServer;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.screen.ConfigScreen;
 import eu.darkcode.utils.Utils;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
