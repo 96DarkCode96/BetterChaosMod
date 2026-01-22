@@ -8,8 +8,9 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RangedBowAttackGoal;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.monster.warden.Warden;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +49,9 @@ public class MobRevolution extends InstantEvent {
                 }));
                 if (followRange.getBaseValue() < 80)
                     followRange.setBaseValue(80);
-                if (mob.goalSelector.getAvailableGoals().stream().noneMatch(a -> a.getGoal() instanceof MeleeAttackGoal || a.getGoal() instanceof RangedBowAttackGoal))
-                    mob.goalSelector.addGoal(-1, new MeleeAttackGoal(mob, 1.5, true));
+                if (!(mob instanceof RangedAttackMob) && !(mob instanceof Warden) && mob.goalSelector.getAvailableGoals().stream().map(WrappedGoal::getGoal)
+                        .noneMatch(goal -> goal instanceof MeleeAttackGoal || goal instanceof SwellGoal))
+                    mob.goalSelector.addGoal(-1, new MeleeAttackGoal(mob, 1.15, true));
             });
         });
     }

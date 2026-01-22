@@ -51,7 +51,7 @@ public class RollCredits extends TimedEvent {
 
     @Override
     public int duration() {
-        return (int) (super.duration() * 0.7);
+        return super.duration() / 2;
     }
 
     @Override

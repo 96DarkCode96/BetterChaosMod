@@ -34,11 +34,11 @@ public class BruteForce extends InstantEvent {
             ServerLevel level = player.level();
             BlockPos position = player.blockPosition();
 
-            int amount = random.nextInt(3) + 2; // 2-4
+            int amount = random.nextIntBetweenInclusive(1, 3); // 1-3
             for (int i = 0; i < amount; i++) {
                 PiglinBrute brute = EntityType.PIGLIN_BRUTE.spawn(level, position.offset(random.nextIntBetweenInclusive(-4, 4), random.nextInt(2), random.nextIntBetweenInclusive(-4, 4)), EntitySpawnReason.EVENT);
                 if (brute != null) {
-                    brute.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, -1, 1, false, false, false));
+                    brute.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, -1, 0, false, false, false));
                     brute.setImmuneToZombification(true);
                 }
             }

@@ -17,9 +17,7 @@ class EventTest {
 
     @Test
     void testDisplayName() {
-        EventRegistry.EVENTS.stream().forEach(event -> {
-            Event construct = assertDoesNotThrow(event::construct);
-        });
+        EventRegistry.EVENTS.stream().forEach(event -> assertDoesNotThrow(event::construct));
     }
 
 }

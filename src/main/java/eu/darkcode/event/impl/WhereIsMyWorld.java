@@ -30,7 +30,6 @@ public class WhereIsMyWorld extends TimedEvent {
     @Override
     public void startClient() {
         super.startClient();
-        // TODO: Hide liquid, stairs, flowers...
         SharedProperties.noWorld = true;
         Minecraft.getInstance().levelRenderer.allChanged();
     }
@@ -45,5 +44,10 @@ public class WhereIsMyWorld extends TimedEvent {
     @Override
     public @NotNull EventRegistry.Entry<? extends Event> entry() {
         return ENTRY;
+    }
+
+    @Override
+    public int duration() {
+        return super.duration() / 2;
     }
 }
