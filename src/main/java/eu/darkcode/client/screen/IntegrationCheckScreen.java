@@ -4,6 +4,7 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.EventManager;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.client.voting.integration.IntegrationSettings;
+import eu.darkcode.client.voting.integration.kick.KickIntegration;
 import eu.darkcode.client.voting.integration.twitch.irc.IRCTest;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegration;
 import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
@@ -50,6 +51,8 @@ public class IntegrationCheckScreen extends BaseScreen {
 
         panel.addChild(new OreSwitchOption(Component.literal("Twitch"), null,
                 enabled.contains(IntegrationType.TWITCH), value -> toggle(value, IntegrationType.TWITCH), true));
+        panel.addChild(new OreSwitchOption(Component.literal("Kick"), null,
+                enabled.contains(IntegrationType.KICK), value -> toggle(value, IntegrationType.KICK), true));
         connectButton = panel.addChild(new OreButton(0, 0, 150, 20, Component.literal("Connect")) {
             @Override
             public void onPress(InputWithModifiers inputWithModifiers) {
@@ -107,6 +110,24 @@ public class IntegrationCheckScreen extends BaseScreen {
             }), (prev, current) -> {
                 if (current != null)
                     prev.put(IntegrationType.TWITCH, current);
+                return prev;
+            });
+        // [KICK]
+        if (enabled.contains(IntegrationType.KICK))
+            chain = chain.thenCombine(CompletableFuture.supplyAsync(() -> {
+//                IRCTest.TestResult result = IRCTest.testConnection(settings.twitchIntegration).join();
+//
+//                if (result == IRCTest.TestResult.AUTHENTICATION_FAILED && TwitchTokenServer.refreshToken().join())
+//                    result = IRCTest.testConnection(settings.twitchIntegration).join();
+//
+//                if (result == IRCTest.TestResult.SUCCESS)
+//                    return new KickIntegration(settings.kickIntegration);
+//
+//                return null;
+                return new KickIntegration(settings.kickIntegration);
+            }), (prev, current) -> {
+                if (current != null)
+                    prev.put(IntegrationType.KICK, current);
                 return prev;
             });
 

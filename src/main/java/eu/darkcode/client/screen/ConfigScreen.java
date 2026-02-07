@@ -7,6 +7,8 @@ import eu.darkcode.UpdateStatus;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.overlay.OverlayWebServer;
+import eu.darkcode.client.voting.integration.kick.KickIntegrationSettings;
+import eu.darkcode.client.voting.integration.kick.KickTokenServer;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
 import eu.darkcode.client.widgets.OreButton;
@@ -14,11 +16,11 @@ import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
 import eu.darkcode.client.widgets.container.OrePanel;
 import eu.darkcode.event.EventRegistry;
-import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,6 +184,12 @@ public class ConfigScreen extends BaseScreen {
     }
 
     private void integrationConfig() {
+        twitchConfig();
+        kickConfig();
+        overlayConfig();
+    }
+
+    private void twitchConfig() {
         panel.addCategory("integration.twitch", "integration.twitch.description");
 
         boolean enabledOptions = Minecraft.getInstance().level == null;
@@ -191,7 +199,7 @@ public class ConfigScreen extends BaseScreen {
         OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
 
-        panel.addSwitch("client.integration.twitch.announceNewPolls", "client.integration.twitch.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
+        panel.addSwitch("client.integration.announceNewPolls", "client.integration.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
         panel.addSwitch("client.integration.twitch.ignoreSharedChat", "client.integration.twitch.ignoreSharedChat.description", twitchIntegration.ignoreSharedChat, a -> twitchIntegration.ignoreSharedChat = a, enabledOptions);
 
         panel.addChild(new OreButton(0, 0, 150, 20, Component.translatable("betterchaosmod.option.client.integration.twitch.getToken")) {
@@ -203,8 +211,28 @@ public class ConfigScreen extends BaseScreen {
             widget.marginLeft(20);
             widget.marginRight(20);
         }).setActive(enabledOptions);
+    }
 
-        overlayConfig();
+    private void kickConfig() {
+        panel.addCategory("integration.kick", "integration.kick.description");
+
+        boolean enabledOptions = Minecraft.getInstance().level == null;
+        KickIntegrationSettings kickIntegration = clientSettings.integration.kickIntegration;
+
+        OreInputOption channelToken = panel.addTextInput("client.integration.kick.token", null, kickIntegration.token, a -> kickIntegration.token = a, enabledOptions);
+        channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+
+        panel.addSwitch("client.integration.announceNewPolls", "client.integration.announceNewPolls.description", kickIntegration.announceNewPolls, a -> kickIntegration.announceNewPolls = a, enabledOptions);
+
+        panel.addChild(new OreButton(0, 0, 150, 20, Component.translatable("betterchaosmod.option.client.integration.twitch.getToken")) {
+            @Override
+            public void onPress(InputWithModifiers inputWithModifiers) {
+                KickTokenServer.openUrl();
+            }
+        }, widget -> {
+            widget.marginLeft(20);
+            widget.marginRight(20);
+        }).setActive(enabledOptions);
     }
 
     private void overlayConfig() {

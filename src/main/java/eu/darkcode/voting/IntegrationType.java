@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumSet;
 
 public enum IntegrationType {
-    TWITCH(Component.translatable("betterchaosmod.integration.twitch"));
+    TWITCH(Component.translatable("betterchaosmod.integration.twitch")),
+    KICK(Component.translatable("betterchaosmod.integration.kick")),
+    ;
 
     public static final StreamCodec<FriendlyByteBuf, EnumSet<IntegrationType>> CODEC = new StreamCodec<>() {
         @Override
