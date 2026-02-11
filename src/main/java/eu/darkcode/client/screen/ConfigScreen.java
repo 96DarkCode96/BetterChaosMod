@@ -33,6 +33,7 @@ public class ConfigScreen extends BaseScreen {
     private @NotNull Category category = Category.GENERAL;
     private OrePanel panel = null;
     private OreInputOption overlayWebPort;
+    private OreInputOption chatroomField;
 
     public ConfigScreen(OptionsScreen parent) {
         super(parent, Component.translatable("betterchaosmod.config.title"));
@@ -218,6 +219,30 @@ public class ConfigScreen extends BaseScreen {
 
         boolean enabledOptions = Minecraft.getInstance().level == null;
         KickIntegrationSettings kickIntegration = clientSettings.integration.kickIntegration;
+
+        chatroomField = panel.addTextInput("client.integration.kick.chatroom", "client.integration.kick.chatroom.desc", kickIntegration.chatroomId == -1 ? "" : String.valueOf(kickIntegration.chatroomId), a -> {
+            if (a.isBlank()) {
+                kickIntegration.chatroomId = -1;
+                return;
+            }
+            try {
+                int id = Integer.parseInt(a);
+                if (id >= 0)
+                    kickIntegration.chatroomId = id;
+                else
+                    chatroomField.textInput().setValue("" + kickIntegration.chatroomId);
+            } catch (NumberFormatException ignored) {
+            }
+        }, enabledOptions);
+        chatroomField.textInput().setFilter(s -> {
+            if (s.isEmpty())
+                return true;
+            try {
+                return Integer.parseInt(s) > 0;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        });
 
         OreInputOption channelToken = panel.addTextInput("client.integration.kick.token", null, kickIntegration.token, a -> kickIntegration.token = a, enabledOptions);
         channelToken.textInput().addFormatter(PASSWORD_FORMATTER);

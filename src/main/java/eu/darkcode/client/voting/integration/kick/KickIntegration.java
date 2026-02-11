@@ -35,6 +35,10 @@ public class KickIntegration implements Integration {
     public KickIntegration(@NotNull KickIntegrationSettings settings) {
         this.settings = settings;
         try {
+            String msgId = sendAsyncMessage("Loading world...").join();
+            if (msgId == null && !Boolean.TRUE.equals(KickTokenServer.refreshToken().join()))
+                throw new IllegalStateException("Failed to connect to kick! Invalid token!");
+
             kickService = new KickService(settings, this);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to connect to kick!", e);
@@ -58,16 +62,19 @@ public class KickIntegration implements Integration {
     }
 
     @NotNull
-    public CompletableFuture<String> getUserName() {
+    public static CompletableFuture<String> getUserName(@NotNull String token) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://api.kick.com/public/v1/users"))
-                .header("Authorization", "Bearer " + settings.token)
+                .header("Authorization", "Bearer " + token)
                 .header("Content-Type", "application/json")
                 .GET()
                 .build();
         return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            if (response.statusCode() != 200)
+            if (response.statusCode() != 200) {
+                BetterChaosModClient.LOGGER.error("Failed to fetch Kick user data! sCode: {}", response.statusCode());
                 return null;
+            }
+            BetterChaosModClient.LOGGER.info("Kick user data has been fetched!: {}", response.body());
             JsonObject object = GSON.fromJson(response.body(), JsonObject.class);
             JsonObject data = object.getAsJsonArray("data").get(0).getAsJsonObject();
             return data.get("name").getAsString();

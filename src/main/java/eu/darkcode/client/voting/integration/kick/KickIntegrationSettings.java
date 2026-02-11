@@ -12,4 +12,5 @@ public class KickIntegrationSettings {
     public long tokenExpiry = -1L;
     public String kickPusherKey = "32cbd69e4b950bf97679";
     public String kickPusherCluster = "us2";
+    public int chatroomId = -1;
 }

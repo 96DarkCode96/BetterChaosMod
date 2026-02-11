@@ -28,23 +28,33 @@ public class KickService implements WebSocket.Listener {
     private final @NotNull KickIntegration integration;
     private final @NotNull String endpoint;
     private final @NotNull HttpClient client;
-    private final String userName;
-    private final int channelRoomId;
+    private final @NotNull KickIntegrationSettings settings;
     private WebSocket websocket;
     private volatile boolean shuttingDown = false;
     private volatile boolean reconnecting = false;
 
     public KickService(@NotNull KickIntegrationSettings settings, @NotNull KickIntegration integration) throws Exception {
+        this.settings = settings;
         this.integration = integration;
         this.endpoint = "wss://ws-" + settings.kickPusherCluster + ".pusher.com/app/" + settings.kickPusherKey + "?protocol=7&client=js&version=8.4.0&flash=false";
         this.client = HttpClient.newHttpClient();
-        userName = integration.getUserName().join();
-        if(userName == null || userName.isEmpty())
-            throw new IllegalArgumentException("Username is empty");
 
-        BetterChaosModClient.LOGGER.info("KickUserName: " + userName);
-        channelRoomId = fetchChannelRoomId(userName);
-        BetterChaosModClient.LOGGER.info("KickChannelRoomId: " + channelRoomId);
+        if (settings.token == null || settings.token.isBlank())
+            throw new IllegalArgumentException("token is null or blank");
+
+        if (settings.chatroomId == -1) {
+            String userName = KickIntegration.getUserName(settings.token).join();
+            if (userName == null || userName.isEmpty())
+                throw new IllegalArgumentException("Username is empty");
+
+            BetterChaosModClient.LOGGER.info("KickUserName: {}", userName);
+            settings.chatroomId = fetchChannelRoomId(userName);
+            BetterChaosModClient.LOGGER.info("KickChannelRoomId: {}", settings.chatroomId);
+            if (settings.chatroomId == -1)
+                throw new IllegalArgumentException("ChatroomId is null");
+            BetterChaosModClient.instance().saveSettings();
+        }
+
         connect().join();
         if (this.websocket == null)
             throw new IOException("Failed to connect to KickService!");
@@ -68,7 +78,7 @@ public class KickService implements WebSocket.Listener {
         try {
             JsonObject subscribe = new JsonObject();
             subscribe.addProperty("auth", "");
-            subscribe.addProperty("channel", "chatrooms." + channelRoomId + ".v2");
+            subscribe.addProperty("channel", "chatrooms." + settings.chatroomId + ".v2");
             sendMessage("pusher:subscribe", subscribe);
         } catch (Throwable t) {
             scheduleReconnect();
