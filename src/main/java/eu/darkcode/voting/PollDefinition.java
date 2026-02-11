@@ -1,5 +1,6 @@
 package eu.darkcode.voting;
 
+import eu.darkcode.utils.Utils;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -28,5 +29,17 @@ public record PollDefinition(int pollId, @NotNull List<Component> entries, @NotN
             }, PollDefinition::visibility,
             PollDefinition::new
     );
+
+    @NotNull
+    public String toMessage() {
+        // Format: [1] Entry1 | [2] Entry2 | ... or 5, 6, 7, 8 based on poll id
+        StringBuilder message = new StringBuilder("New poll started! ");
+        for (int i = 0; i < entries.size(); i++) {
+            message.append("[").append(Utils.getVoteOptionIndex(pollId, i)).append("] ").append(entries.get(i).getString());
+            if (i < entries.size() - 1)
+                message.append(" | ");
+        }
+        return message.toString();
+    }
 
 }

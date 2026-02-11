@@ -4,8 +4,9 @@ import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpServer;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.screen.ConfigScreen;
-import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
 import eu.darkcode.utils.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
+@Environment(EnvType.CLIENT)
 public class KickTokenServer {
 
     private static HttpServer http;

@@ -5,8 +5,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.voting.integration.Integration;
-import eu.darkcode.utils.Utils;
+import eu.darkcode.client.voting.integration.kick.websocket.KickService;
 import eu.darkcode.voting.PollDefinition;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
@@ -20,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
  * @author _dark_code_
  * @date 28.01.2026
  **/
+@Environment(EnvType.CLIENT)
 public class KickIntegration implements Integration {
 
     private static final @NotNull URI SEND_MESSAGE_URI = URI.create("https://api.kick.com/public/v1/chat");
@@ -27,11 +30,12 @@ public class KickIntegration implements Integration {
     private static final @NotNull HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
 
     private final @NotNull KickIntegrationSettings settings;
+    private final @NotNull KickService kickService;
 
     public KickIntegration(@NotNull KickIntegrationSettings settings) {
         this.settings = settings;
         try {
-
+            kickService = new KickService(settings, this);
         } catch (Exception e) {
             throw new IllegalStateException("Failed to connect to kick!", e);
         }
@@ -42,14 +46,7 @@ public class KickIntegration implements Integration {
         if (!settings.announceNewPolls)
             return;
         try {
-            // Format: [1] Entry1 | [2] Entry2 | ... or 5, 6, 7, 8 based on poll id
-            StringBuilder message = new StringBuilder("New poll started! ");
-            for (int i = 0; i < poll.entries().size(); i++) {
-                message.append("[").append(Utils.getVoteOptionIndex(poll.pollId(), i)).append("] ").append(poll.entries().get(i).getString());
-                if (i < poll.entries().size() - 1)
-                    message.append(" | ");
-            }
-            sendAsyncMessage(message.toString());
+            sendAsyncMessage(poll.toMessage());
         } catch (Exception e) {
             BetterChaosModClient.LOGGER.warn("Failed to send poll!", e);
         }
@@ -57,7 +54,24 @@ public class KickIntegration implements Integration {
 
     @Override
     public void shutdown() {
+        kickService.shutdown();
+    }
 
+    @NotNull
+    public CompletableFuture<String> getUserName() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://api.kick.com/public/v1/users"))
+                .header("Authorization", "Bearer " + settings.token)
+                .header("Content-Type", "application/json")
+                .GET()
+                .build();
+        return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
+            if (response.statusCode() != 200)
+                return null;
+            JsonObject object = GSON.fromJson(response.body(), JsonObject.class);
+            JsonObject data = object.getAsJsonArray("data").get(0).getAsJsonObject();
+            return data.get("name").getAsString();
+        });
     }
 
     @NotNull

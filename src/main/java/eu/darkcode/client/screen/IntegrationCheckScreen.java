@@ -115,16 +115,12 @@ public class IntegrationCheckScreen extends BaseScreen {
         // [KICK]
         if (enabled.contains(IntegrationType.KICK))
             chain = chain.thenCombine(CompletableFuture.supplyAsync(() -> {
-//                IRCTest.TestResult result = IRCTest.testConnection(settings.twitchIntegration).join();
-//
-//                if (result == IRCTest.TestResult.AUTHENTICATION_FAILED && TwitchTokenServer.refreshToken().join())
-//                    result = IRCTest.testConnection(settings.twitchIntegration).join();
-//
-//                if (result == IRCTest.TestResult.SUCCESS)
-//                    return new KickIntegration(settings.kickIntegration);
-//
-//                return null;
-                return new KickIntegration(settings.kickIntegration);
+                try {
+                    return new KickIntegration(settings.kickIntegration);
+                } catch (Exception e) {
+                    BetterChaosModClient.LOGGER.error("Kick Integration failed", e);
+                    return null;
+                }
             }), (prev, current) -> {
                 if (current != null)
                     prev.put(IntegrationType.KICK, current);
@@ -136,7 +132,7 @@ public class IntegrationCheckScreen extends BaseScreen {
             EventManager eventManager = BetterChaosModClient.instance().eventManager();
             if (eventManager == null || err != null || success == null || success.size() != enabled.size()) {
                 BetterChaosModClient.LOGGER.error("Integration check failed!", err);
-                packetSender.disconnect(Component.literal("Integration check failed!"));
+                packetSender.disconnect(Component.literal("Integration check failed!\n\nSome of enabled integrations failed to start! Check your configuration for valid access tokens!"));
 
                 if (success != null)
                     success.forEach((type, integration) -> integration.shutdown());

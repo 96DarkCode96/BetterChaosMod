@@ -5,6 +5,8 @@ import com.sun.net.httpserver.HttpServer;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.screen.ConfigScreen;
 import eu.darkcode.utils.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
+@Environment(EnvType.CLIENT)
 public class TwitchTokenServer {
 
     private static HttpServer http;

@@ -10,4 +10,6 @@ public class KickIntegrationSettings {
     public boolean announceNewPolls = true;
     public String refreshToken;
     public long tokenExpiry = -1L;
+    public String kickPusherKey = "32cbd69e4b950bf97679";
+    public String kickPusherCluster = "us2";
 }
