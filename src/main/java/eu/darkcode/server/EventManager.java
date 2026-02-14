@@ -1,6 +1,8 @@
 package eu.darkcode.server;
 
 import eu.darkcode.BetterChaosMod;
+import eu.darkcode.client.SharedProperties;
+import eu.darkcode.event.CycleEvent;
 import eu.darkcode.event.Event;
 import eu.darkcode.networking.ClientboundEventStartPayload;
 import eu.darkcode.networking.ClientboundTickPayload;
@@ -30,7 +32,7 @@ public class EventManager {
 
     private void resetTimerCount() {
         this.votingSystem.newPoll();
-        this.timerCount = BetterChaosMod.instance().settings().timerDuration;
+        this.timerCount = (int) (BetterChaosMod.instance().settings().timerDuration / SharedProperties.timerDurationMultiplier);
     }
 
     @NotNull
@@ -45,6 +47,15 @@ public class EventManager {
 
     public void tick() {
         if (timerCount == 0) {
+            // Cycle events
+            activeEvents.forEach(event -> {
+                if (event instanceof CycleEvent ce && !event.ended()) {
+                    ce.onCycle();
+                    if (event.ended())
+                        event.end(this);
+                }
+            });
+
             int selectCooldown = BetterChaosMod.instance().settings().eventRepetitionCooldown;
             Event pop;
             while (!this.activeEvents.isEmpty() && this.activeEvents.size() > selectCooldown && (pop = this.activeEvents.getFirst()) != null && pop.ended())

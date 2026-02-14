@@ -7,5 +7,6 @@ public enum EventCategory {
     VISUAL,
     TELEPORT,
     TOUCH,
+    TIMER,
     SENSITIVITY;
 }

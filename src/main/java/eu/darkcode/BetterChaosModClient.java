@@ -136,6 +136,7 @@ public class BetterChaosModClient implements ClientModInitializer {
             if (eventManager == null)
                 return;
             context.client().execute(() -> {
+                eventManager.pollStarted(payload.poll());
                 eventManager.votingSystem().processNewPoll(payload.poll());
                 hudManager.hud(CurrentPollPanel.class).newPoll(payload.poll());
             });

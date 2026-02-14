@@ -9,6 +9,9 @@ import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
 import eu.darkcode.event.impl.sensitivity.MouseDrifting;
 import eu.darkcode.event.impl.teleport.*;
+import eu.darkcode.event.impl.timer.Timer2;
+import eu.darkcode.event.impl.timer.Timer5;
+import eu.darkcode.event.impl.timer.TimerHalf;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.MappedRegistry;
@@ -126,6 +129,10 @@ public class EventRegistry {
         register(registry, WeakLegs.ENTRY);
         register(registry, WhereIsMyWorld.ENTRY);
         register(registry, Wither.ENTRY);
+
+        register(registry, TimerHalf.ENTRY);
+        register(registry, Timer2.ENTRY);
+        register(registry, Timer5.ENTRY);
 
         return FabricRegistryBuilder.from(registry).buildAndRegister();
     }

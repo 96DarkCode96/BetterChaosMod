@@ -20,6 +20,7 @@ public final class SharedProperties {
     public static boolean xray = false;
     public static double mouseDX = 0;
     public static double mouseDY = 0;
+    public static double timerDurationMultiplier = 1;
 
     private SharedProperties() {
     }

@@ -6,7 +6,9 @@ import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.client.screen.IntegrationCheckScreen;
 import eu.darkcode.client.voting.Poll;
 import eu.darkcode.client.voting.VotingSystem;
+import eu.darkcode.event.CycleEvent;
 import eu.darkcode.event.Event;
+import eu.darkcode.voting.PollDefinition;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +24,12 @@ public class EventManager {
     private final @NotNull Settings settings;
     private final @NotNull VotingSystem votingSystem;
     private int timerCount;
+    private int timerDuration;
 
     public EventManager(@NotNull Settings settings) {
         this.settings = settings;
         this.timerCount = settings.timerDuration;
+        this.timerDuration = settings.timerDuration;
         this.votingSystem = new VotingSystem();
     }
 
@@ -66,7 +70,7 @@ public class EventManager {
     }
 
     public double getTimerFraction() {
-        return 1.0 - (double) timerCount / settings.timerDuration;
+        return 1.0 - timerCount / (double) timerDuration;
     }
 
     public void end() {
@@ -91,5 +95,17 @@ public class EventManager {
         final Minecraft minecraft = context.client();
         // [OPEN INTEGRATION CHECK SCREEN]
         minecraft.setScreen(new IntegrationCheckScreen(minecraft.screen, context.responseSender()));
+    }
+
+    public void pollStarted(@NotNull PollDefinition poll) {
+        // Cycle events
+        activeEvents.forEach(event -> {
+            if (event instanceof CycleEvent ce && !event.ended()) {
+                ce.onCycle();
+                if (event.ended())
+                    event.endClient();
+            }
+        });
+        this.timerDuration = (int) (settings.timerDuration / SharedProperties.timerDurationMultiplier);
     }
 }
