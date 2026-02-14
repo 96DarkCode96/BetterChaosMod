@@ -7,10 +7,9 @@ import eu.darkcode.UpdateStatus;
 import eu.darkcode.client.ClientSettings;
 import eu.darkcode.client.hud.HudSettings;
 import eu.darkcode.client.overlay.OverlayWebServer;
+import eu.darkcode.client.voting.integration.TokenServer;
 import eu.darkcode.client.voting.integration.kick.KickIntegrationSettings;
-import eu.darkcode.client.voting.integration.kick.KickTokenServer;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegrationSettings;
-import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
 import eu.darkcode.client.widgets.OreButton;
 import eu.darkcode.client.widgets.config.OreInputOption;
 import eu.darkcode.client.widgets.config.OreSidebarOption;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static eu.darkcode.client.widgets.impl.OreSlider.*;
-import static eu.darkcode.client.widgets.utils.Ore.PASSWORD_FORMATTER;
 
 public class ConfigScreen extends BaseScreen {
     private final @NotNull Settings settings;
@@ -196,22 +194,11 @@ public class ConfigScreen extends BaseScreen {
         boolean enabledOptions = Minecraft.getInstance().level == null;
         TwitchIntegrationSettings twitchIntegration = clientSettings.integration.twitchIntegration;
 
-        OreInputOption channelName = panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
-        OreInputOption channelToken = panel.addTextInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions);
-        channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+        panel.addTextInput("client.integration.twitch.channel", null, twitchIntegration.channel, a -> twitchIntegration.channel = a, enabledOptions);
+        panel.addTokenInput("client.integration.twitch.token", null, twitchIntegration.token, a -> twitchIntegration.token = a, enabledOptions, TokenServer::openTwitch);
 
         panel.addSwitch("client.integration.announceNewPolls", "client.integration.announceNewPolls.description", twitchIntegration.announceNewPolls, a -> twitchIntegration.announceNewPolls = a, enabledOptions);
         panel.addSwitch("client.integration.twitch.ignoreSharedChat", "client.integration.twitch.ignoreSharedChat.description", twitchIntegration.ignoreSharedChat, a -> twitchIntegration.ignoreSharedChat = a, enabledOptions);
-
-        panel.addChild(new OreButton(0, 0, 150, 20, Component.translatable("betterchaosmod.option.client.integration.twitch.getToken")) {
-            @Override
-            public void onPress(InputWithModifiers inputWithModifiers) {
-                TwitchTokenServer.openUrl();
-            }
-        }, widget -> {
-            widget.marginLeft(20);
-            widget.marginRight(20);
-        }).setActive(enabledOptions);
     }
 
     private void kickConfig() {
@@ -244,20 +231,9 @@ public class ConfigScreen extends BaseScreen {
             }
         });
 
-        OreInputOption channelToken = panel.addTextInput("client.integration.kick.token", null, kickIntegration.token, a -> kickIntegration.token = a, enabledOptions);
-        channelToken.textInput().addFormatter(PASSWORD_FORMATTER);
+        panel.addTokenInput("client.integration.kick.token", null, kickIntegration.token, a -> kickIntegration.token = a, enabledOptions, TokenServer::openKick);
 
         panel.addSwitch("client.integration.announceNewPolls", "client.integration.announceNewPolls.description", kickIntegration.announceNewPolls, a -> kickIntegration.announceNewPolls = a, enabledOptions);
-
-        panel.addChild(new OreButton(0, 0, 150, 20, Component.translatable("betterchaosmod.option.client.integration.twitch.getToken")) {
-            @Override
-            public void onPress(InputWithModifiers inputWithModifiers) {
-                KickTokenServer.openUrl();
-            }
-        }, widget -> {
-            widget.marginLeft(20);
-            widget.marginRight(20);
-        }).setActive(enabledOptions);
     }
 
     private void overlayConfig() {

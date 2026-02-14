@@ -4,10 +4,10 @@ import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.EventManager;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.client.voting.integration.IntegrationSettings;
+import eu.darkcode.client.voting.integration.TokenServer;
 import eu.darkcode.client.voting.integration.kick.KickIntegration;
 import eu.darkcode.client.voting.integration.twitch.irc.IRCTest;
 import eu.darkcode.client.voting.integration.twitch.TwitchIntegration;
-import eu.darkcode.client.voting.integration.twitch.TwitchTokenServer;
 import eu.darkcode.client.widgets.OreButton;
 import eu.darkcode.client.widgets.config.OreSwitchOption;
 import eu.darkcode.client.widgets.container.OrePanel;
@@ -100,7 +100,7 @@ public class IntegrationCheckScreen extends BaseScreen {
             chain = chain.thenCombine(CompletableFuture.supplyAsync(() -> {
                 IRCTest.TestResult result = IRCTest.testConnection(settings.twitchIntegration).join();
 
-                if (result == IRCTest.TestResult.AUTHENTICATION_FAILED && TwitchTokenServer.refreshToken().join())
+                if (result == IRCTest.TestResult.AUTHENTICATION_FAILED && TokenServer.refreshTwitchToken().join())
                     result = IRCTest.testConnection(settings.twitchIntegration).join();
 
                 if (result == IRCTest.TestResult.SUCCESS)

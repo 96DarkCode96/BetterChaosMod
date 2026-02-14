@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.voting.integration.Integration;
+import eu.darkcode.client.voting.integration.TokenServer;
 import eu.darkcode.client.voting.integration.kick.websocket.KickService;
 import eu.darkcode.voting.PollDefinition;
 import net.fabricmc.api.EnvType;
@@ -36,7 +37,7 @@ public class KickIntegration implements Integration {
         this.settings = settings;
         try {
             String msgId = sendAsyncMessage("Loading world...").join();
-            if (msgId == null && !Boolean.TRUE.equals(KickTokenServer.refreshToken().join()))
+            if (msgId == null && !Boolean.TRUE.equals(TokenServer.refreshKickToken().join()))
                 throw new IllegalStateException("Failed to connect to kick! Invalid token!");
 
             kickService = new KickService(settings, this);

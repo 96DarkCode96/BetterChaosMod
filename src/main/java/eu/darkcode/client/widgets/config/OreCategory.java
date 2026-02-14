@@ -47,7 +47,7 @@ public class OreCategory extends AbstractOreElement implements Renderable {
 
     @Override
     public void render(GuiGraphics g, int i, int j, float f) {
-        g.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF444547);
+        g.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF404142);
 
         final Font font = Minecraft.getInstance().font;
         int y = getY() + 12;

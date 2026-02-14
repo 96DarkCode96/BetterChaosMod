@@ -99,6 +99,15 @@ public class OrePanel extends AbstractLayout<OrePanel.ChildWrapper> implements R
     }
 
     @NotNull
+    public OreTokenOption addTokenInput(@NotNull String name, @Nullable String description, @NotNull String text, @NotNull Consumer<String> valueConsumer, boolean enabled, @NotNull Runnable fetchToken) {
+        return addChild(new OreTokenOption(
+                Component.translatable("betterchaosmod.option." + name),
+                description != null ? Component.translatable("betterchaosmod.option." + description) : null,
+                text, valueConsumer, enabled, fetchToken
+        ));
+    }
+
+    @NotNull
     public OreColorOption addColorOption(@NotNull String name, @Nullable String description, int value, @NotNull IntConsumer valueConsumer, boolean enabled) {
         return addChild(new OreColorOption(
                 Component.translatable("betterchaosmod.option." + name),
