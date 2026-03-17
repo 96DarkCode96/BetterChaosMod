@@ -42,10 +42,6 @@ public class TwitchIntegration implements Integration, IRCEvent {
 
     @Override
     public void onMessage(@NotNull IRCUser user, @NotNull String channel, @NotNull String message) {
-        message = message.trim();
-        if (message.length() == 1) {
-            handleVote(user, message);
-            return;
-        }
+        handleMessage(user, message.trim());
     }
 }

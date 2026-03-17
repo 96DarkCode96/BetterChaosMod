@@ -4,6 +4,8 @@
     "minecraft:water",
     "minecraft:lava",
     "minecraft:air",
+    "minecraft:cave_air",
+    "minecraft:leaf_litter",
     "minecraft:powder_snow",
     "minecraft:gold_ore",
     "minecraft:nether_gold_ore",

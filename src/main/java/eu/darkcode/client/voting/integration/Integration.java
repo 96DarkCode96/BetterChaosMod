@@ -15,6 +15,10 @@ public interface Integration {
 
     void shutdown();
 
+    default void handleMessage(@NotNull IRCUser user, @NotNull String message) {
+        if (message.length() == 1)
+            handleVote(user, message);
+    }
 
     default void handleVote(@NotNull IRCUser user, @NotNull String message) {
         int val = message.charAt(0) - '0';

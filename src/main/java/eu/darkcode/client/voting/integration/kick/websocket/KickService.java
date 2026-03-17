@@ -145,8 +145,6 @@ public class KickService implements WebSocket.Listener {
             if (!data.has("content") || !data.has("sender"))
                 return;
             String content = data.get("content").getAsString().trim();
-            if (content.length() != 1)
-                return;
             JsonObject sender = data.getAsJsonObject("sender");
             JsonObject identity = sender.getAsJsonObject("identity");
             JsonArray badges = identity.getAsJsonArray("badges");
@@ -172,7 +170,7 @@ public class KickService implements WebSocket.Listener {
                     sub
             );
 
-            integration.handleVote(user, content);
+            integration.handleMessage(user, content);
         } catch (Throwable ignored) {
             // ignored
         }
