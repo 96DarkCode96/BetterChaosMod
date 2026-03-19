@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.voting.Poll;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCUser;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +20,10 @@ import java.util.concurrent.Executors;
 
 @Environment(EnvType.CLIENT)
 public final class OverlayWebServer {
+
+    public static final @NotNull String HTML_CONTENT_TYPE = "text/html; charset=utf-8";
+    public static final @NotNull String JS_CONTENT_TYPE = "application/javascript; charset=utf-8";
+    public static final @NotNull String CSS_CONTENT_TYPE = "text/css; charset=utf-8";
 
     private static HttpServer http;
     private static SimpleWebSocketServer wsServer;
@@ -90,8 +95,8 @@ public final class OverlayWebServer {
         return http != null;
     }
 
-    public static void sendPollVotes(int totalVotes, int @NotNull [] votes){
-        if(wsServer != null)
+    public static void sendPollVotes(int totalVotes, int @NotNull [] votes) {
+        if (wsServer != null)
             wsServer.broadcastPollVotes(totalVotes, votes);
     }
 
@@ -105,14 +110,31 @@ public final class OverlayWebServer {
             wsServer.updateStyles();
     }
 
+    public static void clearChatHistory() {
+        if (wsServer != null)
+            wsServer.clearChatHistory();
+    }
+
+    public static void broadcastNewMessage(@NotNull IRCUser user, @NotNull String message) {
+        if (wsServer != null)
+            wsServer.broadcastNewMessage(user, message);
+    }
+
+
     static class ResourceHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             switch (exchange.getRequestURI().getPath()) {
-                case "/", "/index.html" -> serveContent("overlay/index.html", exchange, "text/html; charset=utf-8");
-                case "/app.js" -> serveContent("overlay/app.js", exchange, "application/javascript; charset=utf-8");
-                case "/app.css" -> serveContent("overlay/app.css", exchange, "text/css; charset=utf-8");
-                default -> serverNotFound(exchange);
+                case "/poll" -> serveContent("overlay/poll/index.html", exchange, HTML_CONTENT_TYPE);
+                case "/poll/app.js" -> serveContent("overlay/poll/app.js", exchange, JS_CONTENT_TYPE);
+
+                case "/chat" -> serveContent("overlay/chat/index.html", exchange, HTML_CONTENT_TYPE);
+                case "/chat/app.js" -> serveContent("overlay/chat/app.js", exchange, JS_CONTENT_TYPE);
+
+                case "/app.js" -> serveContent("overlay/app.js", exchange, JS_CONTENT_TYPE);
+                case "/app.css" -> serveContent("overlay/app.css", exchange, CSS_CONTENT_TYPE);
+
+                default -> serveContent("overlay/index.html", exchange, HTML_CONTENT_TYPE);
             }
         }
 

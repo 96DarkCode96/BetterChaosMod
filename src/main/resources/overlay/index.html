@@ -1,12 +1,70 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="min-height: 100vh; margin: 0; padding: 0; background-color: #0f0f0f; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
 <head>
     <meta charset="utf-8">
     <title>Better Chaos Mod - Overlay</title>
-    <link rel="stylesheet" href="app.css">
+    <style>
+        body {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            min-width: 250px;
+        }
+
+        h2 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ff4757; /* A "Chaos" Red */
+            border-bottom: 1px solid rgba(255, 71, 87, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        a {
+            color: #70a1ff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            background: #70a1ff;
+            color: #0f0f0f;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-<div id="poll"></div>
-<script src="app.js" defer></script>
+<div class="container">
+    <h2>Chaos Endpoints</h2>
+    <div class="links">
+        <a href="/poll">/poll</a>
+        <a href="/chat">/chat</a>
+    </div>
+</div>
 </body>
 </html>

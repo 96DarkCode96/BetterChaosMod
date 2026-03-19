@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.EventManager;
 import eu.darkcode.client.voting.Poll;
-import eu.darkcode.client.voting.VotingSystem;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCUser;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -253,6 +253,23 @@ public class SimpleWebSocketServer {
         }
 
         BetterChaosModClient.LOGGER.info("WebSocket server stopped.");
+    }
+
+    public void clearChatHistory() {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("message", "clear_chat_history");
+        broadcast(obj);
+    }
+
+    public void broadcastNewMessage(@NotNull IRCUser user, @NotNull String message) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("message", "chat_message");
+        JsonObject data = new JsonObject();
+        data.addProperty("content", message);
+        data.addProperty("duration", 10_000);// TODO: Add config
+        data.add("user", user.asJsonObject());
+        obj.add("data", data);
+        broadcast(obj);
     }
 
     public void broadcastNewPoll(@Nullable Poll poll) {
