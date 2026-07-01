@@ -6,6 +6,8 @@ import eu.darkcode.event.EventCategory;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.TimedEvent;
 import eu.darkcode.server.EventManager;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,12 +30,14 @@ public class RollCredits extends TimedEvent {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void startClient() {
         super.startClient();
         Minecraft.getInstance().setScreen(new CreditsScreen());
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void tickClient() {
         if (currentTick() % 20 == 0 && Minecraft.getInstance().screen == null)
             Minecraft.getInstance().setScreen(new CreditsScreen());
@@ -41,6 +45,7 @@ public class RollCredits extends TimedEvent {
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public void endClient() {
         if (Minecraft.getInstance().screen instanceof CreditsScreen cs) {
             cs.onClose();
