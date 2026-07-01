@@ -32,9 +32,9 @@ import static eu.darkcode.utils.Utils.MOD_ID;
 
 public class BetterChaosMod implements ModInitializer {
     private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/config.json";
+    private static final Permission.HasCommandLevel PERMISSION = new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS);
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static BetterChaosMod instance;
-    private static final Permission.HasCommandLevel PERMISSION = new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS);
     private @Nullable EventManager eventManager;
     private Settings settings = new Settings();
 
@@ -123,6 +123,18 @@ public class BetterChaosMod implements ModInitializer {
 
                                 return 1;
                             }));
+
+            LiteralArgumentBuilder<CommandSourceStack> pause = Commands.literal("pause")
+                    .requires(source -> source.permissions().hasPermission(PERMISSION))
+                    .executes(context -> {
+                        if (eventManager != null)
+                            eventManager.setPaused(!eventManager.isPaused());
+
+                        return 1;
+                    });
+
+            root.then(pause);
+
             dispatcher.register(root.then(execute));
         });
     }

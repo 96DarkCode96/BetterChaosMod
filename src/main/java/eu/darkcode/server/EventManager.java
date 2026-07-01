@@ -23,6 +23,7 @@ public class EventManager {
     private final @NotNull List<Event> activeEvents = new ArrayList<>();
     private final @NotNull VotingSystem votingSystem;
     private int timerCount = 0;
+    private boolean paused = false;
 
     public EventManager(@NotNull MinecraftServer server) {
         this.server = server;
@@ -46,6 +47,8 @@ public class EventManager {
     }
 
     public void tick() {
+        if(paused) return;
+
         if (timerCount == 0) {
             // Cycle events
             activeEvents.forEach(event -> {
@@ -86,6 +89,10 @@ public class EventManager {
         timerCount--;
     }
 
+    public void setPaused(boolean paused){
+        this.paused = paused;
+    }
+
     public void executeEvent(@NotNull Event event) {
         activeEvents.add(event);
         event.start(this);
@@ -113,5 +120,9 @@ public class EventManager {
     @NotNull
     public Stream<Event> activeEvents() {
         return activeEvents.stream();
+    }
+
+    public boolean isPaused() {
+        return this.paused;
     }
 }
