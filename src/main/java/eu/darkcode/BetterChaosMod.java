@@ -64,7 +64,7 @@ public class BetterChaosMod implements ModInitializer {
                 handler.addTask(new IntegrationCheckTask());
                 return;
             }
-            handler.disconnect(Component.literal("Please download BetterChaosMod! https://www.matejtomecek.eu/betterchaosmod/"));
+            handler.disconnect(Component.literal("Please download BetterChaosMod! https://bcm.matejtomecek.eu/"));
         });
 
         ServerConfigurationNetworking.registerGlobalReceiver(Payloads.C2S_HANDSHAKE_ACK, (payload, context) -> {

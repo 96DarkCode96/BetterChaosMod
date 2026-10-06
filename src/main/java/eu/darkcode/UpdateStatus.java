@@ -7,16 +7,17 @@ import net.fabricmc.loader.impl.FabricLoaderImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 public enum UpdateStatus {
     UNKNOWN, OK, OUTDATED;
 
-    private static final @NotNull URI CHECK_URL = URI.create("https://store.matejtomecek.eu/api/latest/5312ceda48/");
-    public static final @NotNull URI UPDATE_LINK = URI.create("https://store.matejtomecek.eu/product/5312ceda48/?ref=game&action=update");
+    public static final @NotNull URI UPDATE_LINK = URI.create("https://bcm.matejtomecek.eu/download");
 
     @NotNull
     public static String getModVersion() {
@@ -30,22 +31,19 @@ public enum UpdateStatus {
             String versionString = getModVersion();
 
             try (HttpClient client = HttpClient.newHttpClient()) {
-                HttpRequest request = HttpRequest.newBuilder(CHECK_URL).GET().timeout(Duration.ofSeconds(5)).setHeader("User-Agent", "BetterChaosMod-" + FabricLoaderImpl.INSTANCE.getEnvironmentType().name()).build();
+                HttpRequest request = HttpRequest.newBuilder(URI.create("https://bcm.matejtomecek.eu/outdated?currentVersion=" + URLEncoder.encode(versionString, StandardCharsets.UTF_8)))
+                        .GET()
+                        .timeout(Duration.ofSeconds(5))
+                        .setHeader("User-Agent", "BetterChaosMod-" + FabricLoaderImpl.INSTANCE.getEnvironmentType().name())
+                        .build();
 
                 HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
                 if (send.statusCode() != 200)
                     return UNKNOWN;
 
                 JsonObject object = Utils.GSON.fromJson(send.body(), JsonObject.class);
-                if (object.get("status").getAsString().equals("ok")) {
-                    JsonObject latest = object.getAsJsonObject("latest");
-                    String modVersion = latest.get("mod_version").getAsString();
-                    String minecraftVersion = latest.get("minecraft_version").getAsString();
-                    System.out.println("Mod version: " + modVersion + "-" + minecraftVersion);
-                    System.out.println("Current version: " + versionString);
-                    if (!versionString.equals(modVersion + "-" + minecraftVersion))
-                        return OUTDATED;
-                }
+                if (object.get("status").getAsString().equals("outdated"))
+                    return OUTDATED;
             }
             return OK;
         } catch (Throwable e) {

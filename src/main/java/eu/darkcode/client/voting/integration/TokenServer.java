@@ -29,6 +29,9 @@ import java.util.concurrent.CompletableFuture;
  **/
 @Environment(EnvType.CLIENT)
 public class TokenServer {
+
+    private static final @NotNull String INTERNAL_SERVER_ENDPOINT = "https://bcm.matejtomecek.eu/oauth/";
+
     private static HttpServer http;
 
     public static boolean startServer() {
@@ -75,7 +78,7 @@ public class TokenServer {
 
                 BetterChaosModClient.instance().saveSettings();
 
-                exchange.getResponseHeaders().set("Location", "https://projects.matejtomecek.eu/oauth/" + platform + "/success/");
+                exchange.getResponseHeaders().set("Location", INTERNAL_SERVER_ENDPOINT + platform + "/success");
                 exchange.sendResponseHeaders(303, -1);
                 exchange.getResponseBody().close();
 
@@ -102,7 +105,7 @@ public class TokenServer {
             // TODO: Open error screen
             return;
         }
-        Util.getPlatform().openUri("https://projects.matejtomecek.eu/oauth/" + platform + "/authorize");
+        Util.getPlatform().openUri(INTERNAL_SERVER_ENDPOINT + platform + "/authorize");
     }
 
     public static void openKick() {
@@ -128,7 +131,7 @@ public class TokenServer {
         if (settings.refreshToken == null || settings.refreshToken.isEmpty())
             return CompletableFuture.completedFuture(null);
         return CompletableFuture.supplyAsync(() -> {
-            String url = "https://projects.matejtomecek.eu/api/oauth/" + platform + "/refresh";
+            String url = INTERNAL_SERVER_ENDPOINT + platform + "/refresh";
             try {
                 HttpURLConnection connection = (HttpURLConnection) new URI(url).toURL().openConnection();
                 connection.setRequestMethod("POST");
