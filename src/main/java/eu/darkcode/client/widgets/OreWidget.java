@@ -2,7 +2,7 @@ package eu.darkcode.client.widgets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -14,6 +14,7 @@ import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.sounds.SoundEvents;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
@@ -32,7 +33,7 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
     }
 
     @Override
-    public NarrationPriority narrationPriority() {
+    public @NonNull NarrationPriority narrationPriority() {
         if (this.focused)
             return NarrationPriority.FOCUSED;
         if (this.hovered)
@@ -50,19 +51,19 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        this.hovered = guiGraphics.containsPointInScissor(i, j) && this.areCoordinatesInRectangle(i, j);
-        this.renderWidget(guiGraphics, i, j, f);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float a) {
+        this.hovered = guiGraphics.containsPointInScissor(mouseX, mouseY) && this.areCoordinatesInRectangle(mouseX, mouseY);
+        this.renderWidget(guiGraphics, mouseX, mouseY, a);
     }
 
     private boolean areCoordinatesInRectangle(double d, double e) {
         return d >= this.getX() && e >= this.getY() && d < this.getRight() && e < this.getBottom();
     }
 
-    protected abstract void renderWidget(@NotNull GuiGraphics g, int mouseX, int mouseY, float delta);
+    protected abstract void renderWidget(@NotNull GuiGraphicsExtractor g, int mouseX, int mouseY, float delta);
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    public void updateNarration(@NonNull NarrationElementOutput narrationElementOutput) {
 
     }
 
@@ -81,7 +82,7 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean bl) {
+    public boolean mouseClicked(@NonNull MouseButtonEvent mouseButtonEvent, boolean bl) {
         if (this.isActive() && mouseButtonEvent.button() == 0) {
             boolean bl2 = this.isMouseOver(mouseButtonEvent.x(), mouseButtonEvent.y());
             if (bl2) {
@@ -114,7 +115,7 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
 
     @Nullable
     @Override
-    public ComponentPath nextFocusPath(FocusNavigationEvent focusNavigationEvent) {
+    public ComponentPath nextFocusPath(@NonNull FocusNavigationEvent focusNavigationEvent) {
         if (!this.isActive() || this.isFocused())
             return null;
         return ComponentPath.leaf(this);

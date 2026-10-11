@@ -4,7 +4,7 @@ import eu.darkcode.client.widgets.AbstractOreElement;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -46,20 +46,20 @@ public class OreCategory extends AbstractOreElement implements Renderable {
     }
 
     @Override
-    public void render(GuiGraphics g, int i, int j, float f) {
+    public void extractRenderState(GuiGraphicsExtractor g, int i, int j, float f) {
         g.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), 0xFF404142);
 
         final Font font = Minecraft.getInstance().font;
         int y = getY() + 12;
         for (FormattedCharSequence line : cachedName) {
-            g.drawString(font, line, getX() + 18, y, 0xFFFFFFFF, false);
+            g.text(font, line, getX() + 18, y, 0xFFFFFFFF, false);
             y += font.lineHeight;
         }
         if (descriptionComponent == null)
             return;
         y += 4;
         for (FormattedCharSequence line : cachedDescription) {
-            g.drawString(font, line, getX() + 18, y, 0xFFC5C6C8, false);
+            g.text(font, line, getX() + 18, y, 0xFFC5C6C8, false);
             y += font.lineHeight;
         }
     }

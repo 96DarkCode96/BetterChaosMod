@@ -7,7 +7,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.KeyEvent;
@@ -32,7 +32,7 @@ public abstract class OreButton extends OreWidget {
         this.label = label;
     }
 
-    protected static void renderScrollingString(GuiGraphics guiGraphics, Font font, Component component, int i, int j, int k, int l, int m, int n) {
+    protected static void renderScrollingString(GuiGraphicsExtractor guiGraphics, Font font, Component component, int i, int j, int k, int l, int m, int n) {
         int o = font.width(component);
         int p = (k + m - 9) / 2 + 1;
         int q = l - j;
@@ -43,12 +43,12 @@ public abstract class OreButton extends OreWidget {
             double f = Math.sin((Math.PI / 2) * Math.cos((Math.PI * 2) * d / e)) / 2.0 + 0.5;
             double g = Mth.lerp(f, 0.0, r);
             guiGraphics.enableScissor(j, k, l, m);
-            guiGraphics.drawString(font, component, j - (int) g, p, n, false);
+            guiGraphics.text(font, component, j - (int) g, p, n, false);
             guiGraphics.disableScissor();
         } else {
             int r = Mth.clamp(i, j + o / 2, l - o / 2);
             FormattedCharSequence formattedCharSequence = component.getVisualOrderText();
-            guiGraphics.drawString(font, formattedCharSequence, r - font.width(formattedCharSequence) / 2, p, n, false);
+            guiGraphics.text(font, formattedCharSequence, r - font.width(formattedCharSequence) / 2, p, n, false);
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class OreButton extends OreWidget {
     public abstract void onPress(InputWithModifiers inputWithModifiers);
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
         Minecraft minecraft = Minecraft.getInstance();
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
@@ -80,7 +80,7 @@ public abstract class OreButton extends OreWidget {
         this.onPress(mouseButtonEvent);
     }
 
-    public void renderString(GuiGraphics guiGraphics, Font font, int j) {
+    public void renderString(GuiGraphicsExtractor guiGraphics, Font font, int j) {
         int k = this.getX() + 2;
         int l = getRight() - 2;
         OreButton.renderScrollingString(guiGraphics, font, label, (k + l) / 2, k, this.getY(), l, getBottom(), j);

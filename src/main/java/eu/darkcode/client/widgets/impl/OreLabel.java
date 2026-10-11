@@ -4,7 +4,7 @@ import eu.darkcode.client.widgets.AbstractOreElement;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -61,10 +61,10 @@ public class OreLabel extends AbstractOreElement implements Renderable {
     }
 
     @Override
-    public void render(GuiGraphics g, int i, int j, float f) {
+    public void extractRenderState(GuiGraphicsExtractor g, int i, int j, float f) {
         int yPos = this.getY();
         for (FormattedCharSequence line : cachedText) {
-            g.drawString(font, line, this.getX(), yPos, color, false);
+            g.text(font, line, this.getX(), yPos, color, false);
             yPos += font.lineHeight;
         }
     }

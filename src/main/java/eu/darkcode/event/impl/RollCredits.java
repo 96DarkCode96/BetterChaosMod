@@ -33,21 +33,21 @@ public class RollCredits extends TimedEvent {
     @Environment(EnvType.CLIENT)
     public void startClient() {
         super.startClient();
-        Minecraft.getInstance().setScreen(new CreditsScreen());
+        Minecraft.getInstance().setScreenAndShow(new CreditsScreen());
     }
 
     @Override
     @Environment(EnvType.CLIENT)
     public void tickClient() {
-        if (currentTick() % 20 == 0 && Minecraft.getInstance().screen == null)
-            Minecraft.getInstance().setScreen(new CreditsScreen());
+        if (currentTick() % 20 == 0 && Minecraft.getInstance().gui.screen() == null)
+            Minecraft.getInstance().setScreenAndShow(new CreditsScreen());
         super.tickClient();
     }
 
     @Override
     @Environment(EnvType.CLIENT)
     public void endClient() {
-        if (Minecraft.getInstance().screen instanceof CreditsScreen cs) {
+        if (Minecraft.getInstance().gui.screen() instanceof CreditsScreen cs) {
             cs.onClose();
             Minecraft.getInstance().mouseHandler.grabMouse();
         }

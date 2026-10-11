@@ -5,10 +5,9 @@ import eu.darkcode.client.EventManager;
 import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.voting.VotingSystem;
 import eu.darkcode.voting.PollDefinition;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -69,7 +68,7 @@ public class CurrentPollPanel implements Hud {
     }
 
     @Override
-    public void render(HudSettings settings, @NotNull GuiGraphics graphics) {
+    public void render(HudSettings settings, @NotNull GuiGraphicsExtractor graphics) {
         if (poll == null)
             return;
 
@@ -84,7 +83,7 @@ public class CurrentPollPanel implements Hud {
         y += ENTRY_VERTICAL_PADDING;
 
         MutableComponent pollTitle = Component.translatable("betterchaosmod.poll.title", Component.literal("" + totalVotes));
-        graphics.drawString(font, pollTitle, MARGIN + 4, y, 0xFFFFFFFF);
+        graphics.text(font, pollTitle, MARGIN + 4, y, 0xFFFFFFFF);
 
         y += ENTRY_VERTICAL_PADDING + font.lineHeight;
 
@@ -110,7 +109,7 @@ public class CurrentPollPanel implements Hud {
         return eventManager.votingSystem().canViewPoll() && !OverlayWebServer.running();
     }
 
-    private void renderEntry(@NotNull GuiGraphics graphics, int y, @NotNull CurrentPollPanel.ComputedEntry entry) {
+    private void renderEntry(@NotNull GuiGraphicsExtractor graphics, int y, @NotNull CurrentPollPanel.ComputedEntry entry) {
         final Font font = Minecraft.getInstance().font;
 
         double percDelta;
@@ -126,14 +125,14 @@ public class CurrentPollPanel implements Hud {
         y += ENTRY_VERTICAL_PADDING;
         final int color = BetterChaosModClient.instance().settings().hud.pollBarForegroundColor();
 
-        graphics.drawString(font, entry.optionNumber + ".", MARGIN + 4, y, color, false);
+        graphics.text(font, entry.optionNumber + ".", MARGIN + 4, y, color, false);
 
         String percentage = String.format("%.0f%%", entry.percentage * 100);
         int w = font.width(percentage);
-        graphics.drawString(font, percentage, MARGIN - 4 + panelWidth - w, y, color, false);
+        graphics.text(font, percentage, MARGIN - 4 + panelWidth - w, y, color, false);
 
         for (FormattedCharSequence line : entry.lines) {
-            graphics.drawString(font, line, MARGIN + 16, y, color, false);
+            graphics.text(font, line, MARGIN + 16, y, color, false);
             y += font.lineHeight + LINE_SPACE;
         }
     }

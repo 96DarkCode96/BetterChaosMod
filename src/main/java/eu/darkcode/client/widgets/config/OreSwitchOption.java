@@ -4,7 +4,7 @@ import eu.darkcode.client.widgets.OreElement;
 import eu.darkcode.client.widgets.impl.OreLabel;
 import eu.darkcode.client.widgets.impl.OreSwitch;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +61,7 @@ public class OreSwitchOption extends OreOption {
     }
 
     @Override
-    public void render(GuiGraphics g, int i, int j, float f) {
+    public void extractRenderState(GuiGraphicsExtractor g, int i, int j, float f) {
         int right = getX() + getWidth();
         g.fill(getX(), getY(), right, getY() + 1, 0xFF5A5B5D);
         g.fill(getX(), getY() + 1, right, getY() + getHeight(), 0xFF48494B);

@@ -3,8 +3,7 @@ package eu.darkcode.client.hud;
 import eu.darkcode.BetterChaosModClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -24,7 +23,7 @@ public class HudManager {
         registry.put(JumpscareImage.class, new JumpscareImage());
     }
 
-    public void render(@NotNull GuiGraphics graphics, boolean hideGui) {
+    public void render(@NotNull GuiGraphicsExtractor graphics, boolean hideGui) {
         registry.forEach((aClass, hud) -> {
             if (hud.enabled(hideGui))
                 hud.render(BetterChaosModClient.instance().settings().hud, graphics);

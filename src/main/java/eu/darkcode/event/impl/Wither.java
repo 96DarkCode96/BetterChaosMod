@@ -7,7 +7,7 @@ import eu.darkcode.server.EventManager;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class Wither extends InstantEvent {
     @Override
     public void start(@NotNull EventManager manager) {
         manager.activePlayers().forEach(player -> {
-            WitherBoss wither = EntityType.WITHER.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
+            WitherBoss wither = EntityTypes.WITHER.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
             if (wither == null)
                 return;
             wither.setHealth(6);

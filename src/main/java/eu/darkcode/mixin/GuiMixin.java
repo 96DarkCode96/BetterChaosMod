@@ -4,7 +4,6 @@ import eu.darkcode.BetterChaosModClient;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,9 +18,9 @@ abstract class GuiMixin {
     @Shadow
     private Minecraft minecraft;
 
-    @Inject(method = "render", at = @At("TAIL"))
-    private void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if (!(minecraft.screen instanceof LevelLoadingScreen)) {
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
+    private void extractRenderState(DeltaTracker deltaTracker, boolean shouldRenderLevel, boolean resourcesLoaded, CallbackInfo ci) {
+        if (!(minecraft.gui.screen() instanceof LevelLoadingScreen)) {
             BetterChaosModClient.instance().hudManager().render(guiGraphics, this.minecraft.options.hideGui);
         }
     }

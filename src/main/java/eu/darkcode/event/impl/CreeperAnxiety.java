@@ -10,7 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,7 +37,7 @@ public class CreeperAnxiety extends TimedEvent {
             manager.activePlayers().forEach(player -> {
                 RandomSource random = player.getRandom();
                 if (random.nextInt(10) >= 5)
-                    EntityType.CREEPER.spawn(player.level(), player.blockPosition().north(), EntitySpawnReason.EVENT);
+                    EntityTypes.CREEPER.spawn(player.level(), player.blockPosition().north(), EntitySpawnReason.EVENT);
                 player.connection.send(new ClientboundSoundPacket(BuiltInRegistries.SOUND_EVENT.wrapAsHolder(SoundEvents.CREEPER_PRIMED), SoundSource.HOSTILE, player.getX(), player.getY(), player.getZ(), 1f, 0.5f, random.nextLong()));
             });
         }

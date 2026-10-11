@@ -2,7 +2,7 @@ package eu.darkcode.client.widgets;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import eu.darkcode.client.widgets.utils.SpriteAtlas;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;

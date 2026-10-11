@@ -94,7 +94,7 @@ public class EventManager {
     public void setupIntegration(@NotNull ClientConfigurationNetworking.Context context) {
         final Minecraft minecraft = context.client();
         // [OPEN INTEGRATION CHECK SCREEN]
-        minecraft.setScreen(new IntegrationCheckScreen(minecraft.screen, context.responseSender()));
+        minecraft.setScreenAndShow(new IntegrationCheckScreen(minecraft.gui.screen(), context.responseSender()));
     }
 
     public void pollStarted(@NotNull PollDefinition poll) {

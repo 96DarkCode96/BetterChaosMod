@@ -4,7 +4,7 @@ import eu.darkcode.client.widgets.OreElement;
 import eu.darkcode.client.widgets.config.*;
 import eu.darkcode.client.widgets.utils.Ore;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -40,7 +40,7 @@ public class OrePanel extends AbstractLayout<OrePanel.ChildWrapper> implements R
     }
 
     @Override
-    public void render(GuiGraphics g, int i, int j, float f) {
+    public void extractRenderState(GuiGraphicsExtractor g, int i, int j, float f) {
         int right = getX() + getWidth();
         int bottom = getY() + getHeight();
         g.fill(getX(), getY(), right, bottom, 0xFF1E1E1F);
@@ -173,7 +173,7 @@ public class OrePanel extends AbstractLayout<OrePanel.ChildWrapper> implements R
     }
 
     public int maxScrollAmount() {
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
         return screen != null ? -(screen.height - height - unscrolledY - 10) : 0;
     }
 

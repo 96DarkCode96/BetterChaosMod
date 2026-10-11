@@ -4,7 +4,7 @@ import eu.darkcode.client.widgets.OreElement;
 import eu.darkcode.client.widgets.container.AbstractLayout;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 
 @Environment(EnvType.CLIENT)
@@ -18,7 +18,7 @@ public abstract class OreOption extends AbstractLayout<OreElement> implements Re
     }
 
     @Override
-    public void render(GuiGraphics g, int i, int j, float f) {
+    public void extractRenderState(GuiGraphicsExtractor g, int i, int j, float f) {
         g.fill(getX(), getY(), getRight(), getY() + 1, 0xFF5A5B5D);
         g.fill(getX(), getY() + 1, getRight(), getBottom(), 0xFF48494B);
     }

@@ -7,7 +7,7 @@ import eu.darkcode.server.EventManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.rabbit.Rabbit;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class KillerBunny extends InstantEvent {
 
             for (int i = 0; i < count; i++) {
                 BlockPos pos = player.blockPosition().offset(random.nextIntBetweenInclusive(-4, 4), random.nextInt(2), random.nextIntBetweenInclusive(-4, 4));
-                EntityType.RABBIT.spawn(player.level(), rabbit -> rabbit.setVariant(Rabbit.Variant.EVIL), pos, EntitySpawnReason.EVENT, false, false);
+                EntityTypes.RABBIT.spawn(player.level(), rabbit -> rabbit.setVariant(Rabbit.Variant.EVIL), pos, EntitySpawnReason.EVENT, false, false);
             }
         });
     }

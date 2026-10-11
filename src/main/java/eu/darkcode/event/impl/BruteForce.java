@@ -10,7 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.monster.piglin.PiglinBrute;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +36,7 @@ public class BruteForce extends InstantEvent {
 
             int amount = random.nextIntBetweenInclusive(1, 3); // 1-3
             for (int i = 0; i < amount; i++) {
-                PiglinBrute brute = EntityType.PIGLIN_BRUTE.spawn(level, position.offset(random.nextIntBetweenInclusive(-4, 4), random.nextInt(2), random.nextIntBetweenInclusive(-4, 4)), EntitySpawnReason.EVENT);
+                PiglinBrute brute = EntityTypes.PIGLIN_BRUTE.spawn(level, position.offset(random.nextIntBetweenInclusive(-4, 4), random.nextInt(2), random.nextIntBetweenInclusive(-4, 4)), EntitySpawnReason.EVENT);
                 if (brute != null) {
                     brute.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, -1, 0, false, false, false));
                     brute.setImmuneToZombification(true);

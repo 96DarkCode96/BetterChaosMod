@@ -1,7 +1,7 @@
 package eu.darkcode.client.hud;
 
 import eu.darkcode.BetterChaosModClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.NotNull;
 
 public class Timer implements Hud {

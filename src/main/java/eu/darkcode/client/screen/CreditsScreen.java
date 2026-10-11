@@ -1,8 +1,9 @@
 package eu.darkcode.client.screen;
 
 import eu.darkcode.BetterChaosModClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.WinScreen;
+import org.jspecify.annotations.NonNull;
 
 /**
  * @author _dark_code_
@@ -16,8 +17,8 @@ public class CreditsScreen extends WinScreen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        super.extractRenderState(guiGraphics, i, j, f);
         BetterChaosModClient.instance().hudManager().render(guiGraphics, minecraft.options.hideGui);
     }
 

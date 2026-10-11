@@ -83,7 +83,7 @@ public class TokenServer {
                 exchange.getResponseBody().close();
 
                 Minecraft.getInstance().execute(() -> {
-                    if (Minecraft.getInstance().screen instanceof ConfigScreen cs)
+                    if (Minecraft.getInstance().gui.screen() instanceof ConfigScreen cs)
                         cs.reinit();
                 });
                 return;
