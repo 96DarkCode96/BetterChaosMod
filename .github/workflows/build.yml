@@ -1,10 +1,14 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
-
 name: build
-on: [pull_request, push]
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
 
 jobs:
   build:
@@ -12,17 +16,15 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
-        uses: actions/setup-java@v4
+      - name: Setup Java and Gradle Caching
+        uses: gradle/actions/setup-gradle@v4
         with:
           java-version: '21'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: build
+          java-distribution: 'microsoft'
+
+      - name: Build with Gradle
         run: ./gradlew build
+
       - name: Store reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -31,7 +33,8 @@ jobs:
           path: |
             **/build/reports/
             **/build/test-results/
-      - name: capture build artifacts
+
+      - name: Capture build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Artifacts
