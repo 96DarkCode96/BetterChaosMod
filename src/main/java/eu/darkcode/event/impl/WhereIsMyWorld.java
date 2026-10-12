@@ -30,14 +30,12 @@ public class WhereIsMyWorld extends TimedEvent {
     public void startClient() {
         super.startClient();
         SharedProperties.noWorld = true;
-        // TODO: Rework - Minecraft.getInstance().levelRenderer.allChanged();
     }
 
     @Override
     public void endClient() {
         super.endClient();
         SharedProperties.noWorld = false;
-        // TODO: Rework - Minecraft.getInstance().levelRenderer.allChanged();
     }
 
     @Override
