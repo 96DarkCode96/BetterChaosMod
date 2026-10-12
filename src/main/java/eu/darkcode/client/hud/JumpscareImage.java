@@ -15,7 +15,7 @@ public class JumpscareImage implements Hud {
     private static final Identifier TEXTURE = Utils.resourceLocation("jumpscare");
 
     @Override
-    public void render(HudSettings hudManager, @NotNull GuiGraphics guiGraphics) {
+    public void render(HudSettings hudManager, @NotNull GuiGraphicsExtractor guiGraphics) {
         int width = guiGraphics.guiWidth();
         int height = guiGraphics.guiHeight();
 

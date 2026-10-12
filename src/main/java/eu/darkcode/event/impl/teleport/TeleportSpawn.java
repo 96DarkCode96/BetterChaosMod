@@ -29,7 +29,7 @@ public class TeleportSpawn extends InstantEvent {
                 return;
             }
             BlockPos pos = overworld.getLevelData().getRespawnData().pos();
-            Utils.teleportPlayer(player, overworld, pos.getCenter());
+            Utils.teleportPlayer(player, overworld, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f);
             Utils.clearPlayerArea(player);
         });
     }

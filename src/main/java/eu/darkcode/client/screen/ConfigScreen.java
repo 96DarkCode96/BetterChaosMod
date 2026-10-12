@@ -1,5 +1,6 @@
 package eu.darkcode.client.screen;
 
+import com.mojang.blaze3d.Blaze3D;
 import eu.darkcode.BetterChaosMod;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
@@ -56,7 +57,7 @@ public class ConfigScreen extends BaseScreen {
             sidebar.addChild(new OreButton(0, 0, 100, 20, Component.literal("Update available!")) {
                 @Override
                 public void onPress(InputWithModifiers inputWithModifiers) {
-                    Util.getPlatform().openUri(UpdateStatus.UPDATE_LINK);
+                    Blaze3D.openUri(UpdateStatus.UPDATE_LINK);
                 }
             }, a -> a.margin(10, 0, 10, 0));
         }

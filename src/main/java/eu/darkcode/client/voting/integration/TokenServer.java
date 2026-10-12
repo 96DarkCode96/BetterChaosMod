@@ -1,6 +1,7 @@
 package eu.darkcode.client.voting.integration;
 
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.Blaze3D;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import eu.darkcode.BetterChaosModClient;
@@ -9,16 +10,12 @@ import eu.darkcode.utils.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
@@ -105,7 +102,12 @@ public class TokenServer {
             // TODO: Open error screen
             return;
         }
-        Util.getPlatform().openUri(INTERNAL_SERVER_ENDPOINT + platform + "/authorize");
+        try {
+            Blaze3D.openUri(new URI(INTERNAL_SERVER_ENDPOINT + platform + "/authorize"));
+        } catch (URISyntaxException e) {
+            BetterChaosModClient.LOGGER.error("Failed to open Token authorize!", e);
+            // TODO: Open error screen
+        }
     }
 
     public static void openKick() {

@@ -6,6 +6,7 @@ import eu.darkcode.event.InstantEvent;
 import eu.darkcode.server.EventManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.util.Prediction;
 import org.jetbrains.annotations.NotNull;
 
 public class DropItemInHand extends InstantEvent {
@@ -27,6 +28,6 @@ public class DropItemInHand extends InstantEvent {
         super.startClient();
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null)
-            player.drop(true);
+            player.drop(player.getMainHandItem(), true, Prediction.PREDICTED); // TODO: TEST !!
     }
 }

@@ -52,7 +52,7 @@ public class OreSlider extends OreWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor g, int i, int j, float f) {
         double fraction = ((double) value - min) / (max - min);
         int posX = (int) Math.floor(fraction * (getWidth() - HANDLE_WIDTH)) + getX();
 
@@ -120,7 +120,7 @@ public class OreSlider extends OreWidget {
             this.canChangeValue = true;
     }
 
-    private void renderCursor(@NotNull GuiGraphics g) {
+    private void renderCursor(@NotNull GuiGraphicsExtractor g) {
         if (!isHovered())
             return;
         if (!isActive()) {

@@ -19,7 +19,7 @@ public class CreditsScreen extends WinScreen {
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
         super.extractRenderState(guiGraphics, i, j, f);
-        BetterChaosModClient.instance().hudManager().render(guiGraphics, minecraft.options.hideGui);
+        BetterChaosModClient.instance().hudManager().render(guiGraphics, minecraft.gui.hud.isHidden());
     }
 
     @Override

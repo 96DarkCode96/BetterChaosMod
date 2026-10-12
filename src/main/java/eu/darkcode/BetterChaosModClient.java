@@ -13,7 +13,7 @@ import eu.darkcode.networking.configuration.ServerboundHandshakeAck;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -30,7 +30,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,11 +88,11 @@ public class BetterChaosModClient implements ClientModInitializer {
         hudManager = new HudManager();
         updateStatus = UpdateStatus.checkVersion();
 
-        KEYBIND_OPEN_GAME_LOG = KeyBindingHelper.registerKeyBinding(new KeyMapping("key.gamelog.open", GLFW.GLFW_KEY_U, KEYBIND_CATEGORY));
+        KEYBIND_OPEN_GAME_LOG = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.gamelog.open", 24, KEYBIND_CATEGORY));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (KEYBIND_OPEN_GAME_LOG.consumeClick())
-                client.setScreen(new GameLogScreen());
+                client.setScreenAndShow(new GameLogScreen());
         });
 
         ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_HANDSHAKE, (payload, context) -> {

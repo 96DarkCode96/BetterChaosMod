@@ -30,25 +30,25 @@ public final class Payloads {
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> regConfigS2C(@NotNull String packetId, @NotNull StreamCodec<FriendlyByteBuf, T> codec) {
         CustomPacketPayload.Type<T> reg = reg(packetId);
-        PayloadTypeRegistry.configurationS2C().register(reg, codec);
+        PayloadTypeRegistry.clientboundConfiguration().register(reg, codec);
         return reg;
     }
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> regConfigC2S(@NotNull String packetId, @NotNull StreamCodec<FriendlyByteBuf, T> codec) {
         CustomPacketPayload.Type<T> reg = reg(packetId);
-        PayloadTypeRegistry.configurationC2S().register(reg, codec);
+        PayloadTypeRegistry.serverboundConfiguration().register(reg, codec);
         return reg;
     }
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> regPlayS2C(@NotNull String packetId, @NotNull StreamCodec<RegistryFriendlyByteBuf, T> codec) {
         CustomPacketPayload.Type<T> reg = reg(packetId);
-        PayloadTypeRegistry.playS2C().register(reg, codec);
+        PayloadTypeRegistry.clientboundPlay().register(reg, codec);
         return reg;
     }
 
     private static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> regPlayC2S(@NotNull String packetId, @NotNull StreamCodec<RegistryFriendlyByteBuf, T> codec) {
         CustomPacketPayload.Type<T> reg = reg(packetId);
-        PayloadTypeRegistry.playC2S().register(reg, codec);
+        PayloadTypeRegistry.serverboundPlay().register(reg, codec);
         return reg;
     }
 

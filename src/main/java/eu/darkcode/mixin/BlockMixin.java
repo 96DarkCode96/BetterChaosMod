@@ -31,7 +31,7 @@ public class BlockMixin {
         if (SharedProperties.randomDrops && level instanceof ServerLevel serverLevel && !itemStack.isEmpty() && serverLevel.getGameRules().get(GameRules.BLOCK_DROPS)) {
             ItemEntity itemEntity = supplier.get();
             ItemStack itemStack1 = new ItemStack(Utils.getRandomItem(serverLevel));
-            itemStack1.setCount(serverLevel.random.nextIntBetweenInclusive(1, itemStack1.getMaxStackSize()));
+            itemStack1.setCount(serverLevel.getRandom().nextIntBetweenInclusive(1, itemStack1.getMaxStackSize()));
             itemEntity.setItem(itemStack1);
             itemEntity.setDefaultPickUpDelay();
             level.addFreshEntity(itemEntity);

@@ -10,6 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -76,11 +77,11 @@ public class MidasTouch extends TimedEvent {
                     result = new ItemStack(Items.GOLDEN_HORSE_ARMOR, itemStack.getCount());
                 else
                     result = new ItemStack(Items.GOLD_INGOT);
-            } else if (item instanceof AxeItem) {
+            } else if (itemStack.is(ItemTags.AXES)) {
                 result = new ItemStack(Items.GOLDEN_AXE, itemStack.getCount());
-            } else if (item instanceof ShovelItem) {
+            } else if (itemStack.is(ItemTags.SHOVELS)) {
                 result = new ItemStack(Items.GOLDEN_SHOVEL, itemStack.getCount());
-            } else if (item instanceof HoeItem) {
+            } else if (itemStack.is(ItemTags.HOES)) {
                 result = new ItemStack(Items.GOLDEN_HOE, itemStack.getCount());
             } else if (itemStack.has(DataComponents.TOOL)) {
                 Tool tool = itemStack.get(DataComponents.TOOL);
@@ -117,7 +118,7 @@ public class MidasTouch extends TimedEvent {
             if (x instanceof ItemEntity a)
                 return !a.getItem().isEmpty() && !a.getItem().is(ChaosTags.IGNORED_BY_TOUCH_ITEM) && !a.getItem().is(ChaosTags.MIDAS_TOUCH_ITEMS);
             if (x instanceof LivingEntity && x.isAlive())
-                return !x.getType().is(ChaosTags.IGNORED_BY_TOUCH_ENTITY);
+                return !x.is(ChaosTags.IGNORED_BY_TOUCH_ENTITY);
             return false;
         });
         for (Entity mob : mobs) {

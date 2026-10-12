@@ -10,6 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -97,7 +98,7 @@ public class OrichalcumTouch extends TimedEvent {
                     result = new ItemStack(Items.ROTTEN_FLESH, itemStack.getCount());
             } else if (item instanceof BlockItem) {
                 result = switch (player.getRandom().nextInt(6)) {
-                    case 0 -> new ItemStack(Items.COPPER_BLOCK, Math.min(itemStack.getCount(), 3));
+                    case 0 -> new ItemStack(Items.COPPER_BLOCK.weathering().unaffected(), Math.min(itemStack.getCount(), 3));
                     case 1 -> new ItemStack(Items.RAW_COPPER_BLOCK, Math.min(itemStack.getCount(), 3));
                     default -> new ItemStack(Items.COPPER_ORE, Math.min(itemStack.getCount(), 10));
                 };
@@ -115,11 +116,11 @@ public class OrichalcumTouch extends TimedEvent {
                     result = new ItemStack(Items.COPPER_HORSE_ARMOR, itemStack.getCount());
                 else
                     result = new ItemStack(Items.GOLD_INGOT);
-            } else if (item instanceof AxeItem) {
+            } else if (itemStack.is(ItemTags.AXES)) {
                 result = new ItemStack(Items.COPPER_AXE, itemStack.getCount());
-            } else if (item instanceof ShovelItem) {
+            } else if (itemStack.is(ItemTags.SHOVELS)) {
                 result = new ItemStack(Items.COPPER_SHOVEL, itemStack.getCount());
-            } else if (item instanceof HoeItem) {
+            } else if (itemStack.is(ItemTags.HOES)) {
                 result = new ItemStack(Items.COPPER_HOE, itemStack.getCount());
             } else if (itemStack.has(DataComponents.TOOL)) {
                 Tool tool = itemStack.get(DataComponents.TOOL);
@@ -156,14 +157,14 @@ public class OrichalcumTouch extends TimedEvent {
             if (x instanceof ItemEntity a)
                 return !a.getItem().isEmpty() && !a.getItem().is(ChaosTags.IGNORED_BY_TOUCH_ITEM) && !a.getItem().is(ChaosTags.ORICHALCUM_TOUCH_ITEMS);
             if (x instanceof LivingEntity && x.isAlive())
-                return !x.getType().is(ChaosTags.IGNORED_BY_TOUCH_ENTITY);
+                return !x.is(ChaosTags.IGNORED_BY_TOUCH_ENTITY);
             return false;
         });
         for (Entity mob : mobs) {
 
             ItemStack itemStack = switch (player.getRandom().nextInt(14)) {
                 case 0 -> new ItemStack(Items.COPPER_INGOT);
-                case 1 -> new ItemStack(Items.COPPER_BLOCK);
+                case 1 -> new ItemStack(Items.COPPER_BLOCK.weathering().unaffected());
                 case 2 -> new ItemStack(Items.RAW_COPPER_BLOCK);
                 case 3 -> new ItemStack(Items.COPPER_ORE);
                 default -> new ItemStack(Items.COPPER_NUGGET, player.getRandom().nextInt(8) + 2);
@@ -190,7 +191,7 @@ public class OrichalcumTouch extends TimedEvent {
                     else if (odds < 98)
                         world.setBlockAndUpdate(blockPos, Blocks.RAW_COPPER_BLOCK.defaultBlockState());
                     else
-                        world.setBlockAndUpdate(blockPos, Blocks.COPPER_BLOCK.defaultBlockState());
+                        world.setBlockAndUpdate(blockPos, Blocks.COPPER_BLOCK.weathering().unaffected().defaultBlockState());
                 }
             }
         }

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static eu.darkcode.utils.Utils.getVoteOptionIndex;
-import static net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil.renderTooltipBackground;
+import static net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil.extractTooltipBackground;
 
 public class CurrentPollPanel implements Hud {
     private static final int LINE_SPACE = 2;
@@ -76,7 +76,7 @@ public class CurrentPollPanel implements Hud {
 
         // [BACKGROUND]
         int y = settings.timerHeight() + MARGIN;
-        renderTooltipBackground(graphics, MARGIN, y, panelWidth, panelHeight, null);
+        extractTooltipBackground(graphics, MARGIN, y, panelWidth, panelHeight, null);
 
         // [TITLE]
         final Font font = Minecraft.getInstance().font;

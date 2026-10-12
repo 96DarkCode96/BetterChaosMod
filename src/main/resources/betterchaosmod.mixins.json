@@ -8,7 +8,7 @@
   "client": [
     "LevelRendererMixin",
     "BossHealthOverlayMixin",
-    "GuiMixin",
+    "HudMixin",
     "KeyboardInputMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",

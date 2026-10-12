@@ -14,7 +14,7 @@ public record IntegrationCheckTask() implements ConfigurationTask {
 
     @Override
     public void start(Consumer<Packet<?>> consumer) {
-        consumer.accept(ServerConfigurationNetworking.createS2CPacket(ClientboundIntegrationCheck.INSTANCE));
+        consumer.accept(ServerConfigurationNetworking.createClientboundPacket(ClientboundIntegrationCheck.INSTANCE));
     }
 
     @Override

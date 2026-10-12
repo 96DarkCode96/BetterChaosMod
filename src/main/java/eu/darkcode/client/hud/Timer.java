@@ -9,7 +9,7 @@ public class Timer implements Hud {
     private double fraction = 0;
 
     @Override
-    public void render(HudSettings settings, @NotNull GuiGraphics graphics) {
+    public void render(HudSettings settings, @NotNull GuiGraphicsExtractor graphics) {
 
         double targetFraction = BetterChaosModClient.instance().eventManager().getTimerFraction();
         if (targetFraction < fraction || targetFraction > 0.95) {

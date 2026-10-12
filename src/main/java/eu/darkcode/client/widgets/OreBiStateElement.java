@@ -19,7 +19,7 @@ public abstract class OreBiStateElement extends OreWidget {
     protected abstract void onValueChanged(boolean newValue);
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
         Identifier resourceLocation = getSpriteAtlas().get(isHovered(), isFocused(), isActive());
         g.blitSprite(RenderPipelines.GUI_TEXTURED, resourceLocation, getX(), getY(), getWidth(), getHeight(), 0xFFFFFFFF);
         if (this.isHovered())

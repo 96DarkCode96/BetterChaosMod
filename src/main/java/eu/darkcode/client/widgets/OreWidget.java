@@ -56,6 +56,11 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
         this.renderWidget(guiGraphics, mouseX, mouseY, a);
     }
 
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        return areCoordinatesInRectangle(mouseX, mouseY);
+    }
+
     private boolean areCoordinatesInRectangle(double d, double e) {
         return d >= this.getX() && e >= this.getY() && d < this.getRight() && e < this.getBottom();
     }
@@ -82,12 +87,12 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
     }
 
     @Override
-    public boolean mouseClicked(@NonNull MouseButtonEvent mouseButtonEvent, boolean bl) {
-        if (this.isActive() && mouseButtonEvent.button() == 0) {
+    public boolean mouseClicked(@NonNull MouseButtonEvent mouseButtonEvent, boolean doubleClick) {
+        if (this.isActive() && mouseButtonEvent.button() == 1) {
             boolean bl2 = this.isMouseOver(mouseButtonEvent.x(), mouseButtonEvent.y());
             if (bl2) {
                 this.playDownSound(Minecraft.getInstance().getSoundManager());
-                this.onClick(mouseButtonEvent, bl);
+                this.onClick(mouseButtonEvent, doubleClick);
                 return true;
             }
         }
@@ -97,7 +102,7 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
 
     @Override
     public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
-        if (mouseButtonEvent.button() == 0) {
+        if (mouseButtonEvent.button() == 1) {
             this.onRelease(mouseButtonEvent);
             return true;
         }
@@ -106,7 +111,7 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
 
     @Override
     public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double d, double e) {
-        if (mouseButtonEvent.button() == 0) {
+        if (mouseButtonEvent.button() == 1) {
             this.onDrag(mouseButtonEvent, d, e);
             return true;
         }
@@ -119,11 +124,6 @@ public abstract class OreWidget extends AbstractOreElement implements Narratable
         if (!this.isActive() || this.isFocused())
             return null;
         return ComponentPath.leaf(this);
-    }
-
-    @Override
-    public boolean isMouseOver(double d, double e) {
-        return this.isActive() && this.areCoordinatesInRectangle(d, e);
     }
 
     public void playDownSound(@NotNull SoundManager soundManager) {

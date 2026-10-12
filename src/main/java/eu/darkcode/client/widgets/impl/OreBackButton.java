@@ -34,7 +34,7 @@ public class OreBackButton extends OreWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor g, int i, int j, float f) {
         g.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITE, getX() + 4, getY() + 4, 7, 7, isHovered() ? 0xFFAAAAAA : 0xFF000000);
         if (isHovered())
             g.requestCursor(CursorTypes.POINTING_HAND);

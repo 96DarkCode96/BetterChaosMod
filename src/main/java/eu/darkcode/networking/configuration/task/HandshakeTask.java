@@ -15,7 +15,7 @@ public record HandshakeTask(@NotNull Settings settings) implements Configuration
 
     @Override
     public void start(Consumer<Packet<?>> consumer) {
-        consumer.accept(ServerConfigurationNetworking.createS2CPacket(new ClientboundHandshake(settings)));
+        consumer.accept(ServerConfigurationNetworking.createClientboundPacket(new ClientboundHandshake(settings)));
     }
 
     @Override
