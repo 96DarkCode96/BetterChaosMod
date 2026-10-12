@@ -28,7 +28,7 @@ public class ExplodeNearbyEntities extends InstantEvent {
             Vec3 position = player.position();
             AABB area = new AABB(position.add(-80, -80, -80), position.add(80, 80, 80));
             level.getEntities(player, area).forEach(entity -> {
-                if (entity.getType().is(ChaosTags.DO_NOT_EXPLODE_ENTITY))
+                if (entity.is(ChaosTags.DO_NOT_EXPLODE_ENTITY))
                     return;
 
                 level.explode(entity, entity.getX(), entity.getY() + 0.5, entity.getZ(), 2, Level.ExplosionInteraction.MOB);

@@ -7,7 +7,7 @@ import eu.darkcode.server.EventManager;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class Warden extends InstantEvent {
@@ -17,7 +17,7 @@ public class Warden extends InstantEvent {
     @Override
     public void start(@NotNull EventManager manager) {
         manager.activePlayers().forEach(player -> {
-            net.minecraft.world.entity.monster.warden.Warden warden = EntityType.WARDEN.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
+            net.minecraft.world.entity.monster.warden.Warden warden = EntityTypes.WARDEN.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
             if (warden == null)
                 return;
             warden.setHealth(20);

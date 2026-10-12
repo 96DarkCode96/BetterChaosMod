@@ -5,7 +5,7 @@ import eu.darkcode.client.widgets.OreWidget;
 import eu.darkcode.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -30,7 +30,7 @@ public class OreSidebarOption extends OreWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor g, int i, int j, float f) {
         int right = getX() + getWidth();
         int bottom = getY() + getHeight();
         if (selected) {
@@ -48,7 +48,7 @@ public class OreSidebarOption extends OreWidget {
             g.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, xIcon, getY() + 7, ICON_SIZE, ICON_SIZE, 0xFFFFFFFF);
 
         final Font font = Minecraft.getInstance().font;
-        g.drawString(font, text, xIcon + ICON_SIZE + 8, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF, false);
+        g.text(font, text, xIcon + ICON_SIZE + 8, getY() + (getHeight() - 8) / 2, 0xFFFFFFFF, false);
         if (isHovered())
             g.requestCursor(CursorTypes.POINTING_HAND);
     }

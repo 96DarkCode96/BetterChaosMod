@@ -1,7 +1,7 @@
 package eu.darkcode.client.hud;
 
 import eu.darkcode.BetterChaosModClient;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.NotNull;
 
 public class Timer implements Hud {
@@ -9,7 +9,7 @@ public class Timer implements Hud {
     private double fraction = 0;
 
     @Override
-    public void render(HudSettings settings, @NotNull GuiGraphics graphics) {
+    public void render(HudSettings settings, @NotNull GuiGraphicsExtractor graphics) {
 
         double targetFraction = BetterChaosModClient.instance().eventManager().getTimerFraction();
         if (targetFraction < fraction || targetFraction > 0.95) {

@@ -1,7 +1,7 @@
 package eu.darkcode.client.screen;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -9,6 +9,7 @@ import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.IntConsumer;
 
@@ -43,7 +44,7 @@ public class ColorPickerScreen extends Screen {
 
     public ColorPickerScreen(int color, @NotNull IntConsumer valueConsumer) {
         super(Component.empty());
-        this.parent = Minecraft.getInstance().screen;
+        this.parent = Minecraft.getInstance().gui.screen();
         this.valueConsumer = valueConsumer;
 
         float[] hsv = rgbToHsv(color);
@@ -54,13 +55,13 @@ public class ColorPickerScreen extends Screen {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(@NotNull GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         ProfilerFiller profiler = Profiler.get();
         profiler.push("ColorPickerScreen");
 
         profiler.push("parent");
         if (parent != null)
-            parent.render(g, 0, 0, partialTick);
+            parent.extractRenderState(g, 0, 0, partialTick);
         profiler.pop();
 
         profiler.push("blur");
@@ -69,7 +70,7 @@ public class ColorPickerScreen extends Screen {
         profiler.pop();
 
         profiler.push("picker");
-        super.render(g, mouseX, mouseY, partialTick);
+        super.extractRenderState(g, mouseX, mouseY, partialTick);
 
         profiler.push("background");
         drawPanelBackground(g);
@@ -136,8 +137,7 @@ public class ColorPickerScreen extends Screen {
         // compose ARGB from internal HSV+alpha and pass to consumer
         int composed = hsvToArgb(alpha, hue, sat, val);
         valueConsumer.accept(composed);
-        assert minecraft != null;
-        minecraft.setScreen(parent);
+        minecraft.setScreenAndShow(parent);
     }
 
     @Override
@@ -162,18 +162,18 @@ public class ColorPickerScreen extends Screen {
             this.parent.resize(i, j);
     }
 
-    private void printInfo(@NotNull GuiGraphics g, int curA, float curHue, float curSat, float curVal) {
+    private void printInfo(@NotNull GuiGraphicsExtractor g, int curA, float curHue, float curSat, float curVal) {
         int composed = hsvToArgb(curA, curHue, curSat, curVal);
         String hex = String.format("#%08X", composed);
         int infoX = canvasX;
         int infoY = canvasY + CANVAS_SIZE + 8;
-        g.drawString(font, Component.literal("HEX: " + hex), infoX, infoY, 0xFFFFFFFF);
-        g.drawString(font, Component.literal("HUE: " + curHue), infoX, infoY + 9, 0xFFFFFFFF);
-        g.drawString(font, Component.literal("SAT: " + curSat), infoX, infoY + 18, 0xFFFFFFFF);
-        g.drawString(font, Component.literal("VAL: " + curVal), infoX, infoY + 27, 0xFFFFFFFF);
+        g.text(font, Component.literal("HEX: " + hex), infoX, infoY, 0xFFFFFFFF);
+        g.text(font, Component.literal("HUE: " + curHue), infoX, infoY + 9, 0xFFFFFFFF);
+        g.text(font, Component.literal("SAT: " + curSat), infoX, infoY + 18, 0xFFFFFFFF);
+        g.text(font, Component.literal("VAL: " + curVal), infoX, infoY + 27, 0xFFFFFFFF);
     }
 
-    private void drawPanelBackground(@NotNull GuiGraphics g) {
+    private void drawPanelBackground(@NotNull GuiGraphicsExtractor g) {
         int panelX = canvasX - 6;
         int panelY = canvasY - 6;
         int panelW = CANVAS_SIZE + hueW + alphaW + 8 + 8 + 12;
@@ -208,7 +208,7 @@ public class ColorPickerScreen extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent mouseButtonEvent) {
+    public boolean mouseReleased(@NonNull MouseButtonEvent mouseButtonEvent) {
         draggingCanvas = false;
         draggingHue = false;
         draggingAlpha = false;
@@ -267,7 +267,7 @@ public class ColorPickerScreen extends Screen {
         return Math.clamp(v, 0, 199);
     }
 
-    private void drawSelectionRect(@NotNull GuiGraphics g, int cx, int cy) {
+    private void drawSelectionRect(@NotNull GuiGraphicsExtractor g, int cx, int cy) {
         int left = cx - 4;
         int top = cy - 4;
         // outer white border

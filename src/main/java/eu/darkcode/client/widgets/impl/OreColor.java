@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import eu.darkcode.client.screen.ColorPickerScreen;
 import eu.darkcode.client.widgets.OreWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +27,7 @@ public class OreColor extends OreWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int mouseX, int mouseY, float delta) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
         if (isFocused()) {
             g.fill(getX() - 1, getY() - 1, getRight() + 1, getY(), 0xFFFFFFFF);
             g.fill(getX() - 1, getY(), getX(), getBottom(), 0xFFFFFFFF);
@@ -57,7 +57,7 @@ public class OreColor extends OreWidget {
     }
 
     private void openColorPicker() {
-        Minecraft.getInstance().setScreen(new ColorPickerScreen(color, newColor -> {
+        Minecraft.getInstance().setScreenAndShow(new ColorPickerScreen(color, newColor -> {
             this.color = newColor;
             valueConsumer.accept(newColor);
         }));

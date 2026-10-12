@@ -7,7 +7,7 @@ import eu.darkcode.server.EventManager;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class Blaze extends InstantEvent {
@@ -17,7 +17,7 @@ public class Blaze extends InstantEvent {
     @Override
     public void start(@NotNull EventManager manager) {
         manager.activePlayers().forEach(player -> {
-            net.minecraft.world.entity.monster.Blaze blaze = EntityType.BLAZE.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
+            net.minecraft.world.entity.monster.Blaze blaze = EntityTypes.BLAZE.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
             if (blaze == null)
                 return;
             blaze.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 9999, 2));

@@ -6,7 +6,7 @@ import eu.darkcode.event.InstantEvent;
 import eu.darkcode.server.EventManager;
 import net.minecraft.world.entity.EntityReference;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.golem.IronGolem;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +21,7 @@ public class MadSecurity extends InstantEvent {
     @Override
     public void start(@NotNull EventManager manager) {
         manager.activePlayers().forEach(player -> {
-            IronGolem golem = EntityType.IRON_GOLEM.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
+            IronGolem golem = EntityTypes.IRON_GOLEM.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT);
             if (golem == null)
                 return;
             golem.setTarget(player);

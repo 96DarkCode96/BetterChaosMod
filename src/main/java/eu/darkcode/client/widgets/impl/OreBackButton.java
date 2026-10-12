@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import eu.darkcode.client.screen.BaseScreen;
 import eu.darkcode.client.widgets.OreWidget;
 import eu.darkcode.utils.Utils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.KeyEvent;
@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class OreBackButton extends OreWidget {
 
@@ -33,7 +34,7 @@ public class OreBackButton extends OreWidget {
     }
 
     @Override
-    protected void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
+    protected void renderWidget(@NotNull GuiGraphicsExtractor g, int i, int j, float f) {
         g.blitSprite(RenderPipelines.GUI_TEXTURED, SPRITE, getX() + 4, getY() + 4, 7, 7, isHovered() ? 0xFFAAAAAA : 0xFF000000);
         if (isHovered())
             g.requestCursor(CursorTypes.POINTING_HAND);
@@ -46,7 +47,7 @@ public class OreBackButton extends OreWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    public void updateNarration(@NonNull NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.TITLE, CommonComponents.GUI_BACK);
     }
 

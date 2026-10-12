@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -28,7 +28,7 @@ public class SlimeArmy extends InstantEvent {
 
             int amount = random.nextInt(5) + 5;
             for (int i = 0; i < amount; i++) {
-                EntityType.SLIME.spawn(level, position.offset(random.nextIntBetweenInclusive(-4, 4), random.nextInt(3), random.nextIntBetweenInclusive(-4, 4)), EntitySpawnReason.EVENT);
+                EntityTypes.SLIME.spawn(level, position.offset(random.nextIntBetweenInclusive(-4, 4), random.nextInt(3), random.nextIntBetweenInclusive(-4, 4)), EntitySpawnReason.EVENT);
             }
         });
     }

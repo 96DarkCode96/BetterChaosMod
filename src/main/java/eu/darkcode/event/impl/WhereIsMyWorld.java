@@ -6,7 +6,6 @@ import eu.darkcode.event.EventCategory;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.TimedEvent;
 import eu.darkcode.server.EventManager;
-import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,14 +30,12 @@ public class WhereIsMyWorld extends TimedEvent {
     public void startClient() {
         super.startClient();
         SharedProperties.noWorld = true;
-        Minecraft.getInstance().levelRenderer.allChanged();
     }
 
     @Override
     public void endClient() {
         super.endClient();
         SharedProperties.noWorld = false;
-        Minecraft.getInstance().levelRenderer.allChanged();
     }
 
     @Override

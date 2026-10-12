@@ -72,12 +72,12 @@ public class BetterChaosMod implements ModInitializer {
                 context.responseSender().disconnect(Component.literal("Mod version mismatch! (Client: " + payload.clientModVersion() + "; Server: " + UpdateStatus.getModVersion() + ")"));
                 return;
             }
-            context.networkHandler().completeTask(HandshakeTask.TYPE);
+            context.packetListener().completeTask(HandshakeTask.TYPE);
         });
 
         ServerConfigurationNetworking.registerGlobalReceiver(Payloads.C2S_INTEGRATION_PASS, (payload, context) -> {
             //TODO: Store integrations and show ingame? payload.integrations()
-            context.networkHandler().completeTask(IntegrationCheckTask.TYPE);
+            context.packetListener().completeTask(IntegrationCheckTask.TYPE);
         });
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {

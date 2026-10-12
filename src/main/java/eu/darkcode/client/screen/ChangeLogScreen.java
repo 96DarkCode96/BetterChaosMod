@@ -1,10 +1,11 @@
 package eu.darkcode.client.screen;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
+import org.jspecify.annotations.NonNull;
 
 public class ChangeLogScreen extends Screen {
     private static final int PANEL_WIDTH = 310;
@@ -26,10 +27,10 @@ public class ChangeLogScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int i, int j, float f) {
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int i, int j, float f) {
         // [RENDER PARENT]
         if (this.parent != null)
-            this.parent.render(graphics, 0, 0, f);
+            this.parent.extractRenderState(graphics, 0, 0, f);
 
         ProfilerFiller profilerFiller = Profiler.get();
         profilerFiller.push("ChangeLogScreen");
@@ -52,15 +53,14 @@ public class ChangeLogScreen extends Screen {
         // [FOOTER BACKGROUND]
         graphics.fill(x + 1, y + h - 2 * PADDING - BUTTON_HEIGHT - 1, x + w - 1, y + h - 1, 0xFF48494A);
 
-        super.render(graphics, i, j, f);
+        super.extractRenderState(graphics, i, j, f);
 
         profilerFiller.pop();
     }
 
     @Override
     public void onClose() {
-        assert this.minecraft != null;
-        this.minecraft.setScreen(parent);
+        this.minecraft.setScreenAndShow(parent);
     }
 
     @Override

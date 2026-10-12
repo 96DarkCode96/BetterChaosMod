@@ -8,7 +8,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
@@ -25,6 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +76,7 @@ public class OreTextInput extends OreWidget {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics g, int i, int j, float f) {
+    public void renderWidget(@NotNull GuiGraphicsExtractor g, int i, int j, float f) {
         // [FOCUSED BORDER]
         if (isFocused()) {
             g.fill(getX() - 2, getY() - 2, getRight() + 2, getY() - 1, 0xFFFFFFFF);
@@ -96,7 +97,7 @@ public class OreTextInput extends OreWidget {
         if (!string.isEmpty()) {
             String string2 = bl ? string.substring(0, l) : string;
             FormattedCharSequence formattedCharSequence = this.applyFormat(string2, this.displayPos);
-            g.drawString(this.font, formattedCharSequence, m, this.textY, k, false);
+            g.text(this.font, formattedCharSequence, m, this.textY, k, false);
             m += this.font.width(formattedCharSequence) + 1;
         }
 
@@ -110,7 +111,7 @@ public class OreTextInput extends OreWidget {
         }
 
         if (!string.isEmpty() && bl && l < string.length()) {
-            g.drawString(this.font, this.applyFormat(string.substring(l), this.cursorPos), m, this.textY, k, false);
+            g.text(this.font, this.applyFormat(string.substring(l), this.cursorPos), m, this.textY, k, false);
         }
 
         if (n != l) {
@@ -122,7 +123,7 @@ public class OreTextInput extends OreWidget {
             if (bl3) {
                 g.fill(o, this.textY - 1, o + 1, this.textY + 1 + 9, k);
             } else {
-                g.drawString(this.font, "_", o, this.textY, k, false);
+                g.text(this.font, "_", o, this.textY, k, false);
             }
         }
 
@@ -131,7 +132,7 @@ public class OreTextInput extends OreWidget {
     }
 
     @Override
-    public void updateNarration(NarrationElementOutput narrationElementOutput) {
+    public void updateNarration(@NonNull NarrationElementOutput narrationElementOutput) {
         narrationElementOutput.add(NarratedElementType.TITLE, this.createNarrationMessage());
     }
 
@@ -330,7 +331,7 @@ public class OreTextInput extends OreWidget {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent keyEvent) {
+    public boolean keyPressed(@NonNull KeyEvent keyEvent) {
         if (!this.isActive() || !this.isFocused())
             return false;
 
@@ -387,7 +388,7 @@ public class OreTextInput extends OreWidget {
     }
 
     @Override
-    public boolean charTyped(CharacterEvent characterEvent) {
+    public boolean charTyped(@NonNull CharacterEvent characterEvent) {
         if (!this.isActive() || !this.isFocused() || !characterEvent.isAllowedChatCharacter())
             return false;
 

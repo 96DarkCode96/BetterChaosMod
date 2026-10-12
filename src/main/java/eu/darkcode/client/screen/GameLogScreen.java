@@ -3,10 +3,11 @@ package eu.darkcode.client.screen;
 import eu.darkcode.BetterChaosModClient;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -29,8 +30,8 @@ public class GameLogScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int i, int j, float f) {
-        super.render(graphics, i, j, f);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int i, int j, float f) {
+        super.extractRenderState(graphics, i, j, f);
 
         int x = (graphics.guiWidth() - PANEL_WIDTH) / 2;
 
@@ -53,8 +54,7 @@ public class GameLogScreen extends Screen {
 
     @Override
     public void onClose() {
-        assert this.minecraft != null;
-        minecraft.setScreen(prevScreen);
+        this.minecraft.setScreenAndShow(prevScreen);
     }
 
     @Override
@@ -77,6 +77,6 @@ public class GameLogScreen extends Screen {
 
     public interface GameLogEntry {
         @Environment(EnvType.CLIENT)
-        int renderGameLogEntry(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float delta, int x, int y, int width);
+        int renderGameLogEntry(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta, int x, int y, int width);
     }
 }

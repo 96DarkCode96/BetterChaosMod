@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(BossHealthOverlay.class)
 public class BossHealthOverlayMixin {
 
-    @ModifyConstant(method = "render", constant = @Constant(intValue = 12))
+    @ModifyConstant(method = "extractRenderState", constant = @Constant(intValue = 12))
     private int shiftBossBarVerticalPosition(int original) {
         return original + BetterChaosModClient.instance().settings().hud.timerHeight();
     }

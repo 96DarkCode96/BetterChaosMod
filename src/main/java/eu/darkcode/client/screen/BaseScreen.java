@@ -23,8 +23,7 @@ public abstract class BaseScreen extends Screen {
     @Override
     public void onClose() {
         // [OPEN PREVIOUS SCREEN]
-        assert minecraft != null;
-        minecraft.setScreen(parent);
+        this.minecraft.setScreenAndShow(parent);
     }
 
     @Override

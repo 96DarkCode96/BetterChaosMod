@@ -5,7 +5,7 @@ import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.InstantEvent;
 import eu.darkcode.server.EventManager;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import org.jetbrains.annotations.NotNull;
 
 public class Creeper extends InstantEvent {
@@ -14,7 +14,7 @@ public class Creeper extends InstantEvent {
 
     @Override
     public void start(@NotNull EventManager manager) {
-        manager.activePlayers().forEach(player -> EntityType.CREEPER.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT));
+        manager.activePlayers().forEach(player -> EntityTypes.CREEPER.spawn(player.level(), player.blockPosition(), EntitySpawnReason.EVENT));
     }
 
     @Override

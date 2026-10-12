@@ -2,7 +2,7 @@ package eu.darkcode.client.hud;
 
 import eu.darkcode.client.SharedProperties;
 import eu.darkcode.utils.Utils;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ public class JumpscareImage implements Hud {
     private static final Identifier TEXTURE = Utils.resourceLocation("jumpscare");
 
     @Override
-    public void render(HudSettings hudManager, @NotNull GuiGraphics guiGraphics) {
+    public void render(HudSettings hudManager, @NotNull GuiGraphicsExtractor guiGraphics) {
         int width = guiGraphics.guiWidth();
         int height = guiGraphics.guiHeight();
 

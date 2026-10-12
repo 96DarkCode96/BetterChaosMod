@@ -5,7 +5,7 @@ import eu.darkcode.event.Event;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public class ActiveEventsPanel implements Hud {
     private static final int TOP_PADDING = 20;
 
     @Override
-    public void render(HudSettings settings, @NotNull GuiGraphics graphics) {
+    public void render(HudSettings settings, @NotNull GuiGraphicsExtractor graphics) {
         List<Event> activeEvents = BetterChaosModClient.instance().eventManager().getActiveEvents();
         int y = settings.timerHeight() + TOP_PADDING;
         for (Event activeEvent : activeEvents) {
@@ -25,7 +25,7 @@ public class ActiveEventsPanel implements Hud {
             int size = font.width(component);
 
             int width = graphics.guiWidth();
-            graphics.drawString(font, component, width - size - 30, y, 0xFFFFFFFF); // TODO: Add fade-out for first 4 elements if size is > 8
+            graphics.text(font, component, width - size - 30, y, 0xFFFFFFFF); // TODO: Add fade-out for first 4 elements if size is > 8
             if (!activeEvent.ended() && activeEvent.renderDurationBar()) {
                 int startX = width - 25;
                 graphics.fill(startX, y + 1, startX + 20, y + 8, 0xFF999999);
