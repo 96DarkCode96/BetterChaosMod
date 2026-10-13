@@ -3,7 +3,10 @@
   "package": "eu.darkcode.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BlockMixin"
+    "BlockMixin",
+    "PlayerInventoryMixin",
+    "AbstractContainerMenuMixin",
+    "PlayerMixin"
   ],
   "client": [
     "LevelRendererMixin",
@@ -17,7 +20,8 @@
     "SoundEngineMixin",
     "SoundOptionsScreenMixin",
     "TitleScreenMixin",
-    "WindowMixin"
+    "WindowMixin",
+    "AbstractContainerScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

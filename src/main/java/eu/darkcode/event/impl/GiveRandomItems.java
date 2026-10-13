@@ -3,6 +3,7 @@ package eu.darkcode.event.impl;
 import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.InstantEvent;
+import eu.darkcode.event.impl.inventory.Lockable;
 import eu.darkcode.server.EventManager;
 import eu.darkcode.utils.Utils;
 import net.minecraft.world.entity.player.Inventory;
@@ -18,17 +19,17 @@ public class GiveRandomItems extends InstantEvent {
     public static final @NotNull EventRegistry.Entry<?> ENTRY = EventRegistry.entry("give_random_items", GiveRandomItems::new).build();
 
     @Override
-    public void start(@NotNull EventManager manager) {
-        manager.activePlayers().forEach(player -> {
-            Inventory inventory = player.getInventory();
-            for (int i = 0; i < inventory.getContainerSize(); i++)
-                if (inventory.getItem(i).isEmpty())
-                    inventory.setItem(i, new ItemStack(Utils.getRandomItem(player.level())));
-        });
+    public @NotNull EventRegistry.Entry<? extends Event> entry() {
+        return ENTRY;
     }
 
     @Override
-    public @NotNull EventRegistry.Entry<? extends Event> entry() {
-        return ENTRY;
+    public void start(@NotNull EventManager manager) {
+        manager.activePlayers().forEach(player -> {
+            Inventory inventory = player.getInventory();
+            for (int i = 0; i < 36; i++)
+                if (inventory.getItem(i).isEmpty() && !((Lockable) player).betterchaosmod$isSlotLocked(i))
+                    inventory.setItem(i, new ItemStack(Utils.getRandomItem(player.level())));
+        });
     }
 }
