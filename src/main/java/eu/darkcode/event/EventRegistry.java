@@ -4,6 +4,8 @@ import com.mojang.serialization.Lifecycle;
 import eu.darkcode.Settings;
 import eu.darkcode.event.impl.*;
 import eu.darkcode.event.impl.health.*;
+import eu.darkcode.event.impl.inventory.LockInventorySlots;
+import eu.darkcode.event.impl.inventory.UnlockInventorySlots;
 import eu.darkcode.event.impl.move.*;
 import eu.darkcode.event.impl.sensitivity.HighSensitivity;
 import eu.darkcode.event.impl.sensitivity.LowSensitivity;
@@ -80,6 +82,10 @@ public class EventRegistry {
         register(registry, KillerBunny.ENTRY);
         register(registry, Lava.ENTRY);
         register(registry, Levitation.ENTRY);
+
+        register(registry, LockInventorySlots.ENTRY);
+        register(registry, UnlockInventorySlots.ENTRY);
+
         register(registry, LowGravity.ENTRY);
         register(registry, LowPitch.ENTRY);
         register(registry, LowSensitivity.ENTRY);

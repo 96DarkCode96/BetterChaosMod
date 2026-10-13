@@ -87,6 +87,8 @@
   "betterchaosmod.event.timer_5": "5x Timer",
   "betterchaosmod.event.timer_2": "2x Timer",
   "betterchaosmod.event.timer_half": "0.5x Timer",
+  "betterchaosmod.event.lock_inventory_slots": "Lock Slots",
+  "betterchaosmod.event.unlock_inventory_slots": "Unlock Slots",
   "betterchaosmod.options.title": "Better Chaos Mod",
   "betterchaosmod.config.title": "CONFIGURATION",
   "betterchaosmod.option_section.general": "General",

@@ -2,8 +2,10 @@ package eu.darkcode;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import eu.darkcode.event.EventRegistry;
+import eu.darkcode.event.impl.inventory.Lockable;
 import eu.darkcode.networking.ClientboundPollStartPayload;
 import eu.darkcode.networking.ClientboundPollUpdateVotesPayload;
+import eu.darkcode.networking.ClientboundSetLockedSlotsPayload;
 import eu.darkcode.networking.Payloads;
 import eu.darkcode.networking.configuration.task.HandshakeTask;
 import eu.darkcode.networking.configuration.task.IntegrationCheckTask;
@@ -31,24 +33,15 @@ import java.io.IOException;
 import static eu.darkcode.utils.Utils.MOD_ID;
 
 public class BetterChaosMod implements ModInitializer {
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/config.json";
     private static final Permission.HasCommandLevel PERMISSION = new Permission.HasCommandLevel(PermissionLevel.GAMEMASTERS);
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static BetterChaosMod instance;
     private @Nullable EventManager eventManager;
     private Settings settings = new Settings();
 
     public static BetterChaosMod instance() {
         return instance;
-    }
-
-    public EventManager eventManager() {
-        return eventManager;
-    }
-
-    @NotNull
-    public Settings settings() {
-        return settings;
     }
 
     @Override
@@ -87,6 +80,9 @@ public class BetterChaosMod implements ModInitializer {
             Poll poll = eventManager.votingSystem().poll();
             sender.sendPacket(new ClientboundPollStartPayload(poll.definition()));
             sender.sendPacket(new ClientboundPollUpdateVotesPayload(poll.id(), poll.totalVotes(), poll.votes()));
+            if (handler.player instanceof Lockable l) {
+                sender.sendPacket(new ClientboundSetLockedSlotsPayload(l.betterchaosmod$getLockedSlots()));
+            }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Payloads.C2S_SEND_VOTES, (payload, context) -> {
@@ -137,6 +133,15 @@ public class BetterChaosMod implements ModInitializer {
 
             dispatcher.register(root.then(execute));
         });
+    }
+
+    public EventManager eventManager() {
+        return eventManager;
+    }
+
+    @NotNull
+    public Settings settings() {
+        return settings;
     }
 
     public void loadSettings() {

@@ -8,6 +8,7 @@ import eu.darkcode.client.overlay.OverlaySettings;
 import eu.darkcode.client.overlay.OverlayWebServer;
 import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.event.EventRegistry;
+import eu.darkcode.event.impl.inventory.Lockable;
 import eu.darkcode.networking.Payloads;
 import eu.darkcode.networking.configuration.ServerboundHandshakeAck;
 import eu.darkcode.utils.Utils;
@@ -38,15 +39,9 @@ import java.io.IOException;
 import static eu.darkcode.utils.Utils.MOD_ID;
 
 public class BetterChaosModClient implements ClientModInitializer {
-    private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/client_config.json";
-    private static final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("betterchaosmod", "main"));
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    private static KeyMapping KEYBIND_OPEN_GAME_LOG;
-    private static BetterChaosModClient instance;
-
     public static final Identifier jumpscareId = Identifier.fromNamespaceAndPath("betterchaosmod", "jumpscare");
     public static final SoundEvent jumpscareEvent = SoundEvent.createVariableRangeEvent(jumpscareId);
-
     public static final OptionInstance<Double> jumpscareOption = new OptionInstance<>("soundCategory.jumpscare", OptionInstance.noTooltip(),
             (component, d) -> d == 0.0 ? Options.genericValueLabel(component, CommonComponents.OPTION_OFF) :
                     Component.translatable("options.percent_value", component, (int) (d * 100.0)), OptionInstance.UnitDouble.INSTANCE, 1.0, v -> {
@@ -54,7 +49,10 @@ public class BetterChaosModClient implements ClientModInitializer {
         SoundManager soundManager = minecraft.getSoundManager();
         soundManager.refreshCategoryVolume(SoundSource.MASTER);
     });
-
+    private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/client_config.json";
+    private static final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("betterchaosmod", "main"));
+    private static KeyMapping KEYBIND_OPEN_GAME_LOG;
+    private static BetterChaosModClient instance;
     public @NotNull UpdateStatus updateStatus = UpdateStatus.UNKNOWN;
     private ClientSettings settings = new ClientSettings();
     private HudManager hudManager;
@@ -62,20 +60,6 @@ public class BetterChaosModClient implements ClientModInitializer {
 
     public static BetterChaosModClient instance() {
         return instance;
-    }
-
-    public EventManager eventManager() {
-        return eventManager;
-    }
-
-    @NotNull
-    public ClientSettings settings() {
-        return settings;
-    }
-
-    @NotNull
-    public HudManager hudManager() {
-        return hudManager;
     }
 
     @Override
@@ -118,6 +102,20 @@ public class BetterChaosModClient implements ClientModInitializer {
             OverlayWebServer.startServer(overlay.webServerPort);
     }
 
+    public EventManager eventManager() {
+        return eventManager;
+    }
+
+    @NotNull
+    public ClientSettings settings() {
+        return settings;
+    }
+
+    @NotNull
+    public HudManager hudManager() {
+        return hudManager;
+    }
+
     private void registerPlayNetworking() {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             if (eventManager != null)
@@ -154,6 +152,14 @@ public class BetterChaosModClient implements ClientModInitializer {
             if (eventManager == null)
                 return;
             context.client().execute(() -> eventManager.startEvent(payload.event()));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(Payloads.S2C_SET_LOCKED_SLOTS, (payload, context) -> {
+            context.client().execute(() -> {
+                if (context.player() instanceof Lockable l) {
+                    l.betterchaosmod$setLockedSlots(payload.lockedSlots());
+                }
+            });
         });
     }
 
