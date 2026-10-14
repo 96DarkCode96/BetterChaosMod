@@ -1,23 +1,21 @@
 package eu.darkcode.client.voting.integration.kick;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.client.voting.integration.Integration;
 import eu.darkcode.client.voting.integration.TokenServer;
-import eu.darkcode.client.voting.integration.kick.websocket.KickService;
+import eu.darkcode.client.voting.integration.kick.centrifugo.CentrifugoWebSocket;
+import eu.darkcode.client.voting.integration.kick.centrifugo.CentrifugoHelper;
+import eu.darkcode.client.voting.integration.twitch.irc.IRCUser;
+import eu.darkcode.utils.Utils;
 import eu.darkcode.voting.PollDefinition;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 
 /**
  * @author _dark_code_
@@ -26,21 +24,49 @@ import java.util.concurrent.CompletableFuture;
 @Environment(EnvType.CLIENT)
 public class KickIntegration implements Integration {
 
-    private static final @NotNull URI SEND_MESSAGE_URI = URI.create("https://api.kick.com/public/v1/chat");
-    private static final @NotNull Gson GSON = new GsonBuilder().create();
-    private static final @NotNull HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-
     private final @NotNull KickIntegrationSettings settings;
-    private final @NotNull KickService kickService;
+    private final @NotNull CentrifugoWebSocket webSocket;
 
     public KickIntegration(@NotNull KickIntegrationSettings settings) {
         this.settings = settings;
         try {
-            String msgId = sendAsyncMessage("Loading world...").join();
-            if (msgId == null && !Boolean.TRUE.equals(TokenServer.refreshKickToken().join()))
+            if (KickHelper.sendAsyncMessage(settings.token, "Loading world...").join() == null &&
+                    !Boolean.TRUE.equals(TokenServer.refreshKickToken().join()))
                 throw new IllegalStateException("Failed to connect to kick! Invalid token!");
 
-            kickService = new KickService(settings, this);
+            if (settings.token == null || settings.token.isBlank())
+                throw new IllegalArgumentException("token is null or blank");
+
+            // Find ChatRoomId if undefined (-1)
+            if (settings.chatroomId == -1) {
+                settings.chatroomId = KickHelper.fetchChatroomId(settings.token);
+                BetterChaosModClient.instance().saveSettings();
+            }
+
+            this.webSocket = new CentrifugoWebSocket() {
+                @Override
+                protected @NotNull String getWebSocketUrl() {
+                    return Objects.requireNonNull(KickHelper.fetchWebSocketURL(KickHelper.getClientId()));
+                }
+
+                @Override
+                protected void handlePacket(@NotNull JsonObject packet) {
+                    if (packet.has("push")) { // push message
+                        handlePushPacket(packet.getAsJsonObject("push"));
+                    }
+                }
+
+                @Override
+                protected void onConnect() {
+                    sendData(CentrifugoHelper.connect(Objects.requireNonNull(KickHelper.fetchJWTToken(KickHelper.getClientId())), "js") + "\n" +
+                            CentrifugoHelper.subscribe(requestMessageId(), "chatrooms." + settings.chatroomId + ".v2"), true);
+                }
+
+                @Override
+                protected void onDisconnected() {
+
+                }
+            };
         } catch (Exception e) {
             throw new IllegalStateException("Failed to connect to kick!", e);
         }
@@ -51,7 +77,7 @@ public class KickIntegration implements Integration {
         if (!settings.announceNewPolls)
             return;
         try {
-            sendAsyncMessage(poll.toMessage());
+            KickHelper.sendAsyncMessage(settings.token, poll.toMessage());
         } catch (Exception e) {
             BetterChaosModClient.LOGGER.warn("Failed to send poll!", e);
         }
@@ -59,45 +85,59 @@ public class KickIntegration implements Integration {
 
     @Override
     public void shutdown() {
-        kickService.shutdown();
+        this.webSocket.shutdown();
     }
 
-    @NotNull
-    public static CompletableFuture<String> getUserName(@NotNull String token) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.kick.com/public/v1/users"))
-                .header("Authorization", "Bearer " + token)
-                .header("Content-Type", "application/json")
-                .GET()
-                .build();
-        return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            if (response.statusCode() != 200) {
-                BetterChaosModClient.LOGGER.error("Failed to fetch Kick user data! sCode: {}", response.statusCode());
-                return null;
+    private void handlePushPacket(@NotNull JsonObject packet) {
+        // ignore invalid channel
+        if (packet.has("channel") && !packet.get("channel").getAsString().equals("chatrooms." + settings.chatroomId + ".v2"))
+            return;
+
+        if (!packet.has("pub")) return;
+        JsonObject pub = packet.getAsJsonObject("pub");
+
+        if (!pub.has("data")) return;
+        JsonObject data = pub.getAsJsonObject("data");
+
+        if (!data.has("event") || !data.get("event").getAsString().equals("App\\Events\\ChatMessageEvent")) return;
+
+        onChatMessage(Utils.GSON.fromJson(data.get("data").getAsString(), JsonObject.class));
+    }
+
+    private void onChatMessage(@NotNull JsonObject data) {
+        try {
+            if (!data.has("content") || !data.has("sender"))
+                return;
+            String content = data.get("content").getAsString().trim();
+            JsonObject sender = data.getAsJsonObject("sender");
+            JsonObject identity = sender.getAsJsonObject("identity");
+            JsonArray badges = identity.getAsJsonArray("badges");
+            boolean vip = false;
+            boolean mod = false;
+            boolean sub = false;
+            for (JsonElement badge : badges) {
+                String type = badge.getAsJsonObject().get("type").getAsString().toLowerCase();
+                switch (type) {
+                    case "subscriber" -> sub = true;
+                    case "vip" -> vip = true;
+                    case "moderator" -> mod = true;
+                }
             }
-            BetterChaosModClient.LOGGER.info("Kick user data has been fetched!: {}", response.body());
-            JsonObject object = GSON.fromJson(response.body(), JsonObject.class);
-            JsonObject data = object.getAsJsonArray("data").get(0).getAsJsonObject();
-            return data.get("name").getAsString();
-        });
+
+            IRCUser user = new IRCUser(
+                    sender.get("id").getAsLong(),
+                    null,
+                    sender.has("username") ? sender.get("username").getAsString() : sender.get("slug").getAsString(),
+                    Integer.parseInt(identity.get("color").getAsString().substring(1), 16),
+                    vip,
+                    mod,
+                    sub
+            );
+
+            handleMessage(user, content);
+        } catch (Throwable ignored) {
+            // ignored
+        }
     }
 
-    @NotNull
-    public CompletableFuture<String> sendAsyncMessage(@NotNull String message) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(SEND_MESSAGE_URI)
-                .header("Authorization", "Bearer " + settings.token)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(GSON.toJson(Map.of(
-                        "type", "bot",
-                        "content", message
-                ))))
-                .build();
-        return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            if (response.statusCode() != 200)
-                return null;
-            JsonObject object = GSON.fromJson(response.body(), JsonObject.class);
-            return object.getAsJsonObject("data").get("message_id").getAsString();
-        });
-    }
 }
