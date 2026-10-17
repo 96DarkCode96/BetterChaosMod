@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: Optional release notes to add to the GitHub release.
+        required: false
+        default: ''
+      publish_to_modrinth:
+        description: Publish the built jar to Modrinth.
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish release
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Build release artifacts
+        run: ./gradlew --no-daemon clean build
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
+          generate_release_notes: true
+          body: ${{ github.event.inputs.release_notes || github.event.head_commit.message || github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to Modrinth
+        if: ${{ secrets.MODRINTH_TOKEN != '' && (github.event_name == 'push' || github.event.inputs.publish_to_modrinth == 'true') }}
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CHANGELOG: ${{ github.event.inputs.release_notes || github.event.head_commit.message || github.ref_name }}
+        run: ./gradlew --no-daemon modrinth --stacktrace
