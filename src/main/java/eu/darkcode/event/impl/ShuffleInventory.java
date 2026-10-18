@@ -3,6 +3,7 @@ package eu.darkcode.event.impl;
 import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.InstantEvent;
+import eu.darkcode.event.impl.inventory.Lockable;
 import eu.darkcode.server.EventManager;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -25,15 +26,21 @@ public class ShuffleInventory extends InstantEvent {
             Inventory inventory = player.getInventory();
             if (inventory.isEmpty())
                 return;
+            Lockable lockable = (Lockable) player;
             List<ItemStack> stacks = new ArrayList<>();
+            List<Integer> unlockedSlots = new ArrayList<>();
 
-            for (int i = 0; i < 41; i++)
+            for (int i = 0; i < 41; i++) {
+                if (lockable.betterchaosmod$isSlotLocked(i))
+                    continue;
+                unlockedSlots.add(i);
                 stacks.add(inventory.getItem(i));
+            }
 
             Collections.shuffle(stacks);
 
             for (int i = 0; i < stacks.size(); i++)
-                inventory.setItem(i, stacks.get(i));
+                inventory.setItem(unlockedSlots.get(i), stacks.get(i));
         });
     }
 
