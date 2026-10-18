@@ -2,6 +2,7 @@ plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'java-library'
     id 'maven-publish'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 version = "${project.mod_version}-${project.minecraft_version}"
@@ -87,3 +88,22 @@ publishing {
         // retrieving dependencies.
     }
 }
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "betterchaosmod"
+    versionNumber = project.version.toString()
+    versionName = "BetterChaosMod ${project.version}"
+    versionType = "release"
+    uploadFile = jar
+    environment = "client_and_server"
+    changelog = System.getenv("CHANGELOG") ?: DEFAULT_CHANGELOG
+    gameVersions = [project.minecraft_version]
+    loaders = ["fabric"]
+    dependencies {
+        required.version "fabric-api", project.fabric_version
+    }
+    syncBodyFrom = rootProject.file("MODRINTH.md").text
+}
+
+tasks.modrinth.dependsOn(tasks.modrinthSyncBody)

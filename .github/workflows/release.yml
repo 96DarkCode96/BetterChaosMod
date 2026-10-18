@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish release
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve release tag from Gradle properties
+        id: release_tag
+        shell: bash
+        run: |
+          MOD_VERSION="$(grep -E '^mod_version=' gradle.properties | cut -d '=' -f2-)"
+          MINECRAFT_VERSION="$(grep -E '^minecraft_version=' gradle.properties | cut -d '=' -f2-)"
+          TAG="${MOD_VERSION}-${MINECRAFT_VERSION}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Resolved release tag: ${TAG}"
+
+      - name: Create tag for current commit
+        shell: bash
+        env:
+          TAG: ${{ steps.release_tag.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git rev-parse --verify "$TAG" >/dev/null 2>&1; then
+            EXISTING_REF="$(git rev-list -n 1 "$TAG")"
+            CURRENT_REF="$(git rev-list -n 1 HEAD)"
+            if [ "$EXISTING_REF" != "$CURRENT_REF" ]; then
+              echo "Tag $TAG already exists on another commit; refusing to overwrite it."
+              exit 1
+            fi
+            echo "Tag $TAG already points at HEAD; skipping tag creation."
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+            echo "Created and pushed tag $TAG"
+          fi
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Build release artifacts
+        run: ./gradlew --no-daemon clean build
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_tag.outputs.tag }}
+          files: build/libs/*.jar
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Read generated GitHub release notes
+        id: release_notes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.release_tag.outputs.tag }}
+        run: |
+          CHANGELOG="$(gh release view "$TAG" --json body --jq .body)"
+          echo "changelog<<EOF" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$CHANGELOG" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Modrinth
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+          CHANGELOG: ${{ steps.release_notes.outputs.changelog }}
+        run: ./gradlew --no-daemon modrinth --stacktrace
