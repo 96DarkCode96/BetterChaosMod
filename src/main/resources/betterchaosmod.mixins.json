@@ -3,16 +3,18 @@
   "package": "eu.darkcode.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractContainerMenuMixin",
+    "AbstractCowMixin",
     "BlockMixin",
     "PlayerInventoryMixin",
-    "AbstractContainerMenuMixin",
     "PlayerMixin"
   ],
   "client": [
-    "LevelRendererMixin",
+    "AbstractContainerScreenMixin",
     "BossHealthOverlayMixin",
     "HudMixin",
     "KeyboardInputMixin",
+    "LevelRendererMixin",
     "MinecraftMixin",
     "MouseHandlerMixin",
     "OptionsMixin",
@@ -20,8 +22,7 @@
     "SoundEngineMixin",
     "SoundOptionsScreenMixin",
     "TitleScreenMixin",
-    "WindowMixin",
-    "AbstractContainerScreenMixin"
+    "WindowMixin"
   ],
   "injectors": {
     "defaultRequire": 1

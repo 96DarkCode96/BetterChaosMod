@@ -6,19 +6,15 @@ import eu.darkcode.client.hud.CurrentPollPanel;
 import eu.darkcode.client.hud.HudManager;
 import eu.darkcode.client.overlay.OverlaySettings;
 import eu.darkcode.client.overlay.OverlayWebServer;
-import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.impl.inventory.Lockable;
 import eu.darkcode.networking.Payloads;
 import eu.darkcode.networking.configuration.ServerboundHandshakeAck;
 import eu.darkcode.utils.Utils;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
@@ -50,8 +46,6 @@ public class BetterChaosModClient implements ClientModInitializer {
         soundManager.refreshCategoryVolume(SoundSource.MASTER);
     });
     private static final @NotNull String CONFIG_FILE = "./config/betterchaosmod/client_config.json";
-    private static final KeyMapping.Category KEYBIND_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath("betterchaosmod", "main"));
-    private static KeyMapping KEYBIND_OPEN_GAME_LOG;
     private static BetterChaosModClient instance;
     public @NotNull UpdateStatus updateStatus = UpdateStatus.UNKNOWN;
     private ClientSettings settings = new ClientSettings();
@@ -71,13 +65,6 @@ public class BetterChaosModClient implements ClientModInitializer {
 
         hudManager = new HudManager();
         updateStatus = UpdateStatus.checkVersion();
-
-        KEYBIND_OPEN_GAME_LOG = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.gamelog.open", 24, KEYBIND_CATEGORY));
-
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (KEYBIND_OPEN_GAME_LOG.consumeClick())
-                client.setScreenAndShow(new GameLogScreen());
-        });
 
         ClientConfigurationNetworking.registerGlobalReceiver(Payloads.S2C_HANDSHAKE, (payload, context) -> {
             context.responseSender().sendPacket(new ServerboundHandshakeAck(UpdateStatus.getModVersion()));
