@@ -112,3 +112,15 @@ modrinth {
 }
 
 tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
+
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "betterchaosmod-tests"
+        enableGameTests = true
+        enableClientGameTests = true
+        eula = true
+        clearRunDirectory = true
+        username = "96DarkCode96"
+    }
+}

@@ -1,0 +1,21 @@
+{
+    "schemaVersion": 1,
+    "id": "betterchaosmod-tests",
+    "version": "1.0.0",
+    "name": "BetterChaosMod Tests",
+    "environment": "*",
+    "depends": {
+      "fabricloader": ">=0.20.1",
+      "minecraft": "~26.3",
+      "java": ">=25",
+      "fabric-api": ">=0.166.0+26.3"
+    },
+    "entrypoints": {
+      "fabric-gametest": [
+        "eu.darkcode.gametests.bucket.CopperBucketGameTests"
+      ],
+      "fabric-client-gametest": [
+
+      ]
+    }
+}
