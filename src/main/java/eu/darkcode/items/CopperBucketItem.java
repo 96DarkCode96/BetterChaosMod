@@ -88,19 +88,22 @@ public class CopperBucketItem extends BucketItem {
             CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, taken);
         }
 
-        if (taken.is(Items.LAVA_BUCKET)) {
-            // melt if lava
-            if (!level.isClientSide()) {
-                level.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 1.0f);
-                player.igniteForSeconds(5);
-            }
+        if (taken.is(Items.LAVA_BUCKET)) return pickupLavaBucket(level, player, pos, itemStack);
 
-            taken = ItemStack.EMPTY;
-        }
-        else if (taken.is(Items.WATER_BUCKET)) taken = new ItemStack(ModItems.WATER_COPPER_BUCKET);
+        if (taken.is(Items.WATER_BUCKET)) taken = new ItemStack(ModItems.WATER_COPPER_BUCKET);
         else if (taken.is(Items.POWDER_SNOW_BUCKET)) taken = new ItemStack(ModItems.POWDER_SNOW_COPPER_BUCKET);
 
         return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(itemStack, player, taken));
+    }
+
+    @NotNull
+    public static InteractionResult.Success pickupLavaBucket(@NotNull Level level, Player player, BlockPos pos, ItemStack itemStack) {
+        if (!level.isClientSide()) {
+            level.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 1.0f, 1.0f);
+            player.igniteForSeconds(5);
+        }
+
+        return InteractionResult.SUCCESS.heldItemTransformedTo(ItemUtils.createFilledResult(itemStack, player, ItemStack.EMPTY));
     }
 
 }

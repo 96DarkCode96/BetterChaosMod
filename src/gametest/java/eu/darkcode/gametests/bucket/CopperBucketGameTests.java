@@ -14,8 +14,11 @@ import net.minecraft.world.entity.animal.cow.Cow;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -158,6 +161,61 @@ public class CopperBucketGameTests implements CustomTestMethodInvoker {
         );
 
         context.succeed();
+    }
+
+    /**
+     * Fill cauldron with a filled copper bucket and return the empty bucket.
+     */
+    @GameTest
+    public void testCauldronWaterPlacement(GameTestHelper context) {
+        BlockPos pos = new BlockPos(1, 1, 1);
+        Player player = createPlayer(context, GameType.SURVIVAL);
+
+        context.setBlock(pos, Blocks.CAULDRON);
+        testBucket(context, player, ModItems.WATER_COPPER_BUCKET, pos);
+
+        context.assertBlockPresent(Blocks.WATER_CAULDRON, pos);
+        context.assertBlockPresent(Blocks.AIR, pos.above());
+
+        context.assertTrue(
+                player.getMainHandItem().is(ModItems.COPPER_BUCKET),
+                "Empty copper bucket should remain after placing water"
+        );
+
+        context.succeed();
+    }
+
+    /**
+     * Use dispenser to place water filled copper bucket and return the empty bucket.
+     */
+    @GameTest
+    public void testDispenserPlacement(GameTestHelper context) {
+        BlockPos dispenserPos = new BlockPos(1, 1, 1);
+        BlockPos targetPos = new BlockPos(1, 1, 0);
+        BlockPos leverPos = new BlockPos(1, 2, 1);
+
+        context.setBlock(dispenserPos, Blocks.DISPENSER.defaultBlockState().setValue(DispenserBlock.FACING, Direction.NORTH));
+
+        DispenserBlockEntity dispenserEntity = context.getBlockEntity(dispenserPos, DispenserBlockEntity.class);
+        dispenserEntity.setItem(0, new ItemStack(ModItems.WATER_COPPER_BUCKET));
+
+        context.setBlock(leverPos, Blocks.OAK_BUTTON);
+        context.pressButton(leverPos);
+
+        context.runAfterDelay(4, () -> {
+            context.assertBlockPresent(Blocks.WATER, targetPos);
+            ItemStack stackInDispenser = dispenserEntity.getItem(0);
+            context.assertTrue(stackInDispenser.is(ModItems.COPPER_BUCKET), "Expected empty bucket in dispenser slot 0, found: " + stackInDispenser.getItem());
+            context.setBlock(leverPos, Blocks.OAK_BUTTON);
+            context.pressButton(leverPos);
+        });
+
+        context.runAfterDelay(8, () -> {
+            context.assertBlockNotPresent(Blocks.WATER, targetPos);
+            ItemStack stackInDispenser = dispenserEntity.getItem(0);
+            context.assertTrue(stackInDispenser.is(ModItems.WATER_COPPER_BUCKET), "Expected filled bucket in dispenser slot 0, found: " + stackInDispenser.getItem());
+            context.succeed();
+        });
     }
 
     /**

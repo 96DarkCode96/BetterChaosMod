@@ -4,19 +4,29 @@ import eu.darkcode.utils.Utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
@@ -47,6 +57,58 @@ public final class ModItems {
             tab.accept(WATER_COPPER_BUCKET);
             tab.accept(POWDER_SNOW_COPPER_BUCKET);
             tab.accept(MILK_COPPER_BUCKET);
+        });
+
+        // Hook dispenser logic
+
+        DispenseItemBehavior filledBucketBehavior = new DefaultDispenseItemBehavior() {
+            private final DefaultDispenseItemBehavior defaultDispenseItemBehavior = new DefaultDispenseItemBehavior();
+
+            @Override
+            public ItemStack execute(final BlockSource source, final ItemStack dispensed) {
+                DispensibleContainerItem bucket = (DispensibleContainerItem)dispensed.getItem();
+                BlockPos target = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
+                Level level = source.level();
+                if (bucket.emptyContents(null, level, target, null)) {
+                    bucket.checkExtraContent(null, level, dispensed, target);
+                    return this.consumeWithRemainder(source, dispensed, new ItemStack(ModItems.COPPER_BUCKET));
+                } else {
+                    return this.defaultDispenseItemBehavior.dispense(source, dispensed);
+                }
+            }
+        };
+        DispenserBlock.DISPENSER_REGISTRY.put(ModItems.WATER_COPPER_BUCKET, filledBucketBehavior);
+        DispenserBlock.DISPENSER_REGISTRY.put(ModItems.POWDER_SNOW_COPPER_BUCKET, filledBucketBehavior);
+
+        DispenserBlock.DISPENSER_REGISTRY.put(ModItems.COPPER_BUCKET, new DefaultDispenseItemBehavior() {
+            @Override
+            public ItemStack execute(final @NonNull BlockSource source, final @NonNull ItemStack dispensed) {
+                LevelAccessor level = source.level();
+                BlockPos target = source.pos().relative(source.state().getValue(DispenserBlock.FACING));
+                BlockState blockState = level.getBlockState(target);
+                Block block = blockState.getBlock();
+                if (block instanceof BucketPickup bucket) {
+                    ItemStack pickup = bucket.pickupBlock(null, level, target, blockState);
+                    if (pickup.isEmpty()) {
+                        return super.execute(source, dispensed);
+                    } else {
+                        level.gameEvent(null, GameEvent.FLUID_PICKUP, target);
+                        return this.consumeWithRemainder(source, dispensed, getRemainder(pickup));
+                    }
+                } else {
+                    return super.execute(source, dispensed);
+                }
+            }
+
+            private ItemStack getRemainder(ItemStack pickup) {
+                ItemStack remainder = ItemStack.EMPTY;
+                Item targetType = pickup.getItem();
+                if (targetType == Items.WATER_BUCKET)
+                    remainder = new ItemStack(ModItems.WATER_COPPER_BUCKET);
+                else if (targetType == Items.POWDER_SNOW_BUCKET)
+                    remainder = new ItemStack(ModItems.POWDER_SNOW_COPPER_BUCKET);
+                return remainder;
+            }
         });
     }
 
