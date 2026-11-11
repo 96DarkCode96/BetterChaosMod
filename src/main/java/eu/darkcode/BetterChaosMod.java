@@ -3,6 +3,7 @@ package eu.darkcode;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.impl.inventory.Lockable;
+import eu.darkcode.items.ModItems;
 import eu.darkcode.networking.ClientboundPollStartPayload;
 import eu.darkcode.networking.ClientboundPollUpdateVotesPayload;
 import eu.darkcode.networking.ClientboundSetLockedSlotsPayload;
@@ -50,6 +51,8 @@ public class BetterChaosMod implements ModInitializer {
         LOGGER.info("[Chaos-Server] EventRegistry initialized (events: {})", EventRegistry.EVENTS.size());
         loadSettings();
         LOGGER.info("[Chaos-Server] Settings loaded!");
+
+        ModItems.initialize();
 
         ServerConfigurationConnectionEvents.CONFIGURE.register((handler, server) -> {
             if (ServerConfigurationNetworking.canSend(handler, Payloads.S2C_HANDSHAKE)) {

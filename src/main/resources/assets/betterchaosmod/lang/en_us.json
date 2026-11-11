@@ -131,9 +131,6 @@
   "betterchaosmod.option.server.accessibility": "Sensory Safety Mode",
   "betterchaosmod.option.server.accessibility.desc": "Disables events that contain jumpscares, deafening audio, or rapid flashing lights (strobing).",
   "betterchaosmod.option.update.outdated": "Update Mod",
-  "betterchaosmod.gamelog.title": "Game Log",
-  "key.category.betterchaosmod.main": "Better Chaos Mod",
-  "key.gamelog.open": "Open Game Log",
   "soundCategory.jumpscare": "JumpScare",
   "betterchaosmod.event.random": "Random Event",
   "betterchaosmod.poll.title": "Total votes: %d",
@@ -142,5 +139,9 @@
   "betterchaosmod.changelog.title": "Changelog",
   "betterchaosmod.integration_check.title": "INTEGRATION CHECK",
   "betterchaosmod.connect.title": "CONNECTING",
-  "betterchaosmod.option.client.integration.twitch.getToken": "Obtain token"
+  "betterchaosmod.option.client.integration.twitch.getToken": "Obtain token",
+  "item.betterchaosmod.copper_bucket": "Copper Bucket",
+  "item.betterchaosmod.water_copper_bucket": "Water Copper Bucket",
+  "item.betterchaosmod.powder_snow_copper_bucket": "Powder Snow Copper Bucket",
+  "item.betterchaosmod.milk_copper_bucket": "Milk Copper Bucket"
 }

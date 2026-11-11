@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.EnumSet;
 
@@ -14,12 +15,12 @@ public enum IntegrationType {
 
     public static final StreamCodec<FriendlyByteBuf, EnumSet<IntegrationType>> CODEC = new StreamCodec<>() {
         @Override
-        public EnumSet<IntegrationType> decode(FriendlyByteBuf byteBuf) {
+        public @NonNull EnumSet<IntegrationType> decode(FriendlyByteBuf byteBuf) {
             return byteBuf.readEnumSet(IntegrationType.class);
         }
 
         @Override
-        public void encode(FriendlyByteBuf byteBuf, EnumSet<IntegrationType> set) {
+        public void encode(FriendlyByteBuf byteBuf, @NonNull EnumSet<IntegrationType> set) {
             byteBuf.writeEnumSet(set, IntegrationType.class);
         }
     };

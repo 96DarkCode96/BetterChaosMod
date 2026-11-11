@@ -2,7 +2,6 @@ package eu.darkcode.client;
 
 import eu.darkcode.BetterChaosModClient;
 import eu.darkcode.Settings;
-import eu.darkcode.client.screen.GameLogScreen;
 import eu.darkcode.client.screen.IntegrationCheckScreen;
 import eu.darkcode.client.voting.Poll;
 import eu.darkcode.client.voting.VotingSystem;
@@ -18,8 +17,6 @@ import java.util.List;
 
 public class EventManager {
 
-    private final @NotNull List<GameLogScreen.GameLogEntry> gameLogEntries = new ArrayList<>();
-
     private final @NotNull List<Event> activeEvents = new ArrayList<>();
     private final @NotNull Settings settings;
     private final @NotNull VotingSystem votingSystem;
@@ -31,11 +28,6 @@ public class EventManager {
         this.timerCount = settings.timerDuration;
         this.timerDuration = settings.timerDuration;
         this.votingSystem = new VotingSystem();
-    }
-
-    @NotNull
-    public List<GameLogScreen.GameLogEntry> getGameLogEntries() {
-        return gameLogEntries;
     }
 
     @NotNull
@@ -86,7 +78,6 @@ public class EventManager {
         Event pop;
         while (!this.activeEvents.isEmpty() && this.activeEvents.size() >= maxEntries && (pop = this.activeEvents.getFirst()) != null && pop.ended())
             this.activeEvents.removeFirst();
-        this.gameLogEntries.add(event);
         this.activeEvents.add(event);
         event.startClient();
     }

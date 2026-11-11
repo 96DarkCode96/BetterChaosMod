@@ -4,6 +4,8 @@ import eu.darkcode.ChaosTags;
 import eu.darkcode.event.Event;
 import eu.darkcode.event.EventRegistry;
 import eu.darkcode.event.TimedEvent;
+import eu.darkcode.items.CopperBucketItem;
+import eu.darkcode.items.ModItems;
 import eu.darkcode.server.EventManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -21,6 +23,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +88,15 @@ public class OrichalcumTouch extends TimedEvent {
 
             Item item = itemStack.getItem();
             ItemStack result = itemStack.copy();
-            if (itemStack.has(DataComponents.FOOD)) {
+            if(itemStack.is(Items.POWDER_SNOW_BUCKET)) {
+                result = new ItemStack(ModItems.POWDER_SNOW_COPPER_BUCKET, itemStack.getCount());
+            } else if(itemStack.is(Items.MILK_BUCKET)) {
+                result = new ItemStack(ModItems.MILK_COPPER_BUCKET, itemStack.getCount());
+            } else if(item instanceof BucketItem bi && !(item instanceof CopperBucketItem)) {
+                result = new ItemStack(bi.getContent() == Fluids.WATER ? ModItems.WATER_COPPER_BUCKET : ModItems.COPPER_BUCKET, itemStack.getCount());
+            } else if (itemStack.is(Items.CHEST) || itemStack.is(Items.TRAPPED_CHEST)){
+                result = new ItemStack(Items.COPPER_CHEST.weathering().unaffected(), itemStack.getCount());
+            } else if (itemStack.has(DataComponents.FOOD)) {
                 int chance = player.getRandom().nextInt(100);
 
                 if (chance < 25)

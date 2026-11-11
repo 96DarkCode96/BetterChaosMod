@@ -8,6 +8,7 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -18,12 +19,12 @@ public record PollDefinition(int pollId, @NotNull List<Component> entries, @NotN
             ComponentSerialization.STREAM_CODEC.apply(ByteBufCodecs.list()), PollDefinition::entries,
             new StreamCodec<>() {
                 @Override
-                public @NotNull TriState decode(RegistryFriendlyByteBuf buf) {
+                public @NotNull TriState decode(@NonNull RegistryFriendlyByteBuf buf) {
                     return buf.readEnum(TriState.class);
                 }
 
                 @Override
-                public void encode(RegistryFriendlyByteBuf buf, TriState obj) {
+                public void encode(@NonNull RegistryFriendlyByteBuf buf, @NonNull TriState obj) {
                     buf.writeEnum(obj);
                 }
             }, PollDefinition::visibility,
